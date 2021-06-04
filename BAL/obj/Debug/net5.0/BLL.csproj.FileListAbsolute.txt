@@ -1,0 +1,12 @@
+D:\projects\ASP_Labs\BAL\bin\Debug\net5.0\BLL.deps.json
+D:\projects\ASP_Labs\BAL\bin\Debug\net5.0\BLL.dll
+D:\projects\ASP_Labs\BAL\bin\Debug\net5.0\ref\BLL.dll
+D:\projects\ASP_Labs\BAL\bin\Debug\net5.0\BLL.pdb
+D:\projects\ASP_Labs\BAL\obj\Debug\net5.0\BLL.csproj.AssemblyReference.cache
+D:\projects\ASP_Labs\BAL\obj\Debug\net5.0\BLL.GeneratedMSBuildEditorConfig.editorconfig
+D:\projects\ASP_Labs\BAL\obj\Debug\net5.0\BLL.AssemblyInfoInputs.cache
+D:\projects\ASP_Labs\BAL\obj\Debug\net5.0\BLL.AssemblyInfo.cs
+D:\projects\ASP_Labs\BAL\obj\Debug\net5.0\BLL.csproj.CoreCompileInputs.cache
+D:\projects\ASP_Labs\BAL\obj\Debug\net5.0\BLL.dll
+D:\projects\ASP_Labs\BAL\obj\Debug\net5.0\ref\BLL.dll
+D:\projects\ASP_Labs\BAL\obj\Debug\net5.0\BLL.pdb

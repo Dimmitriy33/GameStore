@@ -1,0 +1,12 @@
+D:\projects\ASP_Labs\DAL\obj\Debug\net5.0\DAL.csproj.AssemblyReference.cache
+D:\projects\ASP_Labs\DAL\obj\Debug\net5.0\DAL.GeneratedMSBuildEditorConfig.editorconfig
+D:\projects\ASP_Labs\DAL\obj\Debug\net5.0\DAL.AssemblyInfoInputs.cache
+D:\projects\ASP_Labs\DAL\obj\Debug\net5.0\DAL.AssemblyInfo.cs
+D:\projects\ASP_Labs\DAL\obj\Debug\net5.0\DAL.csproj.CoreCompileInputs.cache
+D:\projects\ASP_Labs\DAL\bin\Debug\net5.0\DAL.deps.json
+D:\projects\ASP_Labs\DAL\bin\Debug\net5.0\DAL.dll
+D:\projects\ASP_Labs\DAL\bin\Debug\net5.0\ref\DAL.dll
+D:\projects\ASP_Labs\DAL\bin\Debug\net5.0\DAL.pdb
+D:\projects\ASP_Labs\DAL\obj\Debug\net5.0\DAL.dll
+D:\projects\ASP_Labs\DAL\obj\Debug\net5.0\ref\DAL.dll
+D:\projects\ASP_Labs\DAL\obj\Debug\net5.0\DAL.pdb

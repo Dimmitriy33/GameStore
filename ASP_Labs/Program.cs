@@ -20,7 +20,7 @@ namespace ASP_Labs
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseStartup<Startup>();
+                    webBuilder.UseStartup<Startup.Startup>();
                 });
     }
 }
