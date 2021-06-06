@@ -10,3 +10,15 @@ D:\projects\ASP_Labs\DAL\bin\Debug\net5.0\DAL.pdb
 D:\projects\ASP_Labs\DAL\obj\Debug\net5.0\DAL.dll
 D:\projects\ASP_Labs\DAL\obj\Debug\net5.0\ref\DAL.dll
 D:\projects\ASP_Labs\DAL\obj\Debug\net5.0\DAL.pdb
+D:\учеба\стажировка\ASP_Labs\DAL\bin\Debug\net5.0\DAL.deps.json
+D:\учеба\стажировка\ASP_Labs\DAL\bin\Debug\net5.0\DAL.dll
+D:\учеба\стажировка\ASP_Labs\DAL\bin\Debug\net5.0\ref\DAL.dll
+D:\учеба\стажировка\ASP_Labs\DAL\bin\Debug\net5.0\DAL.pdb
+D:\учеба\стажировка\ASP_Labs\DAL\obj\Debug\net5.0\DAL.csprojAssemblyReference.cache
+D:\учеба\стажировка\ASP_Labs\DAL\obj\Debug\net5.0\DAL.GeneratedMSBuildEditorConfig.editorconfig
+D:\учеба\стажировка\ASP_Labs\DAL\obj\Debug\net5.0\DAL.AssemblyInfoInputs.cache
+D:\учеба\стажировка\ASP_Labs\DAL\obj\Debug\net5.0\DAL.AssemblyInfo.cs
+D:\учеба\стажировка\ASP_Labs\DAL\obj\Debug\net5.0\DAL.csproj.CoreCompileInputs.cache
+D:\учеба\стажировка\ASP_Labs\DAL\obj\Debug\net5.0\DAL.dll
+D:\учеба\стажировка\ASP_Labs\DAL\obj\Debug\net5.0\ref\DAL.dll
+D:\учеба\стажировка\ASP_Labs\DAL\obj\Debug\net5.0\DAL.pdb

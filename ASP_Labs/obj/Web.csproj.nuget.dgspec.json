@@ -1,24 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "D:\\projects\\ASP_Labs\\ASP_Labs\\Web.csproj": {}
+    "D:\\учеба\\стажировка\\ASP_Labs\\ASP_Labs\\Web.csproj": {}
   },
   "projects": {
-    "D:\\projects\\ASP_Labs\\ASP_Labs\\Web.csproj": {
+    "D:\\учеба\\стажировка\\ASP_Labs\\ASP_Labs\\Web.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\projects\\ASP_Labs\\ASP_Labs\\Web.csproj",
+        "projectUniqueName": "D:\\учеба\\стажировка\\ASP_Labs\\ASP_Labs\\Web.csproj",
         "projectName": "Web",
-        "projectPath": "D:\\projects\\ASP_Labs\\ASP_Labs\\Web.csproj",
-        "packagesPath": "C:\\Users\\Dzmitry.Shalunou\\.nuget\\packages\\",
-        "outputPath": "D:\\projects\\ASP_Labs\\ASP_Labs\\obj\\",
+        "projectPath": "D:\\учеба\\стажировка\\ASP_Labs\\ASP_Labs\\Web.csproj",
+        "packagesPath": "C:\\Users\\User\\.nuget\\packages\\",
+        "outputPath": "D:\\учеба\\стажировка\\ASP_Labs\\ASP_Labs\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
-          "C:\\Users\\Dzmitry.Shalunou\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Users\\User\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -32,11 +28,11 @@
           "net5.0": {
             "targetAlias": "net5.0",
             "projectReferences": {
-              "D:\\projects\\ASP_Labs\\BAL\\BLL.csproj": {
-                "projectPath": "D:\\projects\\ASP_Labs\\BAL\\BLL.csproj"
+              "D:\\учеба\\стажировка\\ASP_Labs\\BAL\\BLL.csproj": {
+                "projectPath": "D:\\учеба\\стажировка\\ASP_Labs\\BAL\\BLL.csproj"
               },
-              "D:\\projects\\ASP_Labs\\DAL\\DAL.csproj": {
-                "projectPath": "D:\\projects\\ASP_Labs\\DAL\\DAL.csproj"
+              "D:\\учеба\\стажировка\\ASP_Labs\\DAL\\DAL.csproj": {
+                "projectPath": "D:\\учеба\\стажировка\\ASP_Labs\\DAL\\DAL.csproj"
               }
             }
           }
@@ -106,25 +102,21 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.300\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.102\\RuntimeIdentifierGraph.json"
         }
       }
     },
-    "D:\\projects\\ASP_Labs\\BAL\\BLL.csproj": {
+    "D:\\учеба\\стажировка\\ASP_Labs\\BAL\\BLL.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\projects\\ASP_Labs\\BAL\\BLL.csproj",
+        "projectUniqueName": "D:\\учеба\\стажировка\\ASP_Labs\\BAL\\BLL.csproj",
         "projectName": "BLL",
-        "projectPath": "D:\\projects\\ASP_Labs\\BAL\\BLL.csproj",
-        "packagesPath": "C:\\Users\\Dzmitry.Shalunou\\.nuget\\packages\\",
-        "outputPath": "D:\\projects\\ASP_Labs\\BAL\\obj\\",
+        "projectPath": "D:\\учеба\\стажировка\\ASP_Labs\\BAL\\BLL.csproj",
+        "packagesPath": "C:\\Users\\User\\.nuget\\packages\\",
+        "outputPath": "D:\\учеба\\стажировка\\ASP_Labs\\BAL\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
-          "C:\\Users\\Dzmitry.Shalunou\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Users\\User\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -170,25 +162,21 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.300\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.102\\RuntimeIdentifierGraph.json"
         }
       }
     },
-    "D:\\projects\\ASP_Labs\\DAL\\DAL.csproj": {
+    "D:\\учеба\\стажировка\\ASP_Labs\\DAL\\DAL.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\projects\\ASP_Labs\\DAL\\DAL.csproj",
+        "projectUniqueName": "D:\\учеба\\стажировка\\ASP_Labs\\DAL\\DAL.csproj",
         "projectName": "DAL",
-        "projectPath": "D:\\projects\\ASP_Labs\\DAL\\DAL.csproj",
-        "packagesPath": "C:\\Users\\Dzmitry.Shalunou\\.nuget\\packages\\",
-        "outputPath": "D:\\projects\\ASP_Labs\\DAL\\obj\\",
+        "projectPath": "D:\\учеба\\стажировка\\ASP_Labs\\DAL\\DAL.csproj",
+        "packagesPath": "C:\\Users\\User\\.nuget\\packages\\",
+        "outputPath": "D:\\учеба\\стажировка\\ASP_Labs\\DAL\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
-          "C:\\Users\\Dzmitry.Shalunou\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Users\\User\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -242,7 +230,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.300\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.102\\RuntimeIdentifierGraph.json"
         }
       }
     }

@@ -1,27 +1,26 @@
 ﻿using DAL.EF;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DAL
 {
-    public class UnitOfWork : IDisposable
+    public class UnitOfWork : IUnitOfWork
     {
         private ApplicationDbContext _context;
 
-        public UnitOfWork(string conString)
+        public UnitOfWork(ApplicationDbContext context)
+        {
+            _context = context;
+        }
+
+        /*public UnitOfWork()
         {
             var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
             var options = optionsBuilder
-                    .UseSqlServer(@"Server=(localdb)\\mssqllocaldb;Database=aspnet-ASP_Lab-53bc9b9d-9d6a-45d4-8429-2a2761773502;Trusted_Connection=True;MultipleActiveResultSets=true")
+                    .UseSqlServer(@"Server=Source=(localdb)\\MSSQLLocalDB;Database=aspnet-ASP_Lab-53bc9b9d-9d6a-45d4-8429-2a2761773502;Trusted_Connection=True;MultipleActiveResultSets=true")
                     .Options;
             _context = new ApplicationDbContext(options);
         }
-
+        */
         private bool disposedValue;
 
         protected virtual void Dispose(bool disposing)

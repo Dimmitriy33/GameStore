@@ -1,19 +1,11 @@
+using ASP_Labs.Startup.Configuration;
+using DAL;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using ASP_Labs.Startup.Configuration;
 
 namespace ASP_Labs.Startup
 {
@@ -37,11 +29,11 @@ namespace ASP_Labs.Startup
             });
 
             /*services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));*/
-          /*  services.AddIdentity<IdentityUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
-                            .AddEntityFrameworkStores<ApplicationDbContext>();*/
-
+            /*  services.AddIdentity<IdentityUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
+                              .AddEntityFrameworkStores<ApplicationDbContext>();*/
             services.RegisterDatabase(Configuration);
             services.RegisterIdentity();
+            services.AddTransient<IUnitOfWork, UnitOfWork>();
 
         }
 
