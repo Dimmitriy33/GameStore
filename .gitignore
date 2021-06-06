@@ -34,6 +34,11 @@ Project_Readme.html
 
 # Build results
 [Dd]ebug/
+BAL/obj/Debug/
+DAL/obj/Debug/
+BAL/[Bb]in/
+DAL/[Dd]ebug/
+DAL/[Bb]in/
 [Dd]ebugPublic/
 [Rr]elease/
 [Rr]eleases/
