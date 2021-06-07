@@ -8,7 +8,7 @@ namespace WebApp.Web.Controllers
     [Route("api/home")]
     public class HomeController : ControllerBase
     {
-        [Route("/info")]
+        [Route("info")]
         [HttpGet]
         public string GetInfo() => JsonSerializer.Serialize("Hello world!");
 

@@ -27,12 +27,10 @@ namespace WebApp.Web.Startup
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "ASP_Labs", Version = "v1" });
             });
-
             services.RegisterDatabase(Configuration);
             services.RegisterIdentityServer();
-            services.AddDatabaseDeveloperPageExceptionFilter();
 
-
+            services.AddCors();
 
 
         }
@@ -44,11 +42,15 @@ namespace WebApp.Web.Startup
             {
                 app.UseDeveloperExceptionPage();
 
+                app.UseCors(builder => builder.AllowAnyOrigin());
+
                 #region Swagger
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "ASP_Labs v1"));
                 #endregion
             }
+
+            app.UseIdentityServer();
 
             app.UseHttpsRedirection();
 
@@ -63,5 +65,6 @@ namespace WebApp.Web.Startup
                 endpoints.MapControllers();
             });
         }
+
     }
 }
