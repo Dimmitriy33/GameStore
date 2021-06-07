@@ -49,10 +49,6 @@ namespace WebApp.Web.Startup
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "ASP_Labs v1"));
                 #endregion
             }
-            else
-            {
-
-            }
 
             app.UseHttpsRedirection();
 
