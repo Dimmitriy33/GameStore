@@ -3,7 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using WebApp.DAL.EF;
 
-namespace ASP_Labs.Startup.Configuration
+namespace WebApp.Web.Startup.Configuration
 {
     public static class DatabaseExtensions
     {

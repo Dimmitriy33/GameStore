@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace WebApp.DAL.Repository.interfaces
+namespace WebApp.DAL.Repository.Interfaces
 {
     public interface IRepository<T> where T : class
     {
-        Task<T> Get(int id);
+        Task<T> Get(Guid id);
         Task<IEnumerable<T>> GetAll();
         Task Add(T entity);
         void Delete(T entity);

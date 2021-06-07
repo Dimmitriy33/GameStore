@@ -2,14 +2,15 @@
 using Microsoft.Extensions.DependencyInjection;
 using WebApp.DAL.EF;
 
-namespace ASP_Labs.Startup.Configuration
+namespace WebApp.Web.Startup.Configuration
 {
     public static class AuthenticationExtensions
     {
-        public static void RegisterIdentity(this IServiceCollection services)
+        public static void RegisterIdentityServer(this IServiceCollection services)
         {
-            services.AddIdentity<IdentityUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
-                            .AddEntityFrameworkStores<ApplicationDbContext>();
+
+            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+                .AddEntityFrameworkStores<ApplicationDbContext>();
         }
     }
 }

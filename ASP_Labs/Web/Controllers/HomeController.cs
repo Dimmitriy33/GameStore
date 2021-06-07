@@ -1,19 +1,14 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 
 namespace WebApp.Web.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/home")]
     public class HomeController : ControllerBase
     {
-        [Route("~/api/[controller]/info")]
+        [Route("/info")]
         [HttpGet]
         public string GetInfo() => JsonSerializer.Serialize("Hello world!");
 

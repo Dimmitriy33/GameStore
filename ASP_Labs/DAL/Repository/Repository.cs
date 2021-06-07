@@ -1,8 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using WebApp.DAL.EF;
-using WebApp.DAL.Repository.interfaces;
+using WebApp.DAL.Repository.Interfaces;
 
 namespace WebApp.DAL.Repository
 {
@@ -19,7 +20,7 @@ namespace WebApp.DAL.Repository
             await _context.Set<T>().AddAsync(entity);
         }
 
-        public async Task<T> Get(int id)
+        public async Task<T> Get(Guid id)
         {
             return await _context.Set<T>().FindAsync(id);
         }
