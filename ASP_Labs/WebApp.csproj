@@ -36,8 +36,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BAL\BLL.csproj" />
-    <ProjectReference Include="..\DAL\DAL.csproj" />
+    <Folder Include="BLL\" />
   </ItemGroup>
 
 </Project>

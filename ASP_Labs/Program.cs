@@ -1,5 +1,3 @@
-using BLL.Interfaces;
-using DAL;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -10,14 +8,7 @@ namespace ASP_Labs
     {
         public static void Main(string[] args)
         {
-            var host = CreateHostBuilder(args).Build();
-            using (var serviceScope = host.Services.CreateScope())
-            {
-                var services = serviceScope.ServiceProvider;
-                var UnitOfWork = services.GetRequiredService<IUnitOfWork>();
-            }
-
-            host.Run();
+            CreateHostBuilder(args).Build().Run();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args)
@@ -25,7 +16,7 @@ namespace ASP_Labs
             return Host.CreateDefaultBuilder(args)
 .ConfigureWebHostDefaults(webBuilder =>
 {
-    webBuilder.UseStartup<Startup.Startup>();
+    webBuilder.UseStartup<WebApp.Web.Startup.Startup>();
 });
         }
     }

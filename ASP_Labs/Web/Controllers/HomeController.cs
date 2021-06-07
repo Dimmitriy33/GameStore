@@ -7,7 +7,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 
 
-namespace ASP_Labs.Controllers
+namespace WebApp.Web.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]

@@ -1,6 +1,4 @@
 using ASP_Labs.Startup.Configuration;
-using BLL.Interfaces;
-using DAL;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -8,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 
-namespace ASP_Labs.Startup
+namespace WebApp.Web.Startup
 {
     public class Startup
     {
@@ -30,12 +28,8 @@ namespace ASP_Labs.Startup
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "ASP_Labs", Version = "v1" });
             });
 
-            /*services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));*/
-            /*  services.AddIdentity<IdentityUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
-                              .AddEntityFrameworkStores<ApplicationDbContext>();*/
             services.RegisterDatabase(Configuration);
             services.RegisterIdentity();
-            services.AddTransient<IUnitOfWork, UnitOfWork>();
 
         }
 
