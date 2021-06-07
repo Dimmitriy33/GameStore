@@ -1543,6 +1543,19 @@
         "runtime": {
           "lib/netstandard1.3/System.Xml.XmlSerializer.dll": {}
         }
+      },
+      "BLL/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v5.0",
+        "dependencies": {
+          "Microsoft.EntityFrameworkCore.SqlServer": "5.0.6"
+        },
+        "compile": {
+          "bin/placeholder/BLL.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/BLL.dll": {}
+        }
       }
     }
   },
@@ -5848,29 +5861,40 @@
         "system.xml.xmlserializer.4.3.0.nupkg.sha512",
         "system.xml.xmlserializer.nuspec"
       ]
+    },
+    "BLL/1.0.0": {
+      "type": "project",
+      "path": "../BAL/BLL.csproj",
+      "msbuildProject": "../BAL/BLL.csproj"
     }
   },
   "projectFileDependencyGroups": {
     "net5.0": [
+      "BLL >= 1.0.0",
       "Microsoft.AspNetCore.Identity.EntityFrameworkCore >= 5.0.6",
       "Microsoft.EntityFrameworkCore >= 5.0.6",
       "Microsoft.EntityFrameworkCore.SqlServer >= 5.0.6"
     ]
   },
   "packageFolders": {
-    "C:\\Users\\User\\.nuget\\packages\\": {}
+    "C:\\Users\\Dzmitry.Shalunou\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\учеба\\стажировка\\ASP_Labs\\DAL\\DAL.csproj",
+      "projectUniqueName": "D:\\projects\\ASP_Labs\\DAL\\DAL.csproj",
       "projectName": "DAL",
-      "projectPath": "D:\\учеба\\стажировка\\ASP_Labs\\DAL\\DAL.csproj",
-      "packagesPath": "C:\\Users\\User\\.nuget\\packages\\",
-      "outputPath": "D:\\учеба\\стажировка\\ASP_Labs\\DAL\\obj\\",
+      "projectPath": "D:\\projects\\ASP_Labs\\DAL\\DAL.csproj",
+      "packagesPath": "C:\\Users\\Dzmitry.Shalunou\\.nuget\\packages\\",
+      "outputPath": "D:\\projects\\ASP_Labs\\DAL\\obj\\",
       "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+      ],
       "configFilePaths": [
-        "C:\\Users\\User\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Dzmitry.Shalunou\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -5883,7 +5907,11 @@
       "frameworks": {
         "net5.0": {
           "targetAlias": "net5.0",
-          "projectReferences": {}
+          "projectReferences": {
+            "D:\\projects\\ASP_Labs\\BAL\\BLL.csproj": {
+              "projectPath": "D:\\projects\\ASP_Labs\\BAL\\BLL.csproj"
+            }
+          }
         }
       },
       "warningProperties": {
@@ -5924,7 +5952,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.102\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.300\\RuntimeIdentifierGraph.json"
       }
     }
   }

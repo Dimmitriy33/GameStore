@@ -22,3 +22,6 @@ D:\учеба\стажировка\ASP_Labs\DAL\obj\Debug\net5.0\DAL.csproj.Core
 D:\учеба\стажировка\ASP_Labs\DAL\obj\Debug\net5.0\DAL.dll
 D:\учеба\стажировка\ASP_Labs\DAL\obj\Debug\net5.0\ref\DAL.dll
 D:\учеба\стажировка\ASP_Labs\DAL\obj\Debug\net5.0\DAL.pdb
+D:\projects\ASP_Labs\DAL\bin\Debug\net5.0\BLL.dll
+D:\projects\ASP_Labs\DAL\bin\Debug\net5.0\BLL.pdb
+D:\projects\ASP_Labs\DAL\obj\Debug\net5.0\DAL.csproj.CopyComplete
