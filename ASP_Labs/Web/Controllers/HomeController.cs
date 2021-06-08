@@ -9,7 +9,6 @@ namespace WebApp.Web.Controllers
     {
         [Route("info")]
         [HttpGet]
-        [Produces("application/json")]
         public string GetInfo() => "Hello world!";
 
     }

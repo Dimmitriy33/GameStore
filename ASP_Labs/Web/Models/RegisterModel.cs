@@ -2,7 +2,7 @@
 
 namespace WebApp.Web.Models
 {
-    public class RegisterVM
+    public class RegisterModel
     {
         [Required]
         [EmailAddress]

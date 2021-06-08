@@ -2,7 +2,7 @@
 
 namespace WebApp.Web.Models
 {
-    public class Login
+    public class LoginModel
     {
         [Required]
         [EmailAddress]
