@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Text.Json;
 
 
 namespace WebApp.Web.Controllers
@@ -10,7 +9,8 @@ namespace WebApp.Web.Controllers
     {
         [Route("info")]
         [HttpGet]
-        public string GetInfo() => JsonSerializer.Serialize("Hello world!");
+        [Produces("application/json")]
+        public string GetInfo() => "Hello world!";
 
     }
 }
