@@ -1,13 +1,11 @@
-﻿using BLL.Interfaces;
-using DAL.EF;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using WebApp.DAL.EF;
+using WebApp.DAL.Repository.Interfaces;
 
-namespace DAL.Repositories.@base
+namespace WebApp.DAL.Repository
 {
     public class Repository<T> : IRepository<T> where T : class
     {
@@ -22,7 +20,7 @@ namespace DAL.Repositories.@base
             await _context.Set<T>().AddAsync(entity);
         }
 
-        public async Task<T> Get(int id)
+        public async Task<T> Get(Guid id)
         {
             return await _context.Set<T>().FindAsync(id);
         }

@@ -1,25 +1,16 @@
-﻿using DAL.EF;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
+﻿using BLL.Interfaces;
+using DAL.EF;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DAL
 {
-    public class UnitOfWork : IDisposable
+    public class UnitOfWork : IUnitOfWork
     {
         private ApplicationDbContext _context;
 
-        public UnitOfWork(string conString)
+        public UnitOfWork(ApplicationDbContext context)
         {
-            var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
-            var options = optionsBuilder
-                    .UseSqlServer(@"Server=(localdb)\\mssqllocaldb;Database=aspnet-ASP_Lab-53bc9b9d-9d6a-45d4-8429-2a2761773502;Trusted_Connection=True;MultipleActiveResultSets=true")
-                    .Options;
-            _context = new ApplicationDbContext(options);
+            this._context = context;
         }
 
         private bool disposedValue;
@@ -30,27 +21,28 @@ namespace DAL
             {
                 if (disposing)
                 {
-                    // TODO: dispose managed state (managed objects)
+                    _context.Dispose();
                 }
 
-                // TODO: free unmanaged resources (unmanaged objects) and override finalizer
-                // TODO: set large fields to null
                 disposedValue = true;
             }
         }
 
-        // // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
-        // ~UnitOfWork()
-        // {
-        //     // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-        //     Dispose(disposing: false);
-        // }
-
+    
         public void Dispose()
         {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
+        }
+
+        public void SaveChanges()
+        {
+            this._context.SaveChanges();
+        }
+
+        public void SaveChangesAsync()
+        {
+            this._context.SaveChangesAsync();
         }
     }
 }
