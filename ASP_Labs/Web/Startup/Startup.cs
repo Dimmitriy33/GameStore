@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.OpenApi.Models;
 using WebApp.Web.Startup.Configuration;
 
 namespace WebApp.Web.Startup
@@ -23,11 +22,7 @@ namespace WebApp.Web.Startup
         {
 
             services.AddControllers();
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "ASP_Labs", Version = "v1" });
-            });
-
+            services.AddSwagger();
             services.RegisterDatabase(Configuration);
             services.RegisterIdentityServer();
             services.AddDatabaseDeveloperPageExceptionFilter();

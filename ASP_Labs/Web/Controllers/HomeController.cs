@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
-
+﻿
+using Microsoft.AspNetCore.Mvc;
 
 namespace WebApp.Web.Controllers
 {
@@ -9,8 +9,6 @@ namespace WebApp.Web.Controllers
     {
         [Route("info")]
         [HttpGet]
-        [Produces("application/json")]
-        public string GetInfo() => "Hello world!";
-
+        public IActionResult GetInfo() => Ok("Hello world!");
     }
 }
