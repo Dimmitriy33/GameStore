@@ -24,8 +24,8 @@ namespace WebApp.Web.Startup
             services.AddControllers();
             services.AddSwagger();
             services.RegisterDatabase(Configuration);
+            services.RegisterIdentity();
             services.RegisterIdentityServer();
-
             services.AddCors();
 
 
@@ -38,7 +38,7 @@ namespace WebApp.Web.Startup
             {
                 app.UseDeveloperExceptionPage();
 
-                app.UseCors(builder => builder.AllowAnyOrigin());
+                app.UseCors(builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 
                 #region Swagger
                 app.UseSwagger();

@@ -1,15 +1,26 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Threading.Tasks;
-using WebApp.Web.Models;
+using WebApp.BLL.DTO;
+using WebApp.BLL.Interfaces;
+using WebApp.BLL.Services;
 
 namespace WebApp.Web.Controllers
 {
+    [ApiController]
+    [Route("api/auth")]
     public class AuthController : Controller
     {
 
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
+
+        public IUserService UserServiceProp
+        {
+            get => new UserService();
+        }
 
         public AuthController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager)
         {
@@ -19,39 +30,53 @@ namespace WebApp.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Register(RegisterModel model)
+        [AllowAnonymous]
+        [Route("sign-up")]
+        public async Task<IActionResult> Register(UserDTO user)
         {
             if(ModelState.IsValid)
             {
-                var user = new IdentityUser
-                {
-                    Email = model.Email,
-                };
-
-                var tryRegister = await _userManager.CreateAsync(user, model.Password);
-                
-                if(tryRegister.Succeeded)
-                {
-                    await _signInManager.SignInAsync(user, isPersistent: false);
-                    return RedirectToAction("info", "Home");
-
-                }
-                else
-                {
-                    return BadRequest();
-                }
-
+                bool tryRegister = await UserServiceProp.TryRegister(user, _userManager, _signInManager);
+                if(tryRegister)
+                    return CreatedAtAction("info", "Home");
             }
 
-            return View(model);
+            return BadRequest("Invalid Register Attempt");
         }
 
 
 
-
-        public IActionResult Index()
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("sign-up")]
+        public IActionResult Register()
         {
-            return View();
+            return Created(new Uri("api/home/info", UriKind.Relative), null);
+        }
+
+
+        [HttpPost]
+        [AllowAnonymous]
+        [Route("sign-in")]
+        public async Task<IActionResult> Login(UserDTO user)
+        {
+            if(ModelState.IsValid)
+            {
+                bool tryLogin = await UserServiceProp.TryLogin(user, _userManager, _signInManager);
+
+                if(tryLogin)
+                    return CreatedAtAction("info", "Home");
+            }
+
+            return Unauthorized(null);
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("sign-in")]
+        public IActionResult Login()
+        {
+            return Ok("Successful authentication!");
         }
     }
 }
