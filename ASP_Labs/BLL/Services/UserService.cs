@@ -7,28 +7,38 @@ namespace WebApp.BLL.Services
 {
     public class UserService : IUserService
     {
-        public async Task<bool> TryRegister(UserDTO userDTO, UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager)
+        private readonly UserManager<IdentityUser> _userManager;
+        private readonly SignInManager<IdentityUser> _signInManager;
+
+        public UserService(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager)
+        {
+            _userManager = userManager;
+            _signInManager = signInManager;
+        }
+
+        public async Task<bool> TryRegister(UserDTO userDTO)
         {
 
             var user = new IdentityUser
             {
                 Email = userDTO.Email,
+                UserName = userDTO.Email
             };
 
-            var tryRegister = await userManager.CreateAsync(user, userDTO.Password);
+            var tryRegister = await _userManager.CreateAsync(user, userDTO.Password);
 
             if (tryRegister.Succeeded)
             {
-                await signInManager.SignInAsync(user, isPersistent: false);
+                await _signInManager.SignInAsync(user, isPersistent: false);
                 return true;
             }
 
             return false;
         }
 
-        public async Task<bool> TryLogin(UserDTO userDTO, UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager)
+        public async Task<bool> TryLogin(UserDTO userDTO)
         {
-            var tryLogin = await signInManager.PasswordSignInAsync(userDTO.Email, userDTO.Password, isPersistent: false, false);
+            var tryLogin = await _signInManager.PasswordSignInAsync(userDTO.Email, userDTO.Password, isPersistent: false, false);
 
             return tryLogin.Succeeded;
         }

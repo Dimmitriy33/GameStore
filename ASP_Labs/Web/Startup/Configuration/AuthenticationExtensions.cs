@@ -10,13 +10,21 @@ namespace WebApp.Web.Startup.Configuration
         public static void RegisterIdentity(this IServiceCollection services)
         {
 
-            services.AddIdentity<IdentityUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
+            services.AddIdentity<IdentityUser, IdentityRole>(options =>
+            {
+                options.SignIn.RequireConfirmedEmail = false;
+                options.Password.RequireDigit = false;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireLowercase = false;
+            })
                 .AddEntityFrameworkStores<ApplicationDbContext>();
         }
 
         public static void RegisterIdentityServer(this IServiceCollection services)
         {
-            services.AddIdentityServer().AddInMemoryCaching()
+            services.AddIdentityServer().AddAspNetIdentity<IdentityUser>()
+                .AddInMemoryCaching()
                 .AddClientStore<InMemoryClientStore>()
                 .AddResourceStore<InMemoryResourcesStore>();
         }

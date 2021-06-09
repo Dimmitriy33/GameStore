@@ -1,8 +1,11 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using WebApp.BLL.Interfaces;
+using WebApp.BLL.Services;
 using WebApp.Web.Startup.Configuration;
 
 namespace WebApp.Web.Startup
@@ -24,9 +27,17 @@ namespace WebApp.Web.Startup
             services.AddControllers();
             services.AddSwagger();
             services.RegisterDatabase(Configuration);
+            services.AddAuthentication();
+
             services.RegisterIdentity();
             services.RegisterIdentityServer();
             services.AddCors();
+
+            services.Configure<PasswordHasherOptions>(options =>
+    options.CompatibilityMode = PasswordHasherCompatibilityMode.IdentityV2
+);
+
+            services.AddTransient<IUserService, UserService>();
 
 
         }

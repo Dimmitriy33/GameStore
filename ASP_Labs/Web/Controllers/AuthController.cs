@@ -1,11 +1,8 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
 using WebApp.BLL.DTO;
 using WebApp.BLL.Interfaces;
-using WebApp.BLL.Services;
 
 namespace WebApp.Web.Controllers
 {
@@ -13,70 +10,39 @@ namespace WebApp.Web.Controllers
     [Route("api/auth")]
     public class AuthController : Controller
     {
+        private readonly IUserService _userService;
 
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly SignInManager<IdentityUser> _signInManager;
-
-        public IUserService UserServiceProp
+        public AuthController(IUserService userService )
         {
-            get => new UserService();
+            _userService = userService;
         }
 
-        public AuthController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager)
-        {
-            _userManager = userManager;
-            _signInManager = signInManager;
-
-        }
-
-        [HttpPost]
-        [AllowAnonymous]
-        [Route("sign-up")]
+        [HttpPost("sign-up")]
         public async Task<IActionResult> Register(UserDTO user)
         {
             if(ModelState.IsValid)
             {
-                bool tryRegister = await UserServiceProp.TryRegister(user, _userManager, _signInManager);
+                bool tryRegister = await _userService.TryRegister(user);
                 if(tryRegister)
-                    return CreatedAtAction("info", "Home");
+                    return Created(new Uri("api/home/info", UriKind.Relative), null);
             }
 
             return BadRequest("Invalid Register Attempt");
         }
 
-
-
-        [HttpGet]
-        [AllowAnonymous]
-        [Route("sign-up")]
-        public IActionResult Register()
-        {
-            return Created(new Uri("api/home/info", UriKind.Relative), null);
-        }
-
-
-        [HttpPost]
-        [AllowAnonymous]
-        [Route("sign-in")]
+        [HttpPost("sign-in")]
         public async Task<IActionResult> Login(UserDTO user)
         {
             if(ModelState.IsValid)
             {
-                bool tryLogin = await UserServiceProp.TryLogin(user, _userManager, _signInManager);
+                bool tryLogin = await _userService.TryLogin(user);
 
                 if(tryLogin)
-                    return CreatedAtAction("info", "Home");
+                    return Ok("Successful authentication!");
             }
 
             return Unauthorized(null);
         }
 
-        [HttpGet]
-        [AllowAnonymous]
-        [Route("sign-in")]
-        public IActionResult Login()
-        {
-            return Ok("Successful authentication!");
-        }
     }
 }
