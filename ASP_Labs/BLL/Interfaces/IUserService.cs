@@ -5,7 +5,8 @@ namespace WebApp.BLL.Interfaces
 {
     public interface IUserService
     {
-        Task<bool> TryRegister(UserDTO userDTO);
+        Task<string> TryRegister(UserDTO userDTO);
         Task<bool> TryLogin(UserDTO userDTO);
+        Task<bool> ConfirmEmail(string email, string token);
     }
 }

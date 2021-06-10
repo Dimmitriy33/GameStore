@@ -18,6 +18,7 @@ namespace WebApp.Web.Startup.Configuration
                 options.Password.RequireUppercase = false;
                 options.Password.RequireLowercase = false;
             })
+                .AddDefaultTokenProviders()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
         }
 

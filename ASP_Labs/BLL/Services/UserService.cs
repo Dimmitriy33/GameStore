@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.WebUtilities;
+using System.Text;
 using System.Threading.Tasks;
 using WebApp.BLL.DTO;
 using WebApp.BLL.Interfaces;
@@ -9,14 +11,13 @@ namespace WebApp.BLL.Services
     {
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
-
         public UserService(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
         }
 
-        public async Task<bool> TryRegister(UserDTO userDTO)
+        public async Task<string> TryRegister(UserDTO userDTO)
         {
 
             var user = new IdentityUser
@@ -29,11 +30,17 @@ namespace WebApp.BLL.Services
 
             if (tryRegister.Succeeded)
             {
-                await _signInManager.SignInAsync(user, isPersistent: false);
-                return true;
+                /*await _userManager.AddToRoleAsync(user, "User");*/
+
+                var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                byte[] tokenGeneratedBytes = Encoding.UTF8.GetBytes(token);
+                var codeEncoded = WebEncoders.Base64UrlEncode(tokenGeneratedBytes);
+
+                /*await _signInManager.SignInAsync(user, isPersistent: false);*/
+                return codeEncoded;
             }
 
-            return false;
+            return null;
         }
 
         public async Task<bool> TryLogin(UserDTO userDTO)
@@ -41,6 +48,22 @@ namespace WebApp.BLL.Services
             var tryLogin = await _signInManager.PasswordSignInAsync(userDTO.Email, userDTO.Password, isPersistent: false, false);
 
             return tryLogin.Succeeded;
+        }
+
+        public async Task<bool> ConfirmEmail(string email, string token)
+        {
+            if (email != null)
+            {
+                var user = await _userManager.FindByEmailAsync(email);
+                if (user != null && token != null)
+                {
+                    var result = await _userManager.ConfirmEmailAsync(user, token);
+                    if (result.Succeeded)
+                        return true;
+                }
+            }
+
+            return false;
         }
     }
 }

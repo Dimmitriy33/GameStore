@@ -1,3 +1,4 @@
+using AspNetCore.IServiceCollection.AddIUrlHelper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -28,16 +29,18 @@ namespace WebApp.Web.Startup
             services.AddSwagger();
             services.RegisterDatabase(Configuration);
             services.AddAuthentication();
+            services.AddCors();
+
+            services.AddUrlHelper();
 
             services.RegisterIdentity();
             services.RegisterIdentityServer();
-            services.AddCors();
 
             services.Configure<PasswordHasherOptions>(options =>
     options.CompatibilityMode = PasswordHasherCompatibilityMode.IdentityV2
 );
-
             services.AddTransient<IUserService, UserService>();
+            services.AddTransient<IEmailService, EmailService>();
 
 
         }

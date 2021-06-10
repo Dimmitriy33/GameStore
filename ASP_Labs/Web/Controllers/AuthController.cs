@@ -11,10 +11,14 @@ namespace WebApp.Web.Controllers
     public class AuthController : Controller
     {
         private readonly IUserService _userService;
+        private readonly IEmailService _emailService;
+        private readonly IUrlHelper _urlHelper;
 
-        public AuthController(IUserService userService )
+        public AuthController(IUserService userService, IEmailService emailService, IUrlHelper urlHelper)
         {
             _userService = userService;
+            _emailService = emailService;
+            _urlHelper = urlHelper;
         }
 
         [HttpPost("sign-up")]
@@ -22,12 +26,30 @@ namespace WebApp.Web.Controllers
         {
             if(ModelState.IsValid)
             {
-                bool tryRegister = await _userService.TryRegister(user);
-                if(tryRegister)
-                    return Created(new Uri("api/home/info", UriKind.Relative), null);
+                string tryRegister = await _userService.TryRegister(user);
+                if(tryRegister != null)
+                {
+                    var confirmationLink = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/api/auth/confirm?email={user.Email}&token={tryRegister}";
+                    var confirmationLink2 = _urlHelper.Action(nameof(ConfirmEmail), nameof(AuthController), new {email = user.Email, tryRegister }, Request.Scheme);
+                    bool emailResponse = await _emailService.SendEmailAsync(user.Email, "Confirm Email", confirmationLink);
+
+                    if(emailResponse)
+                        return Created(new Uri("api/home/info", UriKind.Relative), null);
+                }
             }
 
             return BadRequest("Invalid Register Attempt");
+        }
+
+        [HttpGet("confirm")]
+        public async Task<IActionResult> ConfirmEmail(string email, string token)
+        {
+            bool IsConfirmed = await _userService.ConfirmEmail(email, token); ;
+
+            if (IsConfirmed)
+                return Ok();
+
+            return BadRequest();
         }
 
         [HttpPost("sign-in")]
