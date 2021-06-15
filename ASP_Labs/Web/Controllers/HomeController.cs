@@ -1,4 +1,5 @@
 ﻿
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApp.Web.Controllers
@@ -9,6 +10,7 @@ namespace WebApp.Web.Controllers
     {
         [Route("info")]
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public IActionResult GetInfo() => Ok("Hello world!");
     }
 }

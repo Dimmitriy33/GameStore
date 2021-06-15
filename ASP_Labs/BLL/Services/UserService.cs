@@ -11,6 +11,7 @@ namespace WebApp.BLL.Services
     {
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
         public UserService(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager)
         {
             _userManager = userManager;
@@ -30,6 +31,7 @@ namespace WebApp.BLL.Services
 
             if (tryRegister.Succeeded)
             {
+                await _userManager.AddToRoleAsync(user, "User");
                 var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                 byte[] tokenGeneratedBytes = Encoding.UTF8.GetBytes(token);
                 var codeEncoded = WebEncoders.Base64UrlEncode(tokenGeneratedBytes);
