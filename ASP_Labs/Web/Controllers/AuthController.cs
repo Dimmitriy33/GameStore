@@ -29,8 +29,8 @@ namespace WebApp.Web.Controllers
                 string tryRegister = await _userService.TryRegister(user);
                 if(tryRegister != null)
                 {
+
                     var confirmationLink = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/api/auth/confirm?email={user.Email}&token={tryRegister}";
-                    var confirmationLink2 = _urlHelper.Action(nameof(ConfirmEmail), nameof(AuthController), new {email = user.Email, tryRegister }, Request.Scheme);
                     bool emailResponse = await _emailService.SendEmailAsync(user.Email, "Confirm Email", confirmationLink);
 
                     if(emailResponse)

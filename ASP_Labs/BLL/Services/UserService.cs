@@ -30,13 +30,9 @@ namespace WebApp.BLL.Services
 
             if (tryRegister.Succeeded)
             {
-                /*await _userManager.AddToRoleAsync(user, "User");*/
-
                 var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                 byte[] tokenGeneratedBytes = Encoding.UTF8.GetBytes(token);
                 var codeEncoded = WebEncoders.Base64UrlEncode(tokenGeneratedBytes);
-
-                /*await _signInManager.SignInAsync(user, isPersistent: false);*/
                 return codeEncoded;
             }
 
@@ -57,7 +53,9 @@ namespace WebApp.BLL.Services
                 var user = await _userManager.FindByEmailAsync(email);
                 if (user != null && token != null)
                 {
-                    var result = await _userManager.ConfirmEmailAsync(user, token);
+                    var codeDecodedBytes = WebEncoders.Base64UrlDecode(token);
+                    var codeDecoded = Encoding.UTF8.GetString(codeDecodedBytes);
+                    var result = await _userManager.ConfirmEmailAsync(user, codeDecoded);
                     if (result.Succeeded)
                         return true;
                 }
