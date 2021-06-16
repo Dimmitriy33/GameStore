@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using WebApp.BLL;
 using WebApp.BLL.Interfaces;
 using WebApp.DAL.Entities;
 
@@ -19,23 +20,44 @@ namespace WebApp.Web.Controllers
 
         [HttpPut]
         [Authorize]
-        public async Task<IActionResult> UserWithoutPasswordAsync(ApplicationUser user)
+        public async Task<IActionResult> UpdateAsync(ApplicationUser user)
         {
-            var UpdatedUser = _userService.UserWithoutPassword(user);
+            var UpdatedUser = await _userService.UpdateUser(user);
 
-            return Ok(user);
+            if(UpdatedUser.ServiceResultType == ServiceResultType.Error)
+            {
+                return BadRequest();
+            }
+
+            return Ok(UpdatedUser);
         }
 
-        [HttpPost]
+        [HttpPost("password")]
         [Authorize]
         public async Task<IActionResult> ChangePasswordAsync(ApplicationUser user, string newPassword)
         {
-            var IsChanged = _userService.ChangePassword(user.Email, newPassword);
+            var IsChanged = await _userService.ChangePassword(user.Email, newPassword);
 
-            if(IsChanged.Result == true)
-                return Ok(user);
+            if(!IsChanged)
+            {
+                return BadRequest();
+            }
+            
+            return Ok();
+        }
 
-            return BadRequest();
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> GetUser(ApplicationUser user)
+        {
+            var findedUser = await _userService.FindUser(user);
+
+            if (findedUser.ServiceResultType == ServiceResultType.Error)
+            {
+                return NotFound();
+            }
+
+            return Ok(user);
         }
     }
 }

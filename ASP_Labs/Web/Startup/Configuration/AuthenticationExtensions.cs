@@ -53,20 +53,6 @@ namespace WebApp.Web.Startup.Configuration
                     await roleManager.CreateAsync(new IdentityRole { Name = role });
                 }
             }
-
-            /*if (!roleManager.RoleExistsAsync("User").Result)
-            {
-                IdentityRole role = new IdentityRole();
-                role.Name = "User";
-                IdentityResult roleResult = roleManager.CreateAsync(role).Result;
-            }
-
-            if (!roleManager.RoleExistsAsync("Admin").Result)
-            {
-                IdentityRole role = new IdentityRole();
-                role.Name = "Admin";
-                IdentityResult roleResult = roleManager.CreateAsync(role).Result;
-            }*/
         }
     }
 }

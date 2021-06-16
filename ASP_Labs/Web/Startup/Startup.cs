@@ -36,6 +36,7 @@ namespace WebApp.Web.Startup
             services.AddCors();
 
             services.AddUrlHelper();
+            services.AddAutoMapper(typeof(Startup));
 
             services.RegisterIdentity();
             services.RegisterIdentityServer();

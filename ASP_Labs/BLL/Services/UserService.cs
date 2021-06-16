@@ -1,22 +1,33 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using System.Threading.Tasks;
 using WebApp.BLL.DTO;
 using WebApp.BLL.Helpers;
 using WebApp.BLL.Interfaces;
 using WebApp.BLL.Models;
+using WebApp.DAL.EF;
+using WebApp.DAL.Entities;
+using WebApp.Web.Startup.Settings;
 
 namespace WebApp.BLL.Services
 {
     public class UserService : IUserService
     {
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly RoleManager<IdentityRole> _roleManager;
-        public UserService(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, RoleManager<IdentityRole> roleManager)
+        private readonly IConfiguration _configuration;
+        private readonly AppSettings _appSettings;
+
+        public UserService(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager,
+            RoleManager<IdentityRole> roleManager, IConfiguration configuration, AppSettings appSettings)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _roleManager = roleManager;
+            _configuration = configuration;
+            _appSettings = appSettings;
         }
 
         public async Task<ServiceResult<string>> TryRegister(UserDTO userDTO)
@@ -78,14 +89,28 @@ namespace WebApp.BLL.Services
             return false;
         }
 
-        public async Task<ApplicationUser> UserWithoutPassword(ApplicationUser user)
+        public async Task<ServiceResult<ApplicationUser>> UpdateUser(ApplicationUser user)
         {
-            using (var context = new ApplicationDbContext(new DbContextOptionsBuilder<ApplicationDbContext>().
-                UseSqlServer(_configuration.GetConnectionString("DefaultConnection")).Options))
+            if(user == null)
             {
-                context.Entry(user).State = EntityState.Modified;
+                return new ServiceResult<ApplicationUser> { Result = user, ServiceResultType = ServiceResultType.Error };
             }
-                return user;
+
+            using (var context = new ApplicationDbContext(new DbContextOptionsBuilder<ApplicationDbContext>().
+                UseSqlServer(_configuration.GetConnectionString(_appSettings.DbSettings.ConnectionString)).Options))
+            {
+                var userForUpdate = await _userManager.FindByEmailAsync(user.Email);
+
+                if (userForUpdate == null)
+                {
+                    return new ServiceResult<ApplicationUser> { Result = user, ServiceResultType = ServiceResultType.Error };
+                }
+
+                context.Entry(userForUpdate.PasswordHash).State = EntityState.Detached;
+                userForUpdate = user;
+                context.SaveChanges();
+                return new ServiceResult<ApplicationUser> { Result = userForUpdate, ServiceResultType = ServiceResultType.Success };
+            }
         }
 
         public async Task<bool> ChangePassword(string email, string newPassword)
@@ -105,6 +130,16 @@ namespace WebApp.BLL.Services
 
             return false;
 
+        }
+
+        public async Task<ServiceResult<ApplicationUser>> FindUser(ApplicationUser user)
+        {
+            var findedUser = await _userManager.FindByEmailAsync(user.Email);
+
+            if(findedUser == null)
+                return new ServiceResult<ApplicationUser> { Result = user, ServiceResultType = ServiceResultType.Error };
+
+            return new ServiceResult<ApplicationUser> { Result = findedUser, ServiceResultType = ServiceResultType.Success };
         }
     }
 }
