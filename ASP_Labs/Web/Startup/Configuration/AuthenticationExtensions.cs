@@ -1,6 +1,10 @@
 ﻿using IdentityServer4.Stores;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using WebApp.DAL.EF;
 using WebApp.DAL.Entities;
 
@@ -33,9 +37,24 @@ namespace WebApp.Web.Startup.Configuration
                 .AddResourceStore<InMemoryResourcesStore>();
         }
 
-        public static void SeedRoles(RoleManager<IdentityRole> roleManager)
+        public static async Task SeedRoles(IServiceProvider serviceProvider, ICollection<string> roles)
         {
-            if (!roleManager.RoleExistsAsync("User").Result)
+            if (roles == null || !roles.Any())
+            {
+                return;
+            }
+
+            var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+
+            foreach (var role in roles)
+            {
+                if (!await roleManager.RoleExistsAsync(role))
+                {
+                    await roleManager.CreateAsync(new IdentityRole { Name = role });
+                }
+            }
+
+            /*if (!roleManager.RoleExistsAsync("User").Result)
             {
                 IdentityRole role = new IdentityRole();
                 role.Name = "User";
@@ -47,7 +66,7 @@ namespace WebApp.Web.Startup.Configuration
                 IdentityRole role = new IdentityRole();
                 role.Name = "Admin";
                 IdentityResult roleResult = roleManager.CreateAsync(role).Result;
-            }
+            }*/
         }
     }
 }
