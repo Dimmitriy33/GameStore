@@ -12,13 +12,11 @@ namespace WebApp.Web.Controllers
     {
         private readonly IUserService _userService;
         private readonly IEmailService _emailService;
-        private readonly IUrlHelper _urlHelper;
 
-        public AuthController(IUserService userService, IEmailService emailService, IUrlHelper urlHelper)
+        public AuthController(IUserService userService, IEmailService emailService)
         {
             _userService = userService;
             _emailService = emailService;
-            _urlHelper = urlHelper;
         }
 
         [HttpPost("sign-up")]

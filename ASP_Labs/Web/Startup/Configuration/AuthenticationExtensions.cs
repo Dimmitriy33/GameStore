@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using WebApp.DAL.EF;
+using WebApp.DAL.Entities;
 
 namespace WebApp.Web.Startup.Configuration
 {
@@ -10,7 +11,7 @@ namespace WebApp.Web.Startup.Configuration
         public static void RegisterIdentity(this IServiceCollection services)
         {
 
-            services.AddIdentity<IdentityUser, IdentityRole>(options =>
+            services.AddIdentity<ApplicationUser, IdentityRole>(options =>
             {
                 options.SignIn.RequireConfirmedEmail = false;
                 options.Password.RequireDigit = false;
@@ -26,7 +27,7 @@ namespace WebApp.Web.Startup.Configuration
 
         public static void RegisterIdentityServer(this IServiceCollection services)
         {
-            services.AddIdentityServer().AddAspNetIdentity<IdentityUser>()
+            services.AddIdentityServer().AddAspNetIdentity<ApplicationUser>()
                 .AddInMemoryCaching()
                 .AddClientStore<InMemoryClientStore>()
                 .AddResourceStore<InMemoryResourcesStore>();

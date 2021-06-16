@@ -1,27 +1,32 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using System.Text;
 using System.Threading.Tasks;
 using WebApp.BLL.DTO;
 using WebApp.BLL.Interfaces;
+using WebApp.DAL.EF;
+using WebApp.DAL.Entities;
 
 namespace WebApp.BLL.Services
 {
     public class UserService : IUserService
     {
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly SignInManager<IdentityUser> _signInManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
-        public UserService(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager)
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly IConfiguration _configuration;
+        public UserService(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IConfiguration configuration)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _configuration = configuration;
         }
 
         public async Task<string> TryRegister(UserDTO userDTO)
         {
 
-            var user = new IdentityUser
+            var user = new ApplicationUser
             {
                 Email = userDTO.Email,
                 UserName = userDTO.Email
@@ -64,6 +69,35 @@ namespace WebApp.BLL.Services
             }
 
             return false;
+        }
+
+        public async Task<ApplicationUser> UserWithoutPassword(ApplicationUser user)
+        {
+            using (var context = new ApplicationDbContext(new DbContextOptionsBuilder<ApplicationDbContext>().
+                UseSqlServer(_configuration.GetConnectionString("DefaultConnection")).Options))
+            {
+                context.Entry(user).State = EntityState.Modified;
+            }
+                return user;
+        }
+
+        public async Task<bool> ChangePassword(string email, string newPassword)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+
+            if (email == null || !(await _userManager.IsEmailConfirmedAsync(user)))
+            {
+                return false;
+            }
+
+            string token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var result = await _userManager.ResetPasswordAsync(user, token, newPassword);
+
+            if (result.Succeeded)
+                return true;
+
+            return false;
+
         }
     }
 }
