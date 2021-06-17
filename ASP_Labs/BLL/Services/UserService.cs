@@ -95,57 +95,66 @@ namespace WebApp.BLL.Services
             return new ServiceResultStruct<bool> { Result = false, ServiceResultType = ServiceResultType.Error, Message = "Can't confirm email" };
         }
 
-        public async Task<ServiceResult<ApplicationUser>> UpdateUser(ApplicationUser user)
+        public async Task<ServiceResultClass<ApplicationUser>> UpdateUser(ApplicationUser user)
         {
             if(user == null)
             {
-                return new ServiceResult<ApplicationUser> { Result = user, ServiceResultType = ServiceResultType.Error };
+                return new ServiceResultClass<ApplicationUser> { Result = user, ServiceResultType = ServiceResultType.Error };
             }
 
             using (var context = new ApplicationDbContext(new DbContextOptionsBuilder<ApplicationDbContext>().
                 UseSqlServer(_configuration.GetConnectionString(_appSettings.DbSettings.ConnectionString)).Options))
             {
-                var userForUpdate = await _userManager.FindByEmailAsync(user.Email);
+                var userForUpdate = await _userManager.FindByIdAsync(user.Id);
 
                 if (userForUpdate == null)
                 {
-                    return new ServiceResult<ApplicationUser> { Result = user, ServiceResultType = ServiceResultType.Error };
+                    return new ServiceResultClass<ApplicationUser> { Result = user, ServiceResultType = ServiceResultType.Error };
                 }
 
                 context.Entry(userForUpdate.PasswordHash).State = EntityState.Detached;
                 userForUpdate = user;
                 context.SaveChanges();
-                return new ServiceResult<ApplicationUser> { Result = userForUpdate, ServiceResultType = ServiceResultType.Success };
+                return new ServiceResultClass<ApplicationUser> { Result = userForUpdate, ServiceResultType = ServiceResultType.Success };
             }
         }
 
-        public async Task<bool> ChangePassword(string email, string newPassword)
+        public async Task<ServiceResultStruct<bool>> ChangePassword(ApplicationUser Appuser, string newPassword)
         {
-            var user = await _userManager.FindByEmailAsync(email);
+            var user = await _userManager.FindByIdAsync(Appuser.Id);
 
-            if (email == null || !(await _userManager.IsEmailConfirmedAsync(user)))
+            if (user == null)
             {
-                return false;
+                return new ServiceResultStruct<bool> { Result = false, ServiceResultType = ServiceResultType.Error, Message = "Can't find this user" };
+            }
+
+            if (!(await _userManager.IsEmailConfirmedAsync(user)))
+            {
+                return new ServiceResultStruct<bool> { Result = false, ServiceResultType = ServiceResultType.Error, Message = "Email is not confirmed" };
             }
 
             string token = await _userManager.GeneratePasswordResetTokenAsync(user);
             var result = await _userManager.ResetPasswordAsync(user, token, newPassword);
 
             if (result.Succeeded)
-                return true;
+            {
+                return new ServiceResultStruct<bool> { Result = true, ServiceResultType = ServiceResultType.Success, Message = "Password changed" };
+            }
 
-            return false;
+            return new ServiceResultStruct<bool> { Result = false, ServiceResultType = ServiceResultType.Error, Message = "Password is not changed" };
 
         }
 
-        public async Task<ServiceResult<ApplicationUser>> FindUser(ApplicationUser user)
+        public async Task<ServiceResultClass<ApplicationUser>> FindUser(ApplicationUser user)
         {
-            var findedUser = await _userManager.FindByEmailAsync(user.Email);
+            var findedUser = await _userManager.FindByIdAsync(user.Id);
 
             if(findedUser == null)
-                return new ServiceResult<ApplicationUser> { Result = user, ServiceResultType = ServiceResultType.Error };
+            {
+                return new ServiceResultClass<ApplicationUser> { Result = user, ServiceResultType = ServiceResultType.Error };
+            }
 
-            return new ServiceResult<ApplicationUser> { Result = findedUser, ServiceResultType = ServiceResultType.Success };
+            return new ServiceResultClass<ApplicationUser> { Result = findedUser, ServiceResultType = ServiceResultType.Success };
         }
     }
 }

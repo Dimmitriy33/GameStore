@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using WebApp.BLL;
 using WebApp.BLL.Interfaces;
+using WebApp.BLL.Models;
 using WebApp.DAL.Entities;
 
 namespace WebApp.Web.Controllers
@@ -36,11 +36,11 @@ namespace WebApp.Web.Controllers
         [Authorize]
         public async Task<IActionResult> ChangePasswordAsync(ApplicationUser user, string newPassword)
         {
-            var IsChanged = await _userService.ChangePassword(user.Email, newPassword);
+            var IsChanged = await _userService.ChangePassword(user, newPassword);
 
-            if(!IsChanged)
+            if(IsChanged.ServiceResultType == ServiceResultType.Error)
             {
-                return BadRequest();
+                return BadRequest(IsChanged.Message);
             }
             
             return Ok();
