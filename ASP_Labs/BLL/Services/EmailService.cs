@@ -8,7 +8,7 @@ namespace WebApp.BLL.Services
 {
     public class EmailService : IEmailService
     {
-        private AppSettings _appSettings;
+        private readonly AppSettings _appSettings;
         public EmailService(AppSettings appSettings)
         {
             _appSettings = appSettings;
@@ -27,7 +27,7 @@ namespace WebApp.BLL.Services
 
             using (var client = new SmtpClient())
             {
-                await client.ConnectAsync(_appSettings.EmailSettings.DefaultSMTPServer, 465, true);
+                await client.ConnectAsync(_appSettings.EmailSettings.DefaultSMTPServer, _appSettings.EmailSettings.DefaultSMTPServerPort, true);
                 await client.AuthenticateAsync(_appSettings.EmailSettings.DefaultEmail, _appSettings.EmailSettings.DefaultPassword);
 
                 try

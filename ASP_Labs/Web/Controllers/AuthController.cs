@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
-using WebApp.BLL;
 using WebApp.BLL.DTO;
 using WebApp.BLL.Interfaces;
+using WebApp.BLL.Models;
 
 namespace WebApp.Web.Controllers
 {
@@ -13,24 +13,16 @@ namespace WebApp.Web.Controllers
     {
         private readonly IUserService _userService;
         private readonly IEmailService _emailService;
-        private readonly IUrlHelper _urlHelper;
 
-        public AuthController(IUserService userService, IEmailService emailService, IUrlHelper urlHelper)
+        public AuthController(IUserService userService, IEmailService emailService)
         {
             _userService = userService;
             _emailService = emailService;
-            _urlHelper = urlHelper;
         }
 
         [HttpPost("sign-up")]
         public async Task<IActionResult> Register(UserDTO user)
         {
-            if(!ModelState.IsValid)
-            {
-                return BadRequest("Invalid Data");
-                
-            }
-
             var registerStatus = await _userService.TryRegister(user);
 
             if (registerStatus.ServiceResultType == ServiceResultType.Error)
@@ -53,30 +45,32 @@ namespace WebApp.Web.Controllers
         [HttpGet("confirm")]
         public async Task<IActionResult> ConfirmEmail(string email, string token)
         {
-            bool IsConfirmed = await _userService.ConfirmEmail(email, token);
+            var isConfirmed = await _userService.ConfirmEmail(email, token);
 
-            if (IsConfirmed)
+            if (isConfirmed.ServiceResultType == ServiceResultType.Success)
             {
                 return Ok();
             }
 
-            return BadRequest();
+            return BadRequest(isConfirmed.Message);
         }
 
         [HttpPost("sign-in")]
         public async Task<IActionResult> Login(UserDTO user)
         {
-            if(ModelState.IsValid)
+            if(!ModelState.IsValid)
             {
-                bool tryLogin = await _userService.TryLogin(user);
-
-                if(tryLogin)
-                {
-                    return Ok("Successful authentication!");
-                }
+                return Unauthorized();
             }
 
-            return Unauthorized();
+            bool tryLogin = await _userService.TryLogin(user);
+
+            if (!tryLogin)
+            {
+                return Unauthorized();
+            }
+
+            return Ok();
         }
 
     }

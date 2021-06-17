@@ -1,4 +1,4 @@
-﻿namespace WebApp.BLL
+﻿namespace WebApp.BLL.Models
 {
     public enum ServiceResultType
     {
