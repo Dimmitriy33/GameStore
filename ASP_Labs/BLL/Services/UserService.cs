@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System.Threading.Tasks;
+using WebApp.BLL.Constants;
 using WebApp.BLL.DTO;
 using WebApp.BLL.Helpers;
 using WebApp.BLL.Interfaces;
@@ -30,7 +31,7 @@ namespace WebApp.BLL.Services
             _appSettings = appSettings;
         }
 
-        public async Task<ServiceResult<string>> TryRegister(UserDTO userDTO)
+        public async Task<ServiceResultClass<string>> TryRegister(UserDTO userDTO)
         {
 
             var user = new ApplicationUser
@@ -43,19 +44,19 @@ namespace WebApp.BLL.Services
 
             if (!tryRegister.Succeeded)
             {
-                return new ServiceResult<string> { Result = "Invalid Register Attempt", ServiceResultType = ServiceResultType.Error };
+                return new ServiceResultClass<string> { Result = "Invalid Register Attempt", ServiceResultType = ServiceResultType.Error };
             }
 
-            if (!await _roleManager.RoleExistsAsync("User"))
+            if (!await _roleManager.RoleExistsAsync(RolesConstants.User))
             {
-                return new ServiceResult<string> { Result = "Missing role", ServiceResultType = ServiceResultType.Error };
+                return new ServiceResultClass<string> { Result = "Missing role", ServiceResultType = ServiceResultType.Error };
             }
 
-            await _userManager.AddToRoleAsync(user, "User");
+            await _userManager.AddToRoleAsync(user, RolesConstants.User);
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             var codeEncoded = TokenEncodingHelper.Encode(token);
 
-            return new ServiceResult<string> { Result = codeEncoded, ServiceResultType = ServiceResultType.Success };
+            return new ServiceResultClass<string> { Result = codeEncoded, ServiceResultType = ServiceResultType.Success };
         }
 
         public async Task<bool> TryLogin(UserDTO userDTO)
@@ -65,17 +66,22 @@ namespace WebApp.BLL.Services
             return tryLogin.Succeeded;
         }
 
-        public async Task<bool> ConfirmEmail(string email, string token)
+        public async Task<ServiceResultStruct<bool>> ConfirmEmail(string email, string token)
         {
-            if (email == null || token == null)
+            if (email == null)
             {
-                return false;
+                return new ServiceResultStruct<bool> { Result = false, ServiceResultType = ServiceResultType.Error, Message="Invalid email" };
+            }
+
+            if (token == null)
+            {
+                return new ServiceResultStruct<bool> { Result = false, ServiceResultType = ServiceResultType.Error, Message = "Invalid token" };
             }
 
             var user = await _userManager.FindByEmailAsync(email);
             if (user == null)
             {
-                return false;
+                return new ServiceResultStruct<bool> { Result = false, ServiceResultType = ServiceResultType.Error, Message = "Can't find this email" };
             }
 
             var codeDecoded = TokenEncodingHelper.Decode(token);
@@ -83,10 +89,10 @@ namespace WebApp.BLL.Services
 
             if (result.Succeeded)
             {
-                return true;
+                return new ServiceResultStruct<bool> { Result = true, ServiceResultType = ServiceResultType.Success, Message = "Email address confirmed" };
             }
 
-            return false;
+            return new ServiceResultStruct<bool> { Result = false, ServiceResultType = ServiceResultType.Error, Message = "Can't confirm email" };
         }
 
         public async Task<ServiceResult<ApplicationUser>> UpdateUser(ApplicationUser user)
