@@ -8,7 +8,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Text;
-using WebApp.BLL.Services;
 using WebApp.Web.Startup.Configuration;
 using WebApp.Web.Startup.Settings;
 
@@ -28,7 +27,6 @@ namespace WebApp.Web.Startup
         public void ConfigureServices(IServiceCollection services)
         {
             var appSettings = ReadAppSettings(Configuration);
-            var jwtGenerator = new JwtGenerator(Configuration);
 
             services.AddControllers();
             services.AddSwagger();
@@ -42,7 +40,7 @@ namespace WebApp.Web.Startup
                     opt.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JwtSettings:TokenKey"])),
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(appSettings.JwtSettings.TokenKey)),
                         ValidateAudience = false,
                         ValidateIssuer = false,
                     };
@@ -50,17 +48,14 @@ namespace WebApp.Web.Startup
 
             services.AddCors();
 
-            services.RegisterIdentity();
+            services.RegisterIdentity(appSettings);
             services.RegisterIdentityServer();
 
             services.Configure<PasswordHasherOptions>(options =>
                 options.CompatibilityMode = PasswordHasherCompatibilityMode.IdentityV2
 );
             services.AddSingleton(appSettings);
-            services.AddSingleton(jwtGenerator);
             
-
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -104,12 +99,14 @@ namespace WebApp.Web.Startup
             var dbSettings = configuration.GetSection(nameof(AppSettings.DbSettings)).Get<DbSettings>();
             var identitySettings = configuration.GetSection(nameof(AppSettings.IdentitySettings)).Get<IdentitySettings>();
             var emailSettings = configuration.GetSection(nameof(AppSettings.EmailSettings)).Get<EmailSettings>();
+            var jwtSettings = configuration.GetSection(nameof(AppSettings.JwtSettings)).Get<JwtSettings>();
 
             return new AppSettings
             {
                 DbSettings = dbSettings,
                 IdentitySettings = identitySettings,
-                EmailSettings = emailSettings
+                EmailSettings = emailSettings,
+                JwtSettings = jwtSettings
             };
         }
 

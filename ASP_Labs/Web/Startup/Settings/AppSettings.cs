@@ -5,5 +5,6 @@
         public DbSettings DbSettings { get; set; }
         public IdentitySettings IdentitySettings { get; set; }
         public EmailSettings EmailSettings { get; set; }
+        public JwtSettings JwtSettings { get; set; }
     }
 }

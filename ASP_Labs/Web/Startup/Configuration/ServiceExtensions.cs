@@ -10,6 +10,7 @@ namespace WebApp.Web.Startup.Configuration
         {
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<IEmailService, EmailService>();
+            services.AddTransient<IJwtGenerator, JwtGenerator>();
         }
     }
 }
