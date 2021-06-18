@@ -8,6 +8,6 @@ namespace WebApp.BLL.Interfaces
     {
         Task<ServiceResultClass<string>> TryRegister(UserDTO userDTO);
         Task<bool> TryLogin(UserDTO userDTO);
-        Task<ServiceResultStruct<bool>> ConfirmEmail(string email, string token);
+        Task<ServiceResult> ConfirmEmail(string email, string token);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System;
 using System.Threading.Tasks;
 using WebApp.BLL.DTO;
@@ -14,6 +15,14 @@ namespace WebApp.Web.Controllers
         private readonly IUserService _userService;
         private readonly IEmailService _emailService;
 
+        #region Constants
+
+        private static string invalidRegisterMessage = "Invalid Register Attempt";
+        private static string invalidConfirmEmailMessage = "Invalid Confirm Email Attempt";
+
+        #endregion
+
+
         public AuthController(IUserService userService, IEmailService emailService)
         {
             _userService = userService;
@@ -21,13 +30,13 @@ namespace WebApp.Web.Controllers
         }
 
         [HttpPost("sign-up")]
-        public async Task<IActionResult> Register(UserDTO user)
+        public async Task<IActionResult> Register([BindRequired] UserDTO user)
         {
             var registerStatus = await _userService.TryRegister(user);
 
             if (registerStatus.ServiceResultType == ServiceResultType.Error)
             {
-                return BadRequest("Invalid Register Attempt");
+                return BadRequest(invalidRegisterMessage);
             }
 
             var confirmationLink = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/api/auth/confirm?email={user.Email}&token={registerStatus.Result}";
@@ -35,7 +44,7 @@ namespace WebApp.Web.Controllers
 
             if (!emailResponse)
             {
-                return BadRequest("Invalid Confirm Email Attempt");
+                return BadRequest(invalidConfirmEmailMessage);
             }
 
             return Created(new Uri("api/home/info", UriKind.Relative), null);
@@ -43,7 +52,7 @@ namespace WebApp.Web.Controllers
         }
 
         [HttpGet("confirm")]
-        public async Task<IActionResult> ConfirmEmail(string email, string token)
+        public async Task<IActionResult> ConfirmEmail([BindRequired]string email, [BindRequired] string token)
         {
             var isConfirmed = await _userService.ConfirmEmail(email, token);
 
@@ -56,7 +65,7 @@ namespace WebApp.Web.Controllers
         }
 
         [HttpPost("sign-in")]
-        public async Task<IActionResult> Login(UserDTO user)
+        public async Task<IActionResult> Login([BindRequired] UserDTO user)
         {
             if(!ModelState.IsValid)
             {

@@ -5,6 +5,7 @@ using WebApp.BLL.DTO;
 using WebApp.BLL.Helpers;
 using WebApp.BLL.Interfaces;
 using WebApp.BLL.Models;
+using WebApp.DAL.Entities;
 
 namespace WebApp.BLL.Services
 {
@@ -13,21 +14,25 @@ namespace WebApp.BLL.Services
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly RoleManager<IdentityRole> _roleManager;
-        public UserService(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, RoleManager<IdentityRole> roleManager)
+        private readonly JwtGenerator _jwtGenerator;
+
+        public UserService(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, RoleManager<IdentityRole> roleManager, JwtGenerator jwtGenerator)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _roleManager = roleManager;
+            _jwtGenerator = jwtGenerator;
         }
 
         public async Task<ServiceResultClass<string>> TryRegister(UserDTO userDTO)
         {
-
-            var user = new IdentityUser
+            var user = new ApplicationUser
             {
                 Email = userDTO.Email,
-                UserName = userDTO.Email
+                UserName = userDTO.Email,
             };
+
+            user.Token = _jwtGenerator.CreateToken(user);
 
             var tryRegister = await _userManager.CreateAsync(user, userDTO.Password);
 
@@ -55,22 +60,12 @@ namespace WebApp.BLL.Services
             return tryLogin.Succeeded;
         }
 
-        public async Task<ServiceResultStruct<bool>> ConfirmEmail(string email, string token)
+        public async Task<ServiceResult> ConfirmEmail(string email, string token)
         {
-            if (email == null)
-            {
-                return new ServiceResultStruct<bool> { Result = false, ServiceResultType = ServiceResultType.Error, Message="Invalid email" };
-            }
-
-            if (token == null)
-            {
-                return new ServiceResultStruct<bool> { Result = false, ServiceResultType = ServiceResultType.Error, Message = "Invalid token" };
-            }
-
             var user = await _userManager.FindByEmailAsync(email);
             if (user == null)
             {
-                return new ServiceResultStruct<bool> { Result = false, ServiceResultType = ServiceResultType.Error, Message = "Can't find this email" };
+                return new ServiceResult { ServiceResultType = ServiceResultType.Error, Message = "Can't find this email" };
             }
 
             var codeDecoded = TokenEncodingHelper.Decode(token);
@@ -78,10 +73,10 @@ namespace WebApp.BLL.Services
 
             if (result.Succeeded)
             {
-                return new ServiceResultStruct<bool> { Result = true, ServiceResultType = ServiceResultType.Success, Message = "Email address confirmed" };
+                return new ServiceResult { ServiceResultType = ServiceResultType.Success, Message = "Email address confirmed" };
             }
 
-            return new ServiceResultStruct<bool> { Result = false, ServiceResultType = ServiceResultType.Error, Message = "Can't confirm email" };
+            return new ServiceResult { ServiceResultType = ServiceResultType.Error, Message = "Can't confirm email" };
         }
     }
 }

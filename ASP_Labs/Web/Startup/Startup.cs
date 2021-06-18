@@ -1,12 +1,13 @@
-using AspNetCore.IServiceCollection.AddIUrlHelper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 using System;
-using WebApp.BLL.Interfaces;
+using System.Text;
 using WebApp.BLL.Services;
 using WebApp.Web.Startup.Configuration;
 using WebApp.Web.Startup.Settings;
@@ -27,25 +28,37 @@ namespace WebApp.Web.Startup
         public void ConfigureServices(IServiceCollection services)
         {
             var appSettings = ReadAppSettings(Configuration);
+            var jwtGenerator = new JwtGenerator(Configuration);
 
             services.AddControllers();
             services.AddSwagger();
             services.RegisterDatabase(appSettings.DbSettings);
+            services.RegisterServices();
 
-            services.AddAuthentication();
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(
+                opt =>
+                {
+                    opt.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JwtSettings:TokenKey"])),
+                        ValidateAudience = false,
+                        ValidateIssuer = false,
+                    };
+                });
+
             services.AddCors();
-
-            services.AddUrlHelper();
 
             services.RegisterIdentity();
             services.RegisterIdentityServer();
 
             services.Configure<PasswordHasherOptions>(options =>
-    options.CompatibilityMode = PasswordHasherCompatibilityMode.IdentityV2
+                options.CompatibilityMode = PasswordHasherCompatibilityMode.IdentityV2
 );
             services.AddSingleton(appSettings);
-            services.AddTransient<IUserService, UserService>();
-            services.AddTransient<IEmailService, EmailService>();
+            services.AddSingleton(jwtGenerator);
+            
 
 
         }
