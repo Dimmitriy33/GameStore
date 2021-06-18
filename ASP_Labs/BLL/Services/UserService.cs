@@ -7,8 +7,8 @@ using WebApp.BLL.DTO;
 using WebApp.BLL.Helpers;
 using WebApp.BLL.Interfaces;
 using WebApp.BLL.Models;
-using WebApp.DAL.Entities;
 using WebApp.DAL.EF;
+using WebApp.DAL.Entities;
 using WebApp.Web.Startup.Settings;
 
 namespace WebApp.BLL.Services
@@ -97,11 +97,6 @@ namespace WebApp.BLL.Services
 
         public async Task<ServiceResultClass<ApplicationUser>> UpdateUser(ApplicationUser user)
         {
-            if(user == null)
-            {
-                return new ServiceResultClass<ApplicationUser> { Result = user, ServiceResultType = ServiceResultType.Error };
-            }
-
             using (var context = new ApplicationDbContext(new DbContextOptionsBuilder<ApplicationDbContext>().
                 UseSqlServer(_configuration.GetConnectionString(_appSettings.DbSettings.ConnectionString)).Options))
             {

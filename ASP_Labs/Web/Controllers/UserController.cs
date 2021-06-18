@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.Threading.Tasks;
 using WebApp.BLL.Interfaces;
 using WebApp.BLL.Models;
@@ -20,7 +21,7 @@ namespace WebApp.Web.Controllers
 
         [HttpPut]
         [Authorize]
-        public async Task<IActionResult> UpdateAsync(ApplicationUser user)
+        public async Task<IActionResult> UpdateAsync([BindRequired]ApplicationUser user)
         {
             var UpdatedUser = await _userService.UpdateUser(user);
 
@@ -34,7 +35,7 @@ namespace WebApp.Web.Controllers
 
         [HttpPost("password")]
         [Authorize]
-        public async Task<IActionResult> ChangePasswordAsync(ApplicationUser user, string newPassword)
+        public async Task<IActionResult> ChangePasswordAsync([BindRequired] ApplicationUser user, [BindRequired] string newPassword)
         {
             var IsChanged = await _userService.ChangePassword(user, newPassword);
 
@@ -48,7 +49,7 @@ namespace WebApp.Web.Controllers
 
         [HttpGet]
         [Authorize]
-        public async Task<IActionResult> GetUser(ApplicationUser user)
+        public async Task<IActionResult> GetUser([BindRequired] ApplicationUser user)
         {
             var findedUser = await _userService.FindUser(user);
 
