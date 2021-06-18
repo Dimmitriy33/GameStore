@@ -72,14 +72,14 @@ namespace WebApp.Web.Controllers
                 return Unauthorized();
             }
 
-            bool tryLogin = await _userService.TryLogin(user);
+            var loginresult = await _userService.TryLogin(user);
 
-            if (!tryLogin)
+            if(loginresult.ServiceResultType == ServiceResultType.Error)
             {
                 return Unauthorized();
             }
 
-            return Ok();
+            return Ok(loginresult.Result);
         }
 
     }

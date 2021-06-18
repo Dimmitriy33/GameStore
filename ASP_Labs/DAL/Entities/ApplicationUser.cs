@@ -6,7 +6,5 @@ namespace WebApp.DAL.Entities
     {
         public string Name { get; set; }
         public string AddressDelivery { get; set; }
-        public string Token { get; set; }
-
     }
 }

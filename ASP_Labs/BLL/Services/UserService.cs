@@ -11,12 +11,12 @@ namespace WebApp.BLL.Services
 {
     public class UserService : IUserService
     {
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IJwtGenerator _jwtGenerator;
 
-        public UserService(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, RoleManager<IdentityRole> roleManager, IJwtGenerator jwtGenerator)
+        public UserService(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, RoleManager<IdentityRole> roleManager, IJwtGenerator jwtGenerator)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -31,8 +31,6 @@ namespace WebApp.BLL.Services
                 Email = userDTO.Email,
                 UserName = userDTO.Email,
             };
-
-            user.Token = _jwtGenerator.CreateToken(user);
 
             var tryRegister = await _userManager.CreateAsync(user, userDTO.Password);
 
@@ -53,11 +51,19 @@ namespace WebApp.BLL.Services
             return new ServiceResultClass<string> { Result = codeEncoded, ServiceResultType = ServiceResultType.Success };
         }
 
-        public async Task<bool> TryLogin(UserDTO userDTO)
+        public async Task<ServiceResultClass<string>> TryLogin(UserDTO userDTO)
         {
+
             var tryLogin = await _signInManager.PasswordSignInAsync(userDTO.Email, userDTO.Password, isPersistent: false, false);
 
-            return tryLogin.Succeeded;
+            if (tryLogin.Succeeded)
+            {
+                var user = _userManager.FindByEmailAsync(userDTO.Email);
+                var jwtToken = _jwtGenerator.CreateToken((ApplicationUser)user.Result);
+                return new ServiceResultClass<string> { Result = jwtToken, ServiceResultType = ServiceResultType.Success };
+            }
+
+            return new ServiceResultClass<string> { Result = "Invaild Login Attempt", ServiceResultType = ServiceResultType.Error };
         }
 
         public async Task<ServiceResult> ConfirmEmail(string email, string token)

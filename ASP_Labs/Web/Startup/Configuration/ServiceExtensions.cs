@@ -8,9 +8,9 @@ namespace WebApp.Web.Startup.Configuration
     {
         public static void RegisterServices(this IServiceCollection services)
         {
+            services.AddTransient<IJwtGenerator, JwtGenerator>();
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<IEmailService, EmailService>();
-            services.AddTransient<IJwtGenerator, JwtGenerator>();
         }
     }
 }

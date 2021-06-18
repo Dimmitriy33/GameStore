@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WebApp.DAL.EF;
+using WebApp.DAL.Entities;
 using WebApp.Web.Startup.Settings;
 
 namespace WebApp.Web.Startup.Configuration
@@ -16,7 +17,7 @@ namespace WebApp.Web.Startup.Configuration
         {
             var _appSettings = appSettings;
 
-        services.AddIdentity<IdentityUser, IdentityRole>(options =>
+        services.AddIdentity<ApplicationUser, IdentityRole>(options =>
             {
                 options.SignIn.RequireConfirmedEmail = appSettings.IdentitySettings.SignInRequireConfirmedEmail;
                 options.Password.RequireDigit = appSettings.IdentitySettings.PasswordRequireDigit;
@@ -32,7 +33,7 @@ namespace WebApp.Web.Startup.Configuration
 
         public static void RegisterIdentityServer(this IServiceCollection services)
         {
-            services.AddIdentityServer().AddAspNetIdentity<IdentityUser>()
+            services.AddIdentityServer().AddAspNetIdentity<ApplicationUser>()
                 .AddInMemoryCaching()
                 .AddClientStore<InMemoryClientStore>()
                 .AddResourceStore<InMemoryResourcesStore>();
