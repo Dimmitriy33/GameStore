@@ -23,7 +23,7 @@ namespace WebApp.BLL.Services
         private readonly IConfiguration _configuration;
         private readonly AppSettings _appSettings;
 
-        public UserService(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, RoleManager<IdentityRole> roleManager, IJwtGenerator jwtGenerator,
+        public UserService(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IJwtGenerator jwtGenerator,
             RoleManager<IdentityRole> roleManager, IConfiguration configuration, AppSettings appSettings)
         {
             _userManager = userManager;
@@ -119,18 +119,18 @@ namespace WebApp.BLL.Services
             }
         }
 
-        public async Task<ServiceResultStruct<bool>> ChangePassword(ApplicationUser Appuser, string newPassword)
+        public async Task<ServiceResult> ChangePassword(ApplicationUser Appuser, string newPassword)
         {
             var user = await _userManager.FindByIdAsync(Appuser.Id);
 
             if (user == null)
             {
-                return new ServiceResultStruct<bool> { Result = false, ServiceResultType = ServiceResultType.Error, Message = "Can't find this user" };
+                return new ServiceResult {  ServiceResultType = ServiceResultType.Error, Message = "Can't find this user" };
             }
 
             if (!(await _userManager.IsEmailConfirmedAsync(user)))
             {
-                return new ServiceResultStruct<bool> { Result = false, ServiceResultType = ServiceResultType.Error, Message = "Email is not confirmed" };
+                return new ServiceResult { ServiceResultType = ServiceResultType.Error, Message = "Email is not confirmed" };
             }
 
             string token = await _userManager.GeneratePasswordResetTokenAsync(user);
@@ -138,10 +138,10 @@ namespace WebApp.BLL.Services
 
             if (result.Succeeded)
             {
-                return new ServiceResultStruct<bool> { Result = true, ServiceResultType = ServiceResultType.Success, Message = "Password changed" };
+                return new ServiceResult { ServiceResultType = ServiceResultType.Success, Message = "Password changed" };
             }
 
-            return new ServiceResultStruct<bool> { Result = false, ServiceResultType = ServiceResultType.Error, Message = "Password is not changed" };
+            return new ServiceResult{ ServiceResultType = ServiceResultType.Error, Message = "Password is not changed" };
 
         }
 
