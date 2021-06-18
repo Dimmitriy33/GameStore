@@ -7,8 +7,8 @@ using WebApp.BLL.DTO;
 using WebApp.BLL.Helpers;
 using WebApp.BLL.Interfaces;
 using WebApp.BLL.Models;
-using WebApp.DAL.EF;
 using WebApp.DAL.Entities;
+using WebApp.DAL.EF;
 using WebApp.Web.Startup.Settings;
 
 namespace WebApp.BLL.Services
@@ -18,22 +18,24 @@ namespace WebApp.BLL.Services
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IJwtGenerator _jwtGenerator;
+
         private readonly IConfiguration _configuration;
         private readonly AppSettings _appSettings;
 
-        public UserService(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager,
+        public UserService(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, RoleManager<IdentityRole> roleManager, IJwtGenerator jwtGenerator,
             RoleManager<IdentityRole> roleManager, IConfiguration configuration, AppSettings appSettings)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _roleManager = roleManager;
-            _configuration = configuration;
-            _appSettings = appSettings;
+            _jwtGenerator = jwtGenerator;
+			_configuration = configuration;
+			_appSettings = appSettings;	
         }
-
-        public async Task<ServiceResultClass<string>> TryRegister(UserDTO userDTO)
+		
+		public async Task<ServiceResultClass<string>> TryRegister(UserDTO userDTO)
         {
-
             var user = new ApplicationUser
             {
                 Email = userDTO.Email,
@@ -59,29 +61,27 @@ namespace WebApp.BLL.Services
             return new ServiceResultClass<string> { Result = codeEncoded, ServiceResultType = ServiceResultType.Success };
         }
 
-        public async Task<bool> TryLogin(UserDTO userDTO)
+        public async Task<ServiceResultClass<string>> TryLogin(UserDTO userDTO)
         {
+
             var tryLogin = await _signInManager.PasswordSignInAsync(userDTO.Email, userDTO.Password, isPersistent: false, false);
 
-            return tryLogin.Succeeded;
+            if (tryLogin.Succeeded)
+            {
+                var user = _userManager.FindByEmailAsync(userDTO.Email);
+                var jwtToken = _jwtGenerator.CreateToken((ApplicationUser)user.Result);
+                return new ServiceResultClass<string> { Result = jwtToken, ServiceResultType = ServiceResultType.Success };
+            }
+
+            return new ServiceResultClass<string> { Result = "Invaild Login Attempt", ServiceResultType = ServiceResultType.Error };
         }
 
-        public async Task<ServiceResultStruct<bool>> ConfirmEmail(string email, string token)
+        public async Task<ServiceResult> ConfirmEmail(string email, string token)
         {
-            if (email == null)
-            {
-                return new ServiceResultStruct<bool> { Result = false, ServiceResultType = ServiceResultType.Error, Message="Invalid email" };
-            }
-
-            if (token == null)
-            {
-                return new ServiceResultStruct<bool> { Result = false, ServiceResultType = ServiceResultType.Error, Message = "Invalid token" };
-            }
-
             var user = await _userManager.FindByEmailAsync(email);
             if (user == null)
             {
-                return new ServiceResultStruct<bool> { Result = false, ServiceResultType = ServiceResultType.Error, Message = "Can't find this email" };
+                return new ServiceResult { ServiceResultType = ServiceResultType.Error, Message = "Can't find this email" };
             }
 
             var codeDecoded = TokenEncodingHelper.Decode(token);
@@ -89,10 +89,10 @@ namespace WebApp.BLL.Services
 
             if (result.Succeeded)
             {
-                return new ServiceResultStruct<bool> { Result = true, ServiceResultType = ServiceResultType.Success, Message = "Email address confirmed" };
+                return new ServiceResult { ServiceResultType = ServiceResultType.Success, Message = "Email address confirmed" };
             }
 
-            return new ServiceResultStruct<bool> { Result = false, ServiceResultType = ServiceResultType.Error, Message = "Can't confirm email" };
+            return new ServiceResult { ServiceResultType = ServiceResultType.Error, Message = "Can't confirm email" };
         }
 
         public async Task<ServiceResultClass<ApplicationUser>> UpdateUser(ApplicationUser user)

@@ -7,21 +7,23 @@ using System.Linq;
 using System.Threading.Tasks;
 using WebApp.DAL.EF;
 using WebApp.DAL.Entities;
+using WebApp.Web.Startup.Settings;
 
 namespace WebApp.Web.Startup.Configuration
 {
     public static class AuthenticationExtensions
     {
-        public static void RegisterIdentity(this IServiceCollection services)
+        public static void RegisterIdentity(this IServiceCollection services, AppSettings appSettings)
         {
+            var _appSettings = appSettings;
 
-            services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+        services.AddIdentity<ApplicationUser, IdentityRole>(options =>
             {
-                options.SignIn.RequireConfirmedEmail = false;
-                options.Password.RequireDigit = false;
-                options.Password.RequireNonAlphanumeric = false;
-                options.Password.RequireUppercase = false;
-                options.Password.RequireLowercase = false;
+                options.SignIn.RequireConfirmedEmail = appSettings.IdentitySettings.SignInRequireConfirmedEmail;
+                options.Password.RequireDigit = appSettings.IdentitySettings.PasswordRequireDigit;
+                options.Password.RequireNonAlphanumeric = appSettings.IdentitySettings.PasswordRequireNonAlphanumeric;
+                options.Password.RequireUppercase = appSettings.IdentitySettings.PasswordRequireUppercase;
+                options.Password.RequireLowercase = appSettings.IdentitySettings.PasswordRequireLowercase;
             })
                 .AddRoles<IdentityRole>()
                 .AddRoleManager<RoleManager<IdentityRole>>()

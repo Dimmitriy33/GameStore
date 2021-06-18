@@ -8,8 +8,8 @@ namespace WebApp.BLL.Interfaces
     public interface IUserService
     {
         Task<ServiceResultClass<string>> TryRegister(UserDTO userDTO);
-        Task<bool> TryLogin(UserDTO userDTO);
-        Task<ServiceResultStruct<bool>> ConfirmEmail(string email, string token);
+        Task<ServiceResult> ConfirmEmail(string email, string token);
+        Task<ServiceResultClass<string>> TryLogin(UserDTO userDTO);
         Task<ServiceResultStruct<bool>> ChangePassword(ApplicationUser Appuser, string newPassword);
         Task<ServiceResultClass<ApplicationUser>> UpdateUser(ApplicationUser user);
         Task<ServiceResultClass<ApplicationUser>> FindUser(ApplicationUser user);

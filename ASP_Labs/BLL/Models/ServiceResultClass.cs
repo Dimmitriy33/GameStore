@@ -1,12 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
-
-namespace WebApp.BLL.Models
+﻿namespace WebApp.BLL.Models
 {
-    public class ServiceResultClass<T> where T : class
+    public class ServiceResultClass<T> : ServiceResult where T : class
     {
-        [BindRequired]
         public T Result { get; set; }
-        [BindRequired]
-        public ServiceResultType ServiceResultType { get; set; }
     }
 }
