@@ -30,8 +30,10 @@ namespace WebApp.Web.Startup
 
             services.AddControllers();
             services.AddSwagger();
+            services.AddAutoMapper(typeof(Startup));
+
             services.RegisterDatabase(appSettings.DbSettings);
-            services.RegisterServices();
+            services.RegisterServices(appSettings);
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(
@@ -55,7 +57,8 @@ namespace WebApp.Web.Startup
                 options.CompatibilityMode = PasswordHasherCompatibilityMode.IdentityV2
 );
             services.AddSingleton(appSettings);
-            
+
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

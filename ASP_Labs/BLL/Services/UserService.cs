@@ -1,15 +1,14 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.JsonPatch;
+using System;
 using System.Threading.Tasks;
 using WebApp.BLL.Constants;
 using WebApp.BLL.DTO;
 using WebApp.BLL.Helpers;
 using WebApp.BLL.Interfaces;
 using WebApp.BLL.Models;
-using WebApp.DAL.EF;
 using WebApp.DAL.Entities;
-using WebApp.Web.Startup.Settings;
+using WebApp.DAL.Interfaces.Database;
 
 namespace WebApp.BLL.Services
 {
@@ -19,22 +18,19 @@ namespace WebApp.BLL.Services
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IJwtGenerator _jwtGenerator;
-
-        private readonly IConfiguration _configuration;
-        private readonly AppSettings _appSettings;
+        private readonly IUserRepository _userRepository;
 
         public UserService(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IJwtGenerator jwtGenerator,
-            RoleManager<IdentityRole> roleManager, IConfiguration configuration, AppSettings appSettings)
+            RoleManager<IdentityRole> roleManager, IUserRepository userRepository)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _roleManager = roleManager;
             _jwtGenerator = jwtGenerator;
-			_configuration = configuration;
-			_appSettings = appSettings;	
+            _userRepository = userRepository;
         }
-		
-		public async Task<ServiceResultClass<string>> TryRegister(UserDTO userDTO)
+
+        public async Task<ServiceResultClass<string>> TryRegisterAsync(AuthUserDTO userDTO)
         {
             var user = new ApplicationUser
             {
@@ -61,7 +57,7 @@ namespace WebApp.BLL.Services
             return new ServiceResultClass<string> { Result = codeEncoded, ServiceResultType = ServiceResultType.Success };
         }
 
-        public async Task<ServiceResultClass<string>> TryLogin(UserDTO userDTO)
+        public async Task<ServiceResultClass<string>> TryLoginAsync(AuthUserDTO userDTO)
         {
 
             var tryLogin = await _signInManager.PasswordSignInAsync(userDTO.Email, userDTO.Password, isPersistent: false, false);
@@ -69,14 +65,14 @@ namespace WebApp.BLL.Services
             if (tryLogin.Succeeded)
             {
                 var user = _userManager.FindByEmailAsync(userDTO.Email);
-                var jwtToken = _jwtGenerator.CreateToken((ApplicationUser)user.Result);
+                var jwtToken = _jwtGenerator.CreateToken(user.Result);
                 return new ServiceResultClass<string> { Result = jwtToken, ServiceResultType = ServiceResultType.Success };
             }
 
             return new ServiceResultClass<string> { Result = "Invaild Login Attempt", ServiceResultType = ServiceResultType.Error };
         }
 
-        public async Task<ServiceResult> ConfirmEmail(string email, string token)
+        public async Task<ServiceResult> ConfirmEmailAsync(string email, string token)
         {
             var user = await _userManager.FindByEmailAsync(email);
             if (user == null)
@@ -95,61 +91,52 @@ namespace WebApp.BLL.Services
             return new ServiceResult { ServiceResultType = ServiceResultType.Error, Message = "Can't confirm email" };
         }
 
-        public async Task<ServiceResultClass<ApplicationUser>> UpdateUser(ApplicationUser user)
+        public async Task<ServiceResultClass<UserDTO>> UpdateUserInfoAsync(UserDTO user)
         {
-            using (var context = new ApplicationDbContext(new DbContextOptionsBuilder<ApplicationDbContext>().
-                UseSqlServer(_configuration.GetConnectionString(_appSettings.DbSettings.ConnectionString)).Options))
+            try
             {
-                var userForUpdate = await _userManager.FindByIdAsync(user.Id);
-
-                if (userForUpdate == null)
-                {
-                    return new ServiceResultClass<ApplicationUser> { Result = user, ServiceResultType = ServiceResultType.Error };
-                }
-
-                context.Entry(userForUpdate.PasswordHash).State = EntityState.Detached;
-                userForUpdate = user;
-                context.SaveChanges();
-                return new ServiceResultClass<ApplicationUser> { Result = userForUpdate, ServiceResultType = ServiceResultType.Success };
+                await _userRepository.UpdateUserInfoAsync(user);
+                return new ServiceResultClass<UserDTO> { Result = user, ServiceResultType = ServiceResultType.Success };
+            }
+            catch
+            {
+                return new ServiceResultClass<UserDTO> { Result = user, ServiceResultType = ServiceResultType.Error };
             }
         }
 
-        public async Task<ServiceResult> ChangePassword(ApplicationUser Appuser, string newPassword)
+        public async Task<ServiceResult> ChangePasswordAsync(JsonPatchDocument patch)
         {
-            var user = await _userManager.FindByIdAsync(Appuser.Id);
+            var user = new ResetPasswordUserDTO();
+            patch.ApplyTo(user);
 
-            if (user == null)
+            var userForUpdate = await _userManager.FindByIdAsync(user.Id);
+
+            if (userForUpdate == null)
             {
-                return new ServiceResult {  ServiceResultType = ServiceResultType.Error, Message = "Can't find this user" };
+                return new ServiceResult { ServiceResultType = ServiceResultType.Error, Message = "Can't find this user" };
             }
 
-            if (!(await _userManager.IsEmailConfirmedAsync(user)))
+            try
             {
-                return new ServiceResult { ServiceResultType = ServiceResultType.Error, Message = "Email is not confirmed" };
-            }
-
-            string token = await _userManager.GeneratePasswordResetTokenAsync(user);
-            var result = await _userManager.ResetPasswordAsync(user, token, newPassword);
-
-            if (result.Succeeded)
-            {
+                await _userRepository.UpdatePasswordAsync(user.Id, user.oldPassword, user.newPassword);
                 return new ServiceResult { ServiceResultType = ServiceResultType.Success, Message = "Password changed" };
             }
-
-            return new ServiceResult{ ServiceResultType = ServiceResultType.Error, Message = "Password is not changed" };
-
+            catch
+            {
+                return new ServiceResult { ServiceResultType = ServiceResultType.Error, Message = "Password is not changed" };
+            }
         }
 
-        public async Task<ServiceResultClass<ApplicationUser>> FindUser(ApplicationUser user)
+        public async Task<ServiceResultClass<UserDTO>> FindUserByIdAsync(Guid id)
         {
-            var findedUser = await _userManager.FindByIdAsync(user.Id);
+            var findedUser = await _userRepository.GetUserByIdAsync(id);
 
-            if(findedUser == null)
+            if (findedUser == null)
             {
-                return new ServiceResultClass<ApplicationUser> { Result = user, ServiceResultType = ServiceResultType.Error };
+                return new ServiceResultClass<UserDTO> { Result = null, ServiceResultType = ServiceResultType.Error };
             }
 
-            return new ServiceResultClass<ApplicationUser> { Result = findedUser, ServiceResultType = ServiceResultType.Success };
+            return new ServiceResultClass<UserDTO> { Result = findedUser, ServiceResultType = ServiceResultType.Success };
         }
     }
 }

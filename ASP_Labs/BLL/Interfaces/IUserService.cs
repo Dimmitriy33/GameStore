@@ -1,17 +1,18 @@
-﻿using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.JsonPatch;
+using System;
+using System.Threading.Tasks;
 using WebApp.BLL.DTO;
 using WebApp.BLL.Models;
-using WebApp.DAL.Entities;
 
 namespace WebApp.BLL.Interfaces
 {
     public interface IUserService
     {
-        Task<ServiceResultClass<string>> TryRegister(UserDTO userDTO);
-        Task<ServiceResult> ConfirmEmail(string email, string token);
-        Task<ServiceResultClass<string>> TryLogin(UserDTO userDTO);
-        Task<ServiceResult> ChangePassword(ApplicationUser Appuser, string newPassword);
-        Task<ServiceResultClass<ApplicationUser>> UpdateUser(ApplicationUser user);
-        Task<ServiceResultClass<ApplicationUser>> FindUser(ApplicationUser user);
+        Task<ServiceResultClass<string>> TryRegisterAsync(AuthUserDTO userDTO);
+        Task<ServiceResult> ConfirmEmailAsync(string email, string token);
+        Task<ServiceResultClass<string>> TryLoginAsync(AuthUserDTO userDTO);
+        Task<ServiceResult> ChangePasswordAsync(JsonPatchDocument patch);
+        Task<ServiceResultClass<UserDTO>> FindUserByIdAsync(Guid id);
+        Task<ServiceResultClass<UserDTO>> UpdateUserInfoAsync(UserDTO user);
     }
 }

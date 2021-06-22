@@ -12,7 +12,7 @@ namespace WebApp.DAL.Repository
         where TContext : ApplicationDbContext
         where T : class
     {
-        private readonly TContext _dbContext;
+        protected readonly TContext _dbContext;
         private readonly DbSet<T> _dbSet;
 
         public Repository(TContext dbContext)

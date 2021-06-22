@@ -15,20 +15,19 @@ namespace WebApp.Web.Startup.Configuration
     {
         public static void RegisterIdentity(this IServiceCollection services, AppSettings appSettings)
         {
-            var _appSettings = appSettings;
 
-        services.AddIdentity<ApplicationUser, IdentityRole>(options =>
-            {
-                options.SignIn.RequireConfirmedEmail = appSettings.IdentitySettings.SignInRequireConfirmedEmail;
-                options.Password.RequireDigit = appSettings.IdentitySettings.PasswordRequireDigit;
-                options.Password.RequireNonAlphanumeric = appSettings.IdentitySettings.PasswordRequireNonAlphanumeric;
-                options.Password.RequireUppercase = appSettings.IdentitySettings.PasswordRequireUppercase;
-                options.Password.RequireLowercase = appSettings.IdentitySettings.PasswordRequireLowercase;
-            })
-                .AddRoles<IdentityRole>()
-                .AddRoleManager<RoleManager<IdentityRole>>()
-                .AddDefaultTokenProviders()
-                .AddEntityFrameworkStores<ApplicationDbContext>();
+            services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+                {
+                    options.SignIn.RequireConfirmedEmail = appSettings.IdentitySettings.SignInRequireConfirmedEmail;
+                    options.Password.RequireDigit = appSettings.IdentitySettings.PasswordRequireDigit;
+                    options.Password.RequireNonAlphanumeric = appSettings.IdentitySettings.PasswordRequireNonAlphanumeric;
+                    options.Password.RequireUppercase = appSettings.IdentitySettings.PasswordRequireUppercase;
+                    options.Password.RequireLowercase = appSettings.IdentitySettings.PasswordRequireLowercase;
+                })
+                    .AddRoles<IdentityRole>()
+                    .AddRoleManager<RoleManager<IdentityRole>>()
+                    .AddDefaultTokenProviders()
+                    .AddEntityFrameworkStores<ApplicationDbContext>();
         }
 
         public static void RegisterIdentityServer(this IServiceCollection services)

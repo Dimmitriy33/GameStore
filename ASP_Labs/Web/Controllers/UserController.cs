@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using System;
 using System.Threading.Tasks;
+using WebApp.BLL.DTO;
 using WebApp.BLL.Interfaces;
 using WebApp.BLL.Models;
-using WebApp.DAL.Entities;
 
 namespace WebApp.Web.Controllers
 {
@@ -21,11 +23,11 @@ namespace WebApp.Web.Controllers
 
         [HttpPut]
         [Authorize]
-        public async Task<IActionResult> UpdateAsync([BindRequired]ApplicationUser user)
+        public async Task<IActionResult> Update([BindRequired] UserDTO user)
         {
-            var UpdatedUser = await _userService.UpdateUser(user);
+            var UpdatedUser = await _userService.UpdateUserInfoAsync(user);
 
-            if(UpdatedUser.ServiceResultType == ServiceResultType.Error)
+            if (UpdatedUser.ServiceResultType == ServiceResultType.Error)
             {
                 return BadRequest();
             }
@@ -33,32 +35,33 @@ namespace WebApp.Web.Controllers
             return Ok(UpdatedUser);
         }
 
-        [HttpPost("password")]
+        [HttpPatch("password")]
         [Authorize]
-        public async Task<IActionResult> ChangePasswordAsync([BindRequired] ApplicationUser user, [BindRequired] string newPassword)
+        public async Task<IActionResult> ChangePassword([BindRequired] JsonPatchDocument patch)
         {
-            var IsChanged = await _userService.ChangePassword(user, newPassword);
 
-            if(IsChanged.ServiceResultType == ServiceResultType.Error)
+            var IsChanged = await _userService.ChangePasswordAsync(patch);
+
+            if (IsChanged.ServiceResultType == ServiceResultType.Error)
             {
                 return BadRequest(IsChanged.Message);
             }
-            
+
             return Ok();
         }
 
-        [HttpGet]
+        [HttpGet("{id}")]
         [Authorize]
-        public async Task<IActionResult> GetUser([BindRequired] ApplicationUser user)
+        public async Task<IActionResult> GetUser([BindRequired] Guid id)
         {
-            var findedUser = await _userService.FindUser(user);
+            var findedUser = await _userService.FindUserByIdAsync(id);
 
             if (findedUser.ServiceResultType == ServiceResultType.Error)
             {
                 return NotFound();
             }
 
-            return Ok(user);
+            return Ok(findedUser);
         }
     }
 }
