@@ -1,9 +1,9 @@
-﻿using WebApp.DAL.Entities;
+﻿using System;
 
 namespace WebApp.BLL.Interfaces
 {
     public interface IJwtGenerator
     {
-        string CreateToken(ApplicationUser user);
+        string CreateToken(Guid userId, string userName, string userRole);
     }
 }

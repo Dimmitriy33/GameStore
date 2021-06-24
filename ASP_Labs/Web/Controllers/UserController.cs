@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System;
+using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Threading.Tasks;
 using WebApp.BLL.DTO;
 using WebApp.BLL.Interfaces;
@@ -37,9 +39,8 @@ namespace WebApp.Web.Controllers
 
         [HttpPatch("password")]
         [Authorize]
-        public async Task<IActionResult> ChangePassword([BindRequired] JsonPatchDocument patch)
+        public async Task<IActionResult> ChangePassword([BindRequired][FromBody] JsonPatchDocument patch)
         {
-
             var IsChanged = await _userService.ChangePasswordAsync(patch);
 
             if (IsChanged.ServiceResultType == ServiceResultType.Error)
@@ -52,9 +53,10 @@ namespace WebApp.Web.Controllers
 
         [HttpGet("{id}")]
         [Authorize]
-        public async Task<IActionResult> GetUser([BindRequired] Guid id)
+        public async Task<IActionResult> GetUser()
         {
-            var findedUser = await _userService.FindUserByIdAsync(id);
+            var userId = User.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Sub).Value;
+            var findedUser = await _userService.FindUserByIdAsync(Guid.Parse(userId));
 
             if (findedUser.ServiceResultType == ServiceResultType.Error)
             {

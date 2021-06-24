@@ -25,6 +25,7 @@ namespace WebApp.DAL.Repository
             var userForUpdate = _dbContext.Users.FirstOrDefault(u => u.Id == user.Id);
             userForUpdate.UserName = user.UserName;
             userForUpdate.AddressDelivery = user.AddressDelivery;
+            await _userManager.SetPhoneNumberAsync(userForUpdate, user.PhoneNumber);
             userForUpdate.PhoneNumber = user.PhoneNumber;
 
             _dbContext.Users.Update(userForUpdate);

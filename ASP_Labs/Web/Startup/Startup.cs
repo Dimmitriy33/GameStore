@@ -27,10 +27,9 @@ namespace WebApp.Web.Startup
         public void ConfigureServices(IServiceCollection services)
         {
             var appSettings = ReadAppSettings(Configuration);
-
             services.AddControllers();
             services.AddSwagger();
-            services.AddAutoMapper(typeof(Startup));
+            services.AddControllersWithViews().AddNewtonsoftJson();
 
             services.RegisterDatabase(appSettings.DbSettings);
             services.RegisterServices(appSettings);
@@ -49,16 +48,12 @@ namespace WebApp.Web.Startup
                 });
 
             services.AddCors();
-
             services.RegisterIdentity(appSettings);
             services.RegisterIdentityServer();
 
             services.Configure<PasswordHasherOptions>(options =>
                 options.CompatibilityMode = PasswordHasherCompatibilityMode.IdentityV2
 );
-            services.AddSingleton(appSettings);
-
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

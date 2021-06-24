@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.JsonPatch;
 using System;
 using System.Threading.Tasks;
@@ -14,20 +15,27 @@ namespace WebApp.BLL.Services
 {
     public class UserService : IUserService
     {
+        //constants
+        private readonly string invalidRegisterMessage = "Invalid Register Attempt";
+        private readonly string invalidLoginMessage = "Invalid Login Attempt";
+
+        //services
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IJwtGenerator _jwtGenerator;
         private readonly IUserRepository _userRepository;
+        private readonly IMapper _mapper;
 
         public UserService(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IJwtGenerator jwtGenerator,
-            RoleManager<IdentityRole> roleManager, IUserRepository userRepository)
+            RoleManager<IdentityRole> roleManager, IUserRepository userRepository, IMapper mapper)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _roleManager = roleManager;
             _jwtGenerator = jwtGenerator;
             _userRepository = userRepository;
+            _mapper = mapper;
         }
 
         public async Task<ServiceResultClass<string>> TryRegisterAsync(AuthUserDTO userDTO)
@@ -42,7 +50,7 @@ namespace WebApp.BLL.Services
 
             if (!tryRegister.Succeeded)
             {
-                return new ServiceResultClass<string> { Result = "Invalid Register Attempt", ServiceResultType = ServiceResultType.Error };
+                return new ServiceResultClass<string> { Result = invalidRegisterMessage, ServiceResultType = ServiceResultType.Error };
             }
 
             if (!await _roleManager.RoleExistsAsync(RolesConstants.User))
@@ -59,17 +67,20 @@ namespace WebApp.BLL.Services
 
         public async Task<ServiceResultClass<string>> TryLoginAsync(AuthUserDTO userDTO)
         {
-
-            var tryLogin = await _signInManager.PasswordSignInAsync(userDTO.Email, userDTO.Password, isPersistent: false, false);
+            var user = await _userManager.FindByEmailAsync(userDTO.Email);
+            if (user == null)
+            {
+                return new ServiceResultClass<string> { Result = invalidLoginMessage, ServiceResultType = ServiceResultType.Error };
+            }
+            var tryLogin = await _signInManager.PasswordSignInAsync(user.UserName, userDTO.Password, isPersistent: false, false);
 
             if (tryLogin.Succeeded)
             {
-                var user = _userManager.FindByEmailAsync(userDTO.Email);
-                var jwtToken = _jwtGenerator.CreateToken(user.Result);
+                var jwtToken = _jwtGenerator.CreateToken(Guid.Parse(user.Id), user.UserName, _userManager.GetRolesAsync(user).Result[0]);
                 return new ServiceResultClass<string> { Result = jwtToken, ServiceResultType = ServiceResultType.Success };
             }
 
-            return new ServiceResultClass<string> { Result = "Invaild Login Attempt", ServiceResultType = ServiceResultType.Error };
+            return new ServiceResultClass<string> { Result = invalidLoginMessage, ServiceResultType = ServiceResultType.Error };
         }
 
         public async Task<ServiceResult> ConfirmEmailAsync(string email, string token)
@@ -96,11 +107,13 @@ namespace WebApp.BLL.Services
             try
             {
                 await _userRepository.UpdateUserInfoAsync(user);
-                return new ServiceResultClass<UserDTO> { Result = user, ServiceResultType = ServiceResultType.Success };
+                var updatedUser = await _userManager.FindByIdAsync(user.Id);
+
+                return new ServiceResultClass<UserDTO> { Result = _mapper.Map<UserDTO>(updatedUser), ServiceResultType = ServiceResultType.Success };
             }
             catch
             {
-                return new ServiceResultClass<UserDTO> { Result = user, ServiceResultType = ServiceResultType.Error };
+                return new ServiceResultClass<UserDTO> { ServiceResultType = ServiceResultType.Error };
             }
         }
 
@@ -133,7 +146,7 @@ namespace WebApp.BLL.Services
 
             if (findedUser == null)
             {
-                return new ServiceResultClass<UserDTO> { Result = null, ServiceResultType = ServiceResultType.Error };
+                return new ServiceResultClass<UserDTO> { ServiceResultType = ServiceResultType.Error };
             }
 
             return new ServiceResultClass<UserDTO> { Result = findedUser, ServiceResultType = ServiceResultType.Success };
