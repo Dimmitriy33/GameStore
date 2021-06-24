@@ -9,6 +9,6 @@ namespace WebApp.DAL.Interfaces.Database
     {
         Task<UserDTO> GetUserByIdAsync(Guid Id);
         Task UpdateUserInfoAsync(UserDTO user);
-        Task UpdatePasswordAsync(string id, string oldPassword, string newPassword);
+        Task UpdatePasswordAsync(Guid id, string oldPassword, string newPassword);
     }
 }

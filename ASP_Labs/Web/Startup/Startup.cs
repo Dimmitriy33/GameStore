@@ -1,13 +1,10 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.IdentityModel.Tokens;
 using System;
-using System.Text;
 using WebApp.Web.Startup.Configuration;
 using WebApp.Web.Startup.Settings;
 
@@ -29,23 +26,14 @@ namespace WebApp.Web.Startup
             var appSettings = ReadAppSettings(Configuration);
             services.AddControllers();
             services.AddSwagger();
-            services.AddControllersWithViews().AddNewtonsoftJson();
+            services.AddControllersWithViews().AddNewtonsoftJson(options =>
+            {
+                options.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
+            });
 
             services.RegisterDatabase(appSettings.DbSettings);
             services.RegisterServices(appSettings);
-
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(
-                opt =>
-                {
-                    opt.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(appSettings.JwtSettings.TokenKey)),
-                        ValidateAudience = false,
-                        ValidateIssuer = false,
-                    };
-                });
+            services.RegisterAuthencticationSettings(appSettings);
 
             services.AddCors();
             services.RegisterIdentity(appSettings);
@@ -57,7 +45,7 @@ namespace WebApp.Web.Startup
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, RoleManager<IdentityRole> roleManager, IServiceProvider serviceProvider)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IServiceProvider serviceProvider)
         {
 
             var appSettings = ReadAppSettings(Configuration);

@@ -16,19 +16,19 @@ namespace WebApp.BLL.Services
     public class UserService : IUserService
     {
         //constants
-        private readonly string invalidRegisterMessage = "Invalid Register Attempt";
-        private readonly string invalidLoginMessage = "Invalid Login Attempt";
+        private const string invalidRegisterMessage = "Invalid Register Attempt";
+        private const string invalidLoginMessage = "Invalid Login Attempt";
 
         //services
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly RoleManager<ApplicationRole> _roleManager;
         private readonly IJwtGenerator _jwtGenerator;
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
 
         public UserService(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IJwtGenerator jwtGenerator,
-            RoleManager<IdentityRole> roleManager, IUserRepository userRepository, IMapper mapper)
+            RoleManager<ApplicationRole> roleManager, IUserRepository userRepository, IMapper mapper)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -68,7 +68,7 @@ namespace WebApp.BLL.Services
         public async Task<ServiceResultClass<string>> TryLoginAsync(AuthUserDTO userDTO)
         {
             var user = await _userManager.FindByEmailAsync(userDTO.Email);
-            if (user == null)
+            if (user is null)
             {
                 return new ServiceResultClass<string> { Result = invalidLoginMessage, ServiceResultType = ServiceResultType.Error };
             }
@@ -76,7 +76,7 @@ namespace WebApp.BLL.Services
 
             if (tryLogin.Succeeded)
             {
-                var jwtToken = _jwtGenerator.CreateToken(Guid.Parse(user.Id), user.UserName, _userManager.GetRolesAsync(user).Result[0]);
+                var jwtToken = _jwtGenerator.CreateToken(user.Id, user.UserName, _userManager.GetRolesAsync(user).Result[0]);
                 return new ServiceResultClass<string> { Result = jwtToken, ServiceResultType = ServiceResultType.Success };
             }
 
@@ -107,7 +107,7 @@ namespace WebApp.BLL.Services
             try
             {
                 await _userRepository.UpdateUserInfoAsync(user);
-                var updatedUser = await _userManager.FindByIdAsync(user.Id);
+                var updatedUser = await _userManager.FindByIdAsync(user.Id.ToString());
 
                 return new ServiceResultClass<UserDTO> { Result = _mapper.Map<UserDTO>(updatedUser), ServiceResultType = ServiceResultType.Success };
             }
@@ -122,7 +122,7 @@ namespace WebApp.BLL.Services
             var user = new ResetPasswordUserDTO();
             patch.ApplyTo(user);
 
-            var userForUpdate = await _userManager.FindByIdAsync(user.Id);
+            var userForUpdate = await _userManager.FindByIdAsync(user.Id.ToString());
 
             if (userForUpdate == null)
             {
@@ -131,7 +131,7 @@ namespace WebApp.BLL.Services
 
             try
             {
-                await _userRepository.UpdatePasswordAsync(user.Id, user.oldPassword, user.newPassword);
+                await _userRepository.UpdatePasswordAsync(user.Id, user.OldPassword, user.NewPassword);
                 return new ServiceResult { ServiceResultType = ServiceResultType.Success, Message = "Password changed" };
             }
             catch
@@ -142,14 +142,14 @@ namespace WebApp.BLL.Services
 
         public async Task<ServiceResultClass<UserDTO>> FindUserByIdAsync(Guid id)
         {
-            var findedUser = await _userRepository.GetUserByIdAsync(id);
+            var foundUser = await _userRepository.GetUserByIdAsync(id);
 
-            if (findedUser == null)
+            if (foundUser == null)
             {
                 return new ServiceResultClass<UserDTO> { ServiceResultType = ServiceResultType.Error };
             }
 
-            return new ServiceResultClass<UserDTO> { Result = findedUser, ServiceResultType = ServiceResultType.Success };
+            return new ServiceResultClass<UserDTO> { Result = foundUser, ServiceResultType = ServiceResultType.Success };
         }
     }
 }

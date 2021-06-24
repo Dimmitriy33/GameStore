@@ -22,10 +22,9 @@ namespace WebApp.DAL.Repository
 
         public async Task UpdateUserInfoAsync(UserDTO user)
         {
-            var userForUpdate = _dbContext.Users.FirstOrDefault(u => u.Id == user.Id);
+            var userForUpdate = GetUser(user.Id);
             userForUpdate.UserName = user.UserName;
             userForUpdate.AddressDelivery = user.AddressDelivery;
-            await _userManager.SetPhoneNumberAsync(userForUpdate, user.PhoneNumber);
             userForUpdate.PhoneNumber = user.PhoneNumber;
 
             _dbContext.Users.Update(userForUpdate);
@@ -33,9 +32,9 @@ namespace WebApp.DAL.Repository
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task UpdatePasswordAsync(string id, string oldPassword, string newPassword)
+        public async Task UpdatePasswordAsync(Guid id, string oldPassword, string newPassword)
         {
-            var userForUpdate = _dbContext.Users.FirstOrDefault(u => u.Id == id);
+            var userForUpdate = GetUser(id);
 
             var result = await _userManager.ChangePasswordAsync(userForUpdate, oldPassword, newPassword);
 
@@ -47,10 +46,13 @@ namespace WebApp.DAL.Repository
 
         }
 
-        public async Task<UserDTO> GetUserByIdAsync(Guid Id)
+        public async Task<UserDTO> GetUserByIdAsync(Guid id)
         {
-            var user = await _userManager.FindByIdAsync(Id.ToString());
+            var user = await _userManager.FindByIdAsync(id.ToString());
             return _mapper.Map<UserDTO>(user);
         }
+
+        private ApplicationUser GetUser(Guid id) => _dbContext.Users.FirstOrDefault(u => u.Id == id);
+
     }
 }

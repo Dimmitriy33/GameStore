@@ -13,10 +13,10 @@ namespace ASP_Labs
         public static IHostBuilder CreateHostBuilder(string[] args)
         {
             return Host.CreateDefaultBuilder(args)
-.ConfigureWebHostDefaults(webBuilder =>
-{
-    webBuilder.UseStartup<WebApp.Web.Startup.Startup>();
-});
+                    .ConfigureWebHostDefaults(webBuilder =>
+                    {
+                        webBuilder.UseStartup<WebApp.Web.Startup.Startup>();
+                    });
         }
     }
 }

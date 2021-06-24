@@ -1,9 +1,12 @@
 ﻿using IdentityServer4.Stores;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using WebApp.DAL.EF;
 using WebApp.DAL.Entities;
@@ -13,10 +16,25 @@ namespace WebApp.Web.Startup.Configuration
 {
     public static class AuthenticationExtensions
     {
+        public static void RegisterAuthencticationSettings(this IServiceCollection services, AppSettings appSettings)
+        {
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(
+                opt =>
+                {
+                    opt.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(appSettings.JwtSettings.TokenKey)),
+                        ValidateAudience = false,
+                        ValidateIssuer = false,
+                    };
+                });
+        }
         public static void RegisterIdentity(this IServiceCollection services, AppSettings appSettings)
         {
 
-            services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+            services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
                 {
                     options.SignIn.RequireConfirmedEmail = appSettings.IdentitySettings.SignInRequireConfirmedEmail;
                     options.Password.RequireDigit = appSettings.IdentitySettings.PasswordRequireDigit;
@@ -24,8 +42,7 @@ namespace WebApp.Web.Startup.Configuration
                     options.Password.RequireUppercase = appSettings.IdentitySettings.PasswordRequireUppercase;
                     options.Password.RequireLowercase = appSettings.IdentitySettings.PasswordRequireLowercase;
                 })
-                    .AddRoles<IdentityRole>()
-                    .AddRoleManager<RoleManager<IdentityRole>>()
+                    .AddRoles<ApplicationRole>()
                     .AddDefaultTokenProviders()
                     .AddEntityFrameworkStores<ApplicationDbContext>();
         }
@@ -45,13 +62,13 @@ namespace WebApp.Web.Startup.Configuration
                 return;
             }
 
-            var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            var roleManager = serviceProvider.GetRequiredService<RoleManager<ApplicationRole>>();
 
             foreach (var role in roles)
             {
                 if (!await roleManager.RoleExistsAsync(role))
                 {
-                    await roleManager.CreateAsync(new IdentityRole { Name = role });
+                    await roleManager.CreateAsync(new ApplicationRole { Name = role });
                 }
             }
         }

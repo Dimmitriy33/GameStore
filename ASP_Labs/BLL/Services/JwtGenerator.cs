@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Security.Cryptography;
 using System.Text;
 using WebApp.BLL.Interfaces;
 using WebApp.Web.Startup.Settings;
@@ -36,16 +35,6 @@ namespace WebApp.BLL.Services
 
             var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwtToken);
             return encodedJwt;
-        }
-
-        public string GenerateRefreshToken()
-        {
-            var randomNumber = new byte[32];
-            using (var rng = RandomNumberGenerator.Create())
-            {
-                rng.GetBytes(randomNumber);
-                return Convert.ToBase64String(randomNumber);
-            }
         }
 
         private static ClaimsIdentity GetClaims(Guid userId, string userName, string userRole)
