@@ -18,6 +18,10 @@ namespace WebApp.BLL.Services
         //constants
         private const string invalidRegisterMessage = "Invalid Register Attempt";
         private const string invalidLoginMessage = "Invalid Login Attempt";
+        private const string missingRole = "Missing role";
+        private const string notFoundEmail = "Email not found";
+        private const string notConfirmedEmail = "Email not confirmed"; 
+        private const string notFoundUser = "User not found"; 
 
         //services
         private readonly UserManager<ApplicationUser> _userManager;
@@ -50,19 +54,19 @@ namespace WebApp.BLL.Services
 
             if (!tryRegister.Succeeded)
             {
-                return new ServiceResultClass<string> { Result = invalidRegisterMessage, ServiceResultType = ServiceResultType.Error };
+                return new ServiceResultClass<string>(invalidRegisterMessage, ServiceResultType.Bad_Request);
             }
 
             if (!await _roleManager.RoleExistsAsync(RolesConstants.User))
             {
-                return new ServiceResultClass<string> { Result = "Missing role", ServiceResultType = ServiceResultType.Error };
+                return new ServiceResultClass<string>(missingRole, ServiceResultType.Bad_Request);
             }
 
             await _userManager.AddToRoleAsync(user, RolesConstants.User);
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             var codeEncoded = TokenEncodingHelper.Encode(token);
 
-            return new ServiceResultClass<string> { Result = codeEncoded, ServiceResultType = ServiceResultType.Success };
+            return new ServiceResultClass<string>(codeEncoded, ServiceResultType.Success);
         }
 
         public async Task<ServiceResultClass<string>> TryLoginAsync(AuthUserDTO userDTO)
@@ -70,25 +74,25 @@ namespace WebApp.BLL.Services
             var user = await _userManager.FindByEmailAsync(userDTO.Email);
             if (user is null)
             {
-                return new ServiceResultClass<string> { Result = invalidLoginMessage, ServiceResultType = ServiceResultType.Error };
+                return new ServiceResultClass<string>(invalidLoginMessage, ServiceResultType.Invalid_Data);
             }
             var tryLogin = await _signInManager.PasswordSignInAsync(user.UserName, userDTO.Password, isPersistent: false, false);
 
             if (tryLogin.Succeeded)
             {
                 var jwtToken = _jwtGenerator.CreateToken(user.Id, user.UserName, _userManager.GetRolesAsync(user).Result[0]);
-                return new ServiceResultClass<string> { Result = jwtToken, ServiceResultType = ServiceResultType.Success };
+                return new ServiceResultClass<string>(jwtToken, ServiceResultType.Success);
             }
 
-            return new ServiceResultClass<string> { Result = invalidLoginMessage, ServiceResultType = ServiceResultType.Error };
+            return new ServiceResultClass<string>(invalidLoginMessage, ServiceResultType.Unauthorized);
         }
 
         public async Task<ServiceResult> ConfirmEmailAsync(string email, string token)
         {
             var user = await _userManager.FindByEmailAsync(email);
-            if (user == null)
+            if (user is null)
             {
-                return new ServiceResult { ServiceResultType = ServiceResultType.Error, Message = "Can't find this email" };
+                return new ServiceResult(notFoundEmail, ServiceResultType.Invalid_Data);
             }
 
             var codeDecoded = TokenEncodingHelper.Decode(token);
@@ -96,25 +100,23 @@ namespace WebApp.BLL.Services
 
             if (result.Succeeded)
             {
-                return new ServiceResult { ServiceResultType = ServiceResultType.Success, Message = "Email address confirmed" };
+                return new ServiceResult(ServiceResultType.Success);
             }
 
-            return new ServiceResult { ServiceResultType = ServiceResultType.Error, Message = "Can't confirm email" };
+            return new ServiceResult(notConfirmedEmail, ServiceResultType.Bad_Request);
         }
 
         public async Task<ServiceResultClass<UserDTO>> UpdateUserInfoAsync(UserDTO user)
         {
-            try
-            {
-                await _userRepository.UpdateUserInfoAsync(user);
-                var updatedUser = await _userManager.FindByIdAsync(user.Id.ToString());
+            await _userRepository.UpdateUserInfoAsync(user);
+            var updatedUser = await _userManager.FindByIdAsync(user.Id.ToString());
 
-                return new ServiceResultClass<UserDTO> { Result = _mapper.Map<UserDTO>(updatedUser), ServiceResultType = ServiceResultType.Success };
-            }
-            catch
+            if(updatedUser is null)
             {
-                return new ServiceResultClass<UserDTO> { ServiceResultType = ServiceResultType.Error };
+                return new ServiceResultClass<UserDTO>(ServiceResultType.Bad_Request);
             }
+
+            return new ServiceResultClass<UserDTO>(_mapper.Map<UserDTO>(updatedUser), ServiceResultType.Success);
         }
 
         public async Task<ServiceResult> ChangePasswordAsync(JsonPatchDocument patch)
@@ -124,32 +126,27 @@ namespace WebApp.BLL.Services
 
             var userForUpdate = await _userManager.FindByIdAsync(user.Id.ToString());
 
-            if (userForUpdate == null)
+            if (userForUpdate is null)
             {
-                return new ServiceResult { ServiceResultType = ServiceResultType.Error, Message = "Can't find this user" };
+                return new ServiceResult(notFoundUser, ServiceResultType.Bad_Request);
             }
 
-            try
-            {
-                await _userRepository.UpdatePasswordAsync(user.Id, user.OldPassword, user.NewPassword);
-                return new ServiceResult { ServiceResultType = ServiceResultType.Success, Message = "Password changed" };
-            }
-            catch
-            {
-                return new ServiceResult { ServiceResultType = ServiceResultType.Error, Message = "Password is not changed" };
-            }
+            await _userRepository.UpdatePasswordAsync(user.Id, user.OldPassword, user.NewPassword);
+
+            return new ServiceResult(ServiceResultType.Success);
+
         }
 
         public async Task<ServiceResultClass<UserDTO>> FindUserByIdAsync(Guid id)
         {
             var foundUser = await _userRepository.GetUserByIdAsync(id);
 
-            if (foundUser == null)
+            if (foundUser is null)
             {
-                return new ServiceResultClass<UserDTO> { ServiceResultType = ServiceResultType.Error };
+                return new ServiceResultClass<UserDTO>(ServiceResultType.Not_Found);
             }
 
-            return new ServiceResultClass<UserDTO> { Result = foundUser, ServiceResultType = ServiceResultType.Success };
+            return new ServiceResultClass<UserDTO>(foundUser, ServiceResultType.Success );
         }
     }
 }

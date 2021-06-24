@@ -28,7 +28,7 @@ namespace WebApp.Web.Controllers
         {
             var updatedUser = await _userService.UpdateUserInfoAsync(user);
 
-            if (updatedUser.ServiceResultType == ServiceResultType.Error)
+            if (updatedUser.ServiceResultType != ServiceResultType.Success)
             {
                 return BadRequest();
             }
@@ -41,7 +41,7 @@ namespace WebApp.Web.Controllers
         {
             var IsChanged = await _userService.ChangePasswordAsync(patch);
 
-            if (IsChanged.ServiceResultType == ServiceResultType.Error)
+            if (IsChanged.ServiceResultType != ServiceResultType.Success)
             {
                 return BadRequest(IsChanged.Message);
             }
@@ -55,7 +55,7 @@ namespace WebApp.Web.Controllers
             var userId = ClaimsHelper.GetUserId(User);
             var foundUser = await _userService.FindUserByIdAsync(Guid.Parse(userId));
 
-            if (foundUser.ServiceResultType == ServiceResultType.Error)
+            if (foundUser.ServiceResultType != ServiceResultType.Success)
             {
                 return NotFound();
             }

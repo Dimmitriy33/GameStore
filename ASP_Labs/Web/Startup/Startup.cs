@@ -68,6 +68,8 @@ namespace WebApp.Web.Startup
 
             app.UseRouting();
 
+            app.RegisterExceptionHandler();
+
             app.UseAuthentication();
 
             app.UseAuthorization();

@@ -34,7 +34,7 @@ namespace WebApp.Web.Controllers
         {
             var registerStatus = await _userService.TryRegisterAsync(user);
 
-            if (registerStatus.ServiceResultType == ServiceResultType.Error)
+            if (registerStatus.ServiceResultType != ServiceResultType.Success)
             {
                 return BadRequest(invalidRegisterMessage);
             }
@@ -74,7 +74,7 @@ namespace WebApp.Web.Controllers
 
             var loginResult = await _userService.TryLoginAsync(user);
 
-            if (loginResult.ServiceResultType == ServiceResultType.Error)
+            if (loginResult.ServiceResultType != ServiceResultType.Success)
             {
                 return Unauthorized();
             }
