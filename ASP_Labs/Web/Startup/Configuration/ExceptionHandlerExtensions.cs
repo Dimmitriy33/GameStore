@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using System.Net;
 using WebApp.BLL.Models;
 
@@ -14,7 +15,7 @@ namespace WebApp.Web.Startup.Configuration
             public string Message { get; set; }
         }
 
-        public static void RegisterExceptionHandler(this IApplicationBuilder app)
+        public static void RegisterExceptionHandler(this IApplicationBuilder app, ILogger logger)
         {
             app.UseExceptionHandler(appError =>
             {
@@ -50,6 +51,7 @@ namespace WebApp.Web.Startup.Configuration
                                 break;
                         }
 
+                        logger.LogError($"Error caught in global handler: ${exceptionResponse.Message}");
 
                         await context.Response.WriteAsync($@"
                             {{

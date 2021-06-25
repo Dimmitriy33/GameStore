@@ -1,0 +1,6 @@
+2021-06-25 18:45:00.295 +03:00 [INF] Starting IdentityServer4 version 4.1.2+997a6cdd643e46cd5762b710c4ddc43574cbec2e
+2021-06-25 18:45:00.315 +03:00 [INF] You are using the in-memory version of the persisted grant store. This will store consent decisions, authorization codes, refresh and reference tokens in memory only. If you are using any of those features in production, you want to switch to a different store implementation.
+2021-06-25 18:45:00.322 +03:00 [INF] Using the default authentication scheme Identity.Application for IdentityServer
+2021-06-25 18:45:04.480 +03:00 [INF] Request GET /api/home/info  => 200
+2021-06-25 18:45:04.706 +03:00 [INF] Request GET /api/home/info
+2021-06-25 18:45:04.718 +03:00 [INF] HTTP GET /api/home/info responded 200 in 234.8517 ms
