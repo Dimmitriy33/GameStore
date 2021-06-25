@@ -10,7 +10,7 @@ namespace WebApp.Web.Startup.Configuration
     {
         private class ExceptionResponse
         {
-            public string Status { get; set; }
+            public int Status { get; set; }
             public string Message { get; set; }
         }
 
@@ -25,7 +25,7 @@ namespace WebApp.Web.Startup.Configuration
 
                     var contextFeature = context.Features.Get<IExceptionHandlerFeature>();
 
-                    if (contextFeature != null)
+                    if (contextFeature is not null)
                     {
                         var exceptionResponse = new ExceptionResponse();
 
@@ -45,7 +45,7 @@ namespace WebApp.Web.Startup.Configuration
                                         break;
                                 }
 
-                                exceptionResponse.Status = customExceptions.ErrorStatus.ToString();
+                                exceptionResponse.Status = (int)customExceptions.ErrorStatus;
                                 exceptionResponse.Message = contextFeature.Error.Message;
                                 break;
                         }

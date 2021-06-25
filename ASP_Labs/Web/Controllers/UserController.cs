@@ -39,7 +39,10 @@ namespace WebApp.Web.Controllers
         [HttpPatch("password")]
         public async Task<IActionResult> ChangePassword([BindRequired, FromBody] JsonPatchDocument patch)
         {
-            var IsChanged = await _userService.ChangePasswordAsync(patch);
+            var user = new ResetPasswordUserDTO();
+            patch.ApplyTo(user);
+
+            var IsChanged = await _userService.ChangePasswordAsync(user);
 
             if (IsChanged.ServiceResultType != ServiceResultType.Success)
             {

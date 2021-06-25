@@ -17,8 +17,8 @@ namespace WebApp.Web.Controllers
 
         #region Constants
 
-        private static string invalidRegisterMessage = "Invalid Register Attempt";
-        private static string invalidConfirmEmailMessage = "Invalid Confirm Email Attempt";
+        private static string InvalidRegisterMessage = "Invalid Register Attempt";
+        private static string InvalidConfirmEmailMessage = "Invalid Confirm Email Attempt";
 
         #endregion
 
@@ -36,7 +36,7 @@ namespace WebApp.Web.Controllers
 
             if (registerStatus.ServiceResultType != ServiceResultType.Success)
             {
-                return BadRequest(invalidRegisterMessage);
+                return BadRequest(InvalidRegisterMessage);
             }
 
             var confirmationLink = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/api/auth/confirm?email={user.Email}&token={registerStatus.Result}";
@@ -44,7 +44,7 @@ namespace WebApp.Web.Controllers
 
             if (!emailResponse)
             {
-                return BadRequest(invalidConfirmEmailMessage);
+                return BadRequest(InvalidConfirmEmailMessage);
             }
 
             return Created(new Uri("api/home/info", UriKind.Relative), null);

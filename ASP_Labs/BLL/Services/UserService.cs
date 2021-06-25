@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.JsonPatch;
 using System;
 using System.Threading.Tasks;
 using WebApp.BLL.Constants;
@@ -16,12 +15,12 @@ namespace WebApp.BLL.Services
     public class UserService : IUserService
     {
         //constants
-        private const string invalidRegisterMessage = "Invalid Register Attempt";
-        private const string invalidLoginMessage = "Invalid Login Attempt";
-        private const string missingRole = "Missing role";
-        private const string notFoundEmail = "Email not found";
-        private const string notConfirmedEmail = "Email not confirmed"; 
-        private const string notFoundUser = "User not found"; 
+        private const string InvalidRegisterMessage = "Invalid Register Attempt";
+        private const string InvalidLoginMessage = "Invalid Login Attempt";
+        private const string MissingRole = "Missing role";
+        private const string NotFoundEmail = "Email not found";
+        private const string NotConfirmedEmail = "Email not confirmed"; 
+        private const string NotFoundUser = "User not found"; 
 
         //services
         private readonly UserManager<ApplicationUser> _userManager;
@@ -54,12 +53,12 @@ namespace WebApp.BLL.Services
 
             if (!tryRegister.Succeeded)
             {
-                return new ServiceResultClass<string>(invalidRegisterMessage, ServiceResultType.Bad_Request);
+                return new ServiceResultClass<string>(InvalidRegisterMessage, ServiceResultType.Bad_Request);
             }
 
             if (!await _roleManager.RoleExistsAsync(RolesConstants.User))
             {
-                return new ServiceResultClass<string>(missingRole, ServiceResultType.Bad_Request);
+                return new ServiceResultClass<string>(MissingRole, ServiceResultType.Bad_Request);
             }
 
             await _userManager.AddToRoleAsync(user, RolesConstants.User);
@@ -74,7 +73,7 @@ namespace WebApp.BLL.Services
             var user = await _userManager.FindByEmailAsync(userDTO.Email);
             if (user is null)
             {
-                return new ServiceResultClass<string>(invalidLoginMessage, ServiceResultType.Invalid_Data);
+                return new ServiceResultClass<string>(InvalidLoginMessage, ServiceResultType.Bad_Request);
             }
             var tryLogin = await _signInManager.PasswordSignInAsync(user.UserName, userDTO.Password, isPersistent: false, false);
 
@@ -84,7 +83,7 @@ namespace WebApp.BLL.Services
                 return new ServiceResultClass<string>(jwtToken, ServiceResultType.Success);
             }
 
-            return new ServiceResultClass<string>(invalidLoginMessage, ServiceResultType.Unauthorized);
+            return new ServiceResultClass<string>(InvalidLoginMessage, ServiceResultType.Unauthorized);
         }
 
         public async Task<ServiceResult> ConfirmEmailAsync(string email, string token)
@@ -92,7 +91,7 @@ namespace WebApp.BLL.Services
             var user = await _userManager.FindByEmailAsync(email);
             if (user is null)
             {
-                return new ServiceResult(notFoundEmail, ServiceResultType.Invalid_Data);
+                return new ServiceResult(NotFoundEmail, ServiceResultType.Invalid_Data);
             }
 
             var codeDecoded = TokenEncodingHelper.Decode(token);
@@ -103,7 +102,7 @@ namespace WebApp.BLL.Services
                 return new ServiceResult(ServiceResultType.Success);
             }
 
-            return new ServiceResult(notConfirmedEmail, ServiceResultType.Bad_Request);
+            return new ServiceResult(NotConfirmedEmail, ServiceResultType.Bad_Request);
         }
 
         public async Task<ServiceResultClass<UserDTO>> UpdateUserInfoAsync(UserDTO user)
@@ -119,16 +118,13 @@ namespace WebApp.BLL.Services
             return new ServiceResultClass<UserDTO>(_mapper.Map<UserDTO>(updatedUser), ServiceResultType.Success);
         }
 
-        public async Task<ServiceResult> ChangePasswordAsync(JsonPatchDocument patch)
+        public async Task<ServiceResult> ChangePasswordAsync(ResetPasswordUserDTO user)
         {
-            var user = new ResetPasswordUserDTO();
-            patch.ApplyTo(user);
-
             var userForUpdate = await _userManager.FindByIdAsync(user.Id.ToString());
 
             if (userForUpdate is null)
             {
-                return new ServiceResult(notFoundUser, ServiceResultType.Bad_Request);
+                return new ServiceResult(NotFoundUser, ServiceResultType.Bad_Request);
             }
 
             await _userRepository.UpdatePasswordAsync(user.Id, user.OldPassword, user.NewPassword);

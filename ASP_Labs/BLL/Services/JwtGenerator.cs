@@ -29,7 +29,7 @@ namespace WebApp.BLL.Services
                 audience: _appSettings.JwtSettings.Audience,
                 notBefore: DateTime.UtcNow,
                 claims: claims.Claims,
-                expires: DateTime.UtcNow.Add(TimeSpan.FromMinutes(double.Parse(_appSettings.JwtSettings.Lifetime))),
+                expires: DateTime.UtcNow.Add(TimeSpan.FromMinutes(_appSettings.JwtSettings.Lifetime)),
                 signingCredentials: new SigningCredentials(key, SecurityAlgorithms.HmacSha256)
             );
 

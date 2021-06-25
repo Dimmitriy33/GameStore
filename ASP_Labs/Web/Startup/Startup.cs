@@ -31,6 +31,7 @@ namespace WebApp.Web.Startup
                 options.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
             });
 
+            services.ValidateSettingParameters(Configuration);
             services.RegisterDatabase(appSettings.DbSettings);
             services.RegisterServices(appSettings);
             services.RegisterAuthencticationSettings(appSettings);
