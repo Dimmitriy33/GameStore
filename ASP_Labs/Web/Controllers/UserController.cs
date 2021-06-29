@@ -37,7 +37,7 @@ namespace WebApp.Web.Controllers
         }
 
         [HttpPatch("password")]
-        public async Task<IActionResult> ChangePassword([BindRequired, FromBody] JsonPatchDocument patch)
+        public async Task<IActionResult> ChangePassword([BindRequired, FromBody] JsonPatchDocument<ResetPasswordUserDTO> patch)
         {
             var user = new ResetPasswordUserDTO();
             patch.ApplyTo(user);
