@@ -11,8 +11,8 @@ namespace WebApp.Web.Startup.Settings
         [Required]
         public string Username { get; set; }
         [Required]
-        public string Password_hash { get; set; }
-        public string ConnectionString => $"Server={Host};Database={Instance};User={Username};Password={Password_hash};integrated security=True;Trusted_Connection=True;MultipleActiveResultSets=true";
+        public string Password { get; set; }
+        public string ConnectionString => $"Server={Host};Database={Instance};User={Username};Password={Password};integrated security=True;Trusted_Connection=True;MultipleActiveResultSets=true";
         public void Validate()
         {
             Validator.ValidateObject(this, new ValidationContext(this), true);

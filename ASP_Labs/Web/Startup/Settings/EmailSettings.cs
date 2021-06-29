@@ -5,7 +5,7 @@ namespace WebApp.Web.Startup.Settings
 {
     public class EmailSettings : IValidatable
     {
-        [Required, DataType(DataType.EmailAddress)]
+        [Required, EmailAddress]
         public string DefaultEmail { get; set; }
         [Required, DataType(DataType.Password)]
         public string DefaultPassword { get; set; }

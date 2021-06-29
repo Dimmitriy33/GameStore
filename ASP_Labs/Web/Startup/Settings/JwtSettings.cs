@@ -1,18 +1,17 @@
 ﻿using NetEscapades.Configuration.Validation;
 using System.ComponentModel.DataAnnotations;
-using WebApp.Web.Validation;
 
 namespace WebApp.Web.Startup.Settings
 {
     public class JwtSettings : IValidatable
     {
-        [DefaultValue]
+        [Required]
         public string TokenKey { get; set; }
-        [DefaultValue]
+        [Required]
         public string Issuer { get; set; }
-        [DefaultValue]
+        [Required]
         public string Audience { get; set; }
-        [DefaultValue]
+        [Range(1, double.MaxValue)]
         public double Lifetime { get; set; }
         public bool ValidateIssuer { get; set; }
         public bool ValidateAudience { get; set; }
