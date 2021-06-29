@@ -17,8 +17,8 @@ namespace WebApp.Web.Controllers
 
         #region Constants
 
-        private static string invalidRegisterMessage = "Invalid Register Attempt";
-        private static string invalidConfirmEmailMessage = "Invalid Confirm Email Attempt";
+        private static string InvalidRegisterMessage = "Invalid Register Attempt";
+        private static string InvalidConfirmEmailMessage = "Invalid Confirm Email Attempt";
 
         #endregion
 
@@ -30,21 +30,21 @@ namespace WebApp.Web.Controllers
         }
 
         [HttpPost("sign-up")]
-        public async Task<IActionResult> Register([BindRequired] UserDTO user)
+        public async Task<IActionResult> Register([BindRequired] AuthUserDTO user)
         {
-            var registerStatus = await _userService.TryRegister(user);
+            var registerStatus = await _userService.TryRegisterAsync(user);
 
-            if (registerStatus.ServiceResultType == ServiceResultType.Error)
+            if (registerStatus.ServiceResultType != ServiceResultType.Success)
             {
-                return BadRequest(invalidRegisterMessage);
+                return BadRequest(InvalidRegisterMessage);
             }
 
             var confirmationLink = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/api/auth/confirm?email={user.Email}&token={registerStatus.Result}";
-            bool emailResponse = await _emailService.SendEmailAsync(user.Email, "Confirm Email", confirmationLink);
+            var emailResponse = await _emailService.SendEmailAsync(user.Email, "Confirm Email", confirmationLink);
 
             if (!emailResponse)
             {
-                return BadRequest(invalidConfirmEmailMessage);
+                return BadRequest(InvalidConfirmEmailMessage);
             }
 
             return Created(new Uri("api/home/info", UriKind.Relative), null);
@@ -52,9 +52,9 @@ namespace WebApp.Web.Controllers
         }
 
         [HttpGet("confirm")]
-        public async Task<IActionResult> ConfirmEmail([BindRequired]string email, [BindRequired] string token)
+        public async Task<IActionResult> ConfirmEmail([BindRequired] string email, [BindRequired] string token)
         {
-            var isConfirmed = await _userService.ConfirmEmail(email, token);
+            var isConfirmed = await _userService.ConfirmEmailAsync(email, token);
 
             if (isConfirmed.ServiceResultType == ServiceResultType.Success)
             {
@@ -65,21 +65,21 @@ namespace WebApp.Web.Controllers
         }
 
         [HttpPost("sign-in")]
-        public async Task<IActionResult> Login([BindRequired] UserDTO user)
+        public async Task<IActionResult> Login([BindRequired] AuthUserDTO user)
         {
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return Unauthorized();
             }
 
-            var loginresult = await _userService.TryLogin(user);
+            var loginResult = await _userService.TryLoginAsync(user);
 
-            if(loginresult.ServiceResultType == ServiceResultType.Error)
+            if (loginResult.ServiceResultType != ServiceResultType.Success)
             {
                 return Unauthorized();
             }
 
-            return Ok(loginresult.Result);
+            return Ok(loginResult.Result);
         }
 
     }

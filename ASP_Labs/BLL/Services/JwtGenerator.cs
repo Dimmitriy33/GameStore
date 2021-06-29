@@ -1,49 +1,57 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using WebApp.BLL.Interfaces;
-using WebApp.DAL.Entities;
+using WebApp.Web.Startup.Settings;
 
 namespace WebApp.BLL.Services
 {
-	public class JwtGenerator : IJwtGenerator
-	{
-		private readonly SymmetricSecurityKey _key;
-		private readonly UserManager<ApplicationUser> _userManager;
+    public class JwtGenerator : IJwtGenerator
+    {
+        private readonly AppSettings _appSettings;
 
-		public JwtGenerator(IConfiguration config, UserManager<ApplicationUser> userManager)
-		{
-			_key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["jwtSettings:TokenKey"]));
-			_userManager = userManager;
-		}
+        public JwtGenerator(AppSettings appSettings)
+        {
+            _appSettings = appSettings;
+        }
 
-		public string CreateToken(ApplicationUser user)
-		{
-			var claims = new List<Claim>
-			{
-				new Claim(JwtRegisteredClaimNames.NameId, user.Id),
-				new Claim(JwtRegisteredClaimNames.NameId, user.UserName),
-				new Claim(JwtRegisteredClaimNames.NameId, _userManager.GetRolesAsync(user).Result[0])
-			};
+        public string CreateToken(Guid userId, string userName, string userRole)
+        {
+            var claims = GetClaims(userId, userName, userRole);
 
-			var credentials = new SigningCredentials(_key, SecurityAlgorithms.HmacSha512Signature);
+            var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_appSettings.JwtSettings.TokenKey));
 
-			var tokenDescriptor = new SecurityTokenDescriptor
-			{
-				Subject = new ClaimsIdentity(claims),
-				Expires = DateTime.Now.AddDays(7),
-				SigningCredentials = credentials
-			};
-			var tokenHandler = new JwtSecurityTokenHandler();
+            var jwtToken = new JwtSecurityToken(
+                issuer: _appSettings.JwtSettings.Issuer,
+                audience: _appSettings.JwtSettings.Audience,
+                notBefore: DateTime.UtcNow,
+                claims: claims.Claims,
+                expires: DateTime.UtcNow.Add(TimeSpan.FromMinutes(_appSettings.JwtSettings.Lifetime)),
+                signingCredentials: new SigningCredentials(key, SecurityAlgorithms.HmacSha256)
+            );
 
-			var token = tokenHandler.CreateToken(tokenDescriptor);
+            var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwtToken);
+            return encodedJwt;
+        }
 
-			return tokenHandler.WriteToken(token);
-		}
-	}
+        private static ClaimsIdentity GetClaims(Guid userId, string userName, string userRole)
+        {
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.NameIdentifier, userId.ToString()),
+                new Claim(ClaimTypes.Role, userRole),
+                new Claim(ClaimTypes.Name, userName),
+            };
+
+            var claimsIdentity = new ClaimsIdentity(
+                claims,
+                "Token"
+            );
+
+            return claimsIdentity;
+        }
+    }
 }

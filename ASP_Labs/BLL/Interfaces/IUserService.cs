@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using WebApp.BLL.DTO;
 using WebApp.BLL.Models;
 
@@ -6,8 +7,11 @@ namespace WebApp.BLL.Interfaces
 {
     public interface IUserService
     {
-        Task<ServiceResultClass<string>> TryRegister(UserDTO userDTO);
-        Task<ServiceResult> ConfirmEmail(string email, string token);
-        Task<ServiceResultClass<string>> TryLogin(UserDTO userDTO);
+        Task<ServiceResultClass<string>> TryRegisterAsync(AuthUserDTO userDTO);
+        Task<ServiceResult> ConfirmEmailAsync(string email, string token);
+        Task<ServiceResultClass<string>> TryLoginAsync(AuthUserDTO userDTO);
+        Task<ServiceResult> ChangePasswordAsync(ResetPasswordUserDTO use);
+        Task<ServiceResultClass<UserDTO>> FindUserByIdAsync(Guid id);
+        Task<ServiceResultClass<UserDTO>> UpdateUserInfoAsync(UserDTO user);
     }
 }

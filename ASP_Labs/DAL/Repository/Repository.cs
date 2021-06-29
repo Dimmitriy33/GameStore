@@ -1,43 +1,84 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using WebApp.DAL.EF;
-using WebApp.DAL.Repository.Interfaces;
+using WebApp.DAL.Interfaces.Database;
 
 namespace WebApp.DAL.Repository
 {
-    public class Repository<T> : IRepository<T> where T : class
+    public abstract class Repository<TContext, T> : IRepository<T>
+        where TContext : ApplicationDbContext
+        where T : class
     {
-        protected readonly ApplicationDbContext _context;
+        protected readonly TContext _dbContext;
+        private readonly DbSet<T> _dbSet;
 
-        public Repository(ApplicationDbContext context)
+        public Repository(TContext dbContext)
         {
-            _context = context;
+            _dbContext = dbContext;
+            _dbSet = _dbContext.Set<T>();
         }
-        public async Task Add(T entity)
+        public async Task<T> CreateAsync(T item)
         {
-            await _context.Set<T>().AddAsync(entity);
+            try
+            {
+                await _dbSet.AddAsync(item);
+
+                await _dbContext.SaveChangesAsync();
+
+                _dbContext.Entry(item).State = EntityState.Detached;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw new Exception($"Could not create item in database. Error: {e.Message}");
+            }
+
+            return item;
         }
 
-        public async Task<T> Get(Guid id)
+        public async Task<int> CountAsync(Expression<Func<T, bool>> expression)
         {
-            return await _context.Set<T>().FindAsync(id);
+            var count = expression == null
+                ? await _dbSet.CountAsync()
+                : await _dbSet.Where(expression).CountAsync();
+
+            return count;
+        }
+        public async Task<T> UpdateItemAsync(T item)
+        {
+            try
+            {
+                _dbSet.Update(item);
+
+                await _dbContext.SaveChangesAsync();
+
+                _dbContext.Entry(item).State = EntityState.Detached;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw new Exception($"Unable to update item. Error: {e.Message}");
+            }
+
+            return item;
         }
 
-        public async Task<IEnumerable<T>> GetAll()
+        public async Task DeleteAsync(Expression<Func<T, bool>> expression)
         {
-            return await _context.Set<T>().ToListAsync();
-        }
+            try
+            {
+                _dbSet.RemoveRange(_dbSet.Where(expression));
 
-        public void Delete(T entity)
-        {
-            _context.Set<T>().Remove(entity);
-        }
-
-        public void Update(T entity)
-        {
-            _context.Set<T>().Update(entity);
+                await _dbContext.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw new Exception($"Unable to remove item or items. Error: {e.Message}");
+            }
         }
     }
 }

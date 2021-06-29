@@ -1,13 +1,10 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.IdentityModel.Tokens;
 using System;
-using System.Text;
 using WebApp.Web.Startup.Configuration;
 using WebApp.Web.Startup.Settings;
 
@@ -27,39 +24,29 @@ namespace WebApp.Web.Startup
         public void ConfigureServices(IServiceCollection services)
         {
             var appSettings = ReadAppSettings(Configuration);
-
             services.AddControllers();
             services.AddSwagger();
-            services.RegisterDatabase(appSettings.DbSettings);
-            services.RegisterServices();
+            services.AddControllersWithViews().AddNewtonsoftJson(options =>
+            {
+                options.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
+            });
 
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(
-                opt =>
-                {
-                    opt.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(appSettings.JwtSettings.TokenKey)),
-                        ValidateAudience = false,
-                        ValidateIssuer = false,
-                    };
-                });
+            services.ValidateSettingParameters(Configuration);
+            services.RegisterDatabase(appSettings.DbSettings);
+            services.RegisterServices(appSettings);
+            services.RegisterAuthencticationSettings(appSettings);
 
             services.AddCors();
-
             services.RegisterIdentity(appSettings);
             services.RegisterIdentityServer();
 
             services.Configure<PasswordHasherOptions>(options =>
                 options.CompatibilityMode = PasswordHasherCompatibilityMode.IdentityV2
 );
-            services.AddSingleton(appSettings);
-            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, RoleManager<IdentityRole> roleManager, IServiceProvider serviceProvider)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IServiceProvider serviceProvider)
         {
 
             var appSettings = ReadAppSettings(Configuration);
@@ -81,6 +68,8 @@ namespace WebApp.Web.Startup
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.RegisterExceptionHandler();
 
             app.UseAuthentication();
 
