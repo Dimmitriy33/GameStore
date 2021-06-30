@@ -6,6 +6,7 @@ using Serilog;
 using Serilog.Events;
 using Serilog.Formatting.Json;
 using System;
+using System.Diagnostics;
 using WebApp.Web.Startup;
 
 namespace ASP_Labs
@@ -16,11 +17,18 @@ namespace ASP_Labs
         {
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Information()
+                .MinimumLevel.Override("Microsoft.EntityFrameworkCore", Serilog.Events.LogEventLevel.Information)
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
                 .WriteTo.File(new JsonFormatter(), "Log/log.json")
                 .WriteTo.File("Log/log.txt")
+                .WriteTo.Console(restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Verbose)
                 .Enrich.FromLogContext()
                 .CreateLogger();
+
+            Serilog.Debugging.SelfLog.Enable(msg =>
+            {
+                Debug.Print(msg);
+            });
 
             try
             {
