@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Serilog;
 using System;
 using WebApp.Web.Startup.Configuration;
 using WebApp.Web.Startup.Settings;
@@ -12,18 +14,23 @@ namespace WebApp.Web.Startup
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, ILoggerFactory loggerFactory)
         {
-            var builder = new ConfigurationBuilder().AddConfiguration(configuration);
-            Configuration = builder.Build();
+            Configuration = configuration;
+            LoggerFactory = loggerFactory;
         }
 
+        private ILoggerFactory LoggerFactory { get; }
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             var appSettings = ReadAppSettings(Configuration);
+
+            services.AddLogging(loggingBuilder =>
+             loggingBuilder.AddSerilog(dispose: true));
+
             services.AddControllers();
             services.AddSwagger();
             services.AddControllersWithViews().AddNewtonsoftJson(options =>
@@ -32,7 +39,7 @@ namespace WebApp.Web.Startup
             });
 
             services.ValidateSettingParameters(Configuration);
-            services.RegisterDatabase(appSettings.DbSettings);
+            services.RegisterDatabase(appSettings.DbSettings, LoggerFactory);
             services.RegisterServices(appSettings);
             services.RegisterAuthencticationSettings(appSettings);
 
@@ -51,6 +58,8 @@ namespace WebApp.Web.Startup
 
             var appSettings = ReadAppSettings(Configuration);
 
+            LoggerFactory.AddSerilog();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -63,13 +72,17 @@ namespace WebApp.Web.Startup
                 #endregion
             }
 
+            app.UseMiddleware<LoggingExtensions>();
+
+            app.UseSerilogRequestLogging();
+
             app.UseIdentityServer();
 
             app.UseHttpsRedirection();
 
             app.UseRouting();
 
-            app.RegisterExceptionHandler();
+            app.RegisterExceptionHandler(LoggerFactory.CreateLogger("Exceptions"));
 
             app.UseAuthentication();
 
