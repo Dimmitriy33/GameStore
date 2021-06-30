@@ -42,7 +42,7 @@ namespace WebApp.Web.Startup
             services.ValidateSettingParameters(Configuration);
             services.RegisterDatabase(appSettings.DbSettings, LoggerFactory);
             services.RegisterServices(appSettings);
-            services.RegisterAuthencticationSettings(appSettings);
+            services.RegisterAuthenticationSettings(appSettings);
 
             services.AddCors();
             services.RegisterIdentity(appSettings);

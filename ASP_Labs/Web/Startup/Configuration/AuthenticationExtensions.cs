@@ -17,7 +17,7 @@ namespace WebApp.Web.Startup.Configuration
 {
     public static class AuthenticationExtensions
     {
-        public static void RegisterAuthencticationSettings(this IServiceCollection services, AppSettings appSettings)
+        public static void RegisterAuthenticationSettings(this IServiceCollection services, AppSettings appSettings)
         {
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(

@@ -14,10 +14,12 @@ namespace WebApp.Web.Startup.Configuration
             //Services
             services.AddTransient<IJwtGenerator, JwtGenerator>();
             services.AddTransient<IUserService, UserService>();
-            services.AddTransient<IEmailService, EmailService>();
+            services.AddTransient<IEmailService, EmailService>(); 
+            services.AddTransient<IProductService, ProductService>();
 
             //Repositories
             services.AddTransient<IUserRepository, UserRepository>();
+            services.AddTransient<IProductRepository, ProductRepository>();
 
             //AppSettings
             services.AddSingleton(appSettings);
