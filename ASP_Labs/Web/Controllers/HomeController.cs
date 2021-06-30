@@ -9,15 +9,21 @@ namespace WebApp.Web.Controllers
     [Route("api/home")]
     public class HomeController : ControllerBase
     {
-        //Constants
-        private const string GetInfoMessage = "Request GET /api/home/info";
+        private readonly ILogger _logger;
+
+        public HomeController(ILogger logger)
+        {
+            _logger = logger;
+        }
 
         [Route("info")]
         [HttpGet]
         [Authorize(Roles = "Admin")]
         public IActionResult GetInfo()
         {
-            Log.Information(GetInfoMessage);
+            string GetInfoMessage = "Request GET /api/home/info";
+
+            _logger.Information(GetInfoMessage);
             return Ok(GetInfoMessage);
         }
     }

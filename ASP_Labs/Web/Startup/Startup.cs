@@ -16,8 +16,7 @@ namespace WebApp.Web.Startup
     {
         public Startup(IConfiguration configuration, ILoggerFactory loggerFactory)
         {
-            var builder = new ConfigurationBuilder().AddConfiguration(configuration);
-            Configuration = builder.Build();
+            Configuration = configuration;
             LoggerFactory = loggerFactory;
         }
 
@@ -54,12 +53,12 @@ namespace WebApp.Web.Startup
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IServiceProvider serviceProvider, ILoggerFactory loggerfactory)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IServiceProvider serviceProvider)
         {
 
             var appSettings = ReadAppSettings(Configuration);
 
-            loggerfactory.AddSerilog();
+            LoggerFactory.AddSerilog();
 
             if (env.IsDevelopment())
             {
@@ -83,7 +82,7 @@ namespace WebApp.Web.Startup
 
             app.UseRouting();
 
-            app.RegisterExceptionHandler(loggerfactory.CreateLogger("Exceptions"));
+            app.RegisterExceptionHandler(LoggerFactory.CreateLogger("Exceptions"));
 
             app.UseAuthentication();
 

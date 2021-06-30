@@ -23,7 +23,7 @@ namespace WebApp.Web.Startup.Configuration
                 context.Request.EnableBuffering();
                 var jsonBody = string.Empty;
 
-                if (context.Request != null && context.Request.Body != null)
+                if (context.Request is not null && context.Request.Body is not null)
                 {
                     context.Request.EnableBuffering();
                     jsonBody = await new StreamReader(context.Request.Body).ReadToEndAsync();
