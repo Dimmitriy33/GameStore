@@ -21,10 +21,15 @@ namespace WebApp.Web.Controllers
             _productService = productService;
         }
 
+        /// <summary>
+        /// Get top three popular platforms
+        /// </summary>
+        /// <response code="200">Found games successfully</response>
+        /// <response code="404">Unable to find games</response>
         [HttpGet("top-platforms")]
-        public async Task<IActionResult> GetTopPlatforms()
+        public async Task<ActionResult> GetTopThreePlatforms()
         {
-            var platforms = await _productService.GetTopThreePlatforms();
+            var platforms = await _productService.GetTopPlatformsAsync(3);
 
             if (platforms.ServiceResultType is not ServiceResultType.Success)
             {
@@ -34,10 +39,18 @@ namespace WebApp.Web.Controllers
             return Ok(platforms.Result);
         }
 
+        /// <summary>
+        /// Search games by input string
+        /// </summary>
+        /// /// <param name="term">Search part</param>
+        /// /// <param name="limit">Maximum number of received items</param>
+        /// /// <param name="offset">Amount of items you may skip</param>
+        /// <response code="200">Found games successfully</response>
+        /// <response code="404">Unable to find games</response>
         [HttpGet("search")]
-        public async Task<IActionResult> GetTopPlatforms([BindRequired, FromQuery]string term, [BindRequired, FromQuery] int limit, [BindRequired, FromQuery] int offset)
+        public async Task<ActionResult> SearchGamesByName([BindRequired, FromQuery]string term, [BindRequired, FromQuery] int limit, [BindRequired, FromQuery] int offset)
         {
-            var games = await _productService.SearchGamesByName(term, limit,offset);
+            var games = await _productService.SearchGamesByNameAsync(term, limit,offset);
 
             if (games.ServiceResultType is not ServiceResultType.Success)
             {

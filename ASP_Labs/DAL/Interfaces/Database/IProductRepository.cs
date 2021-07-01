@@ -7,7 +7,7 @@ namespace WebApp.DAL.Interfaces.Database
 {
     public interface IProductRepository : IRepository<Product>
     {
-        Task<List<Product>> GetProductByName(string term, int limit, int offset);
-        Task<List<Platforms>> GetTopThreePopularPlatforms();
+        Task<List<Product>> GetProductByNameAsync(string term, int limit, int offset);
+        Task<List<Platforms>> GetTopPopularPlatformsAsync(int count);
     }
 }

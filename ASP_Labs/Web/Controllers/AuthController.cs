@@ -32,8 +32,14 @@ namespace WebApp.Web.Controllers
             _emailService = emailService;
         }
 
+        /// <summary>
+        /// Create user (sign up)
+        /// </summary>
+        /// <param name="user">AuthenticationUser model</param>
+        /// <response code="201">Successful customer registration</response>
+        /// <response code="400">Failed customer registration</response>
         [HttpPost("sign-up")]
-        public async Task<IActionResult> Register([BindRequired] AuthUserDTO user)
+        public async Task<ActionResult> Register([BindRequired] AuthUserDTO user)
         {
             var registerStatus = await _userService.TryRegisterAsync(user);
 
@@ -53,8 +59,15 @@ namespace WebApp.Web.Controllers
             return Created(new Uri("api/home/info", UriKind.Relative), null);
         }
 
+        /// <summary>
+        /// Confirm user email (confirm email)
+        /// </summary>
+        /// <param email="email">User email</param>
+        /// <param token="token">User access token</param>
+        /// <response code="200">Successful user email confirmation</response>
+        /// <response code="400">Failed user email confirmation</response>
         [HttpGet("confirm")]
-        public async Task<IActionResult> ConfirmEmail([BindRequired] string email, [BindRequired] string token)
+        public async Task<ActionResult> ConfirmEmail([BindRequired] string email, [BindRequired] string token)
         {
             var isConfirmed = await _userService.ConfirmEmailAsync(email, token);
 
@@ -66,8 +79,14 @@ namespace WebApp.Web.Controllers
             return BadRequest(isConfirmed.Message);
         }
 
+        /// <summary>
+        /// Authenticate user (sign in)
+        /// </summary>
+        /// <param name="user">AuthenticationUser model</param>
+        /// <response code="200">Successful authentication</response>
+        /// <response code="401">Failed authentication</response>
         [HttpPost("sign-in")]
-        public async Task<IActionResult> Login([BindRequired] AuthUserDTO user)
+        public async Task<ActionResult> Login([BindRequired] AuthUserDTO user)
         {
             if (!ModelState.IsValid)
             {

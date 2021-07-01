@@ -13,34 +13,29 @@ namespace WebApp.BLL.Services
         private const string NotFoundPlatforms = "Platforms not found";
         private const string NotFoundGames = "Games not found";
 
-        //services
+        //repositories
         private readonly IProductRepository _productRepository;
+
         public ProductService(IProductRepository productRepository)
         {
             _productRepository = productRepository;
         }
 
-        public async Task<ServiceResultClass<List<string>>> GetTopThreePlatforms()
+        public async Task<ServiceResultClass<List<string>>> GetTopPlatformsAsync(int count)
         {
-            var platforms = await _productRepository.GetTopThreePopularPlatforms();
+            var platforms = await _productRepository.GetTopPopularPlatformsAsync(count);
 
             if(platforms is null)
             {
                 return new ServiceResultClass<List<string>>(NotFoundPlatforms,ServiceResultType.Internal_Server_Error);
             }
 
-            var list = new List<string>();
-            foreach(var pl in platforms)
-            {
-                list.Add(pl.ToString());
-            }
-
-            return new ServiceResultClass<List<string>>(list, ServiceResultType.Success);
+            return new ServiceResultClass<List<string>>(platforms.ConvertAll(p => p.ToString()), ServiceResultType.Success);
         }
 
-        public async Task<ServiceResultClass<List<Product>>> SearchGamesByName(string term, int limit, int offset)
+        public async Task<ServiceResultClass<List<Product>>> SearchGamesByNameAsync(string term, int limit, int offset)
         {
-            var games = await _productRepository.GetProductByName(term, limit, offset);
+            var games = await _productRepository.GetProductByNameAsync(term, limit, offset);
 
             if(games is null)
             {

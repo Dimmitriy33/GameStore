@@ -7,7 +7,7 @@ namespace WebApp.BLL.Interfaces
 {
     public interface IProductService
     {
-        Task<ServiceResultClass<List<string>>> GetTopThreePlatforms();
-        Task<ServiceResultClass<List<Product>>> SearchGamesByName(string term, int limit, int offset);
+        Task<ServiceResultClass<List<string>>> GetTopPlatformsAsync(int count);
+        Task<ServiceResultClass<List<Product>>> SearchGamesByNameAsync(string term, int limit, int offset);
     }
 }

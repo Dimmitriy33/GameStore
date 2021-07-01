@@ -27,8 +27,14 @@ namespace WebApp.Web.Controllers
             _claimsHelper = claimsHelper;
         }
 
+        /// <summary>
+        /// Update user information
+        /// </summary>
+        /// /// <param name="user">User for update</param>
+        /// <response code="200">Successful update</response>
+        /// <response code="400">Failed update</response>
         [HttpPut]
-        public async Task<IActionResult> Update([BindRequired] UserDTO user)
+        public async Task<ActionResult> Update([BindRequired] UserDTO user)
         {
             var updatedUser = await _userService.UpdateUserInfoAsync(user);
 
@@ -40,8 +46,13 @@ namespace WebApp.Web.Controllers
             return Ok(updatedUser);
         }
 
+        /// <summary>
+        /// Change user password
+        /// </summary>
+        /// <response code="200">Password successfully changed</response>
+        /// <response code="400">Failed password change</response>
         [HttpPatch("password")]
-        public async Task<IActionResult> ChangePassword([BindRequired, FromBody] JsonPatchDocument<ResetPasswordUserDTO> patch)
+        public async Task<ActionResult> ChangePassword([BindRequired, FromBody] JsonPatchDocument<ResetPasswordUserDTO> patch)
         {
             var user = new ResetPasswordUserDTO();
             patch.ApplyTo(user);
@@ -56,8 +67,13 @@ namespace WebApp.Web.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Get user by id
+        /// </summary>
+        /// <response code="200">Found user successfully</response>
+        /// <response code="400">Failed to find user</response>
         [HttpGet]
-        public async Task<IActionResult> GetUser()
+        public async Task<ActionResult> GetUser()
         {
             var result = _claimsHelper.GetUserId(User);
             if (result.ServiceResultType is not ServiceResultType.Success)

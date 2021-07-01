@@ -19,10 +19,14 @@ namespace WebApp.Web.Controllers
             _logger = logger;
         }
 
+        /// <summary>
+        /// Get information
+        /// </summary>
+        /// <response code="200">Output message</response>
         [Route("info")]
         [HttpGet]
         [Authorize(Roles = "Admin")]
-        public IActionResult GetInfo()
+        public ActionResult GetInfo()
         {
             string GetInfoMessage = "Request GET /api/home/info";
 

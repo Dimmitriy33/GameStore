@@ -15,7 +15,7 @@ namespace WebApp.DAL.Repository
         {
         }
 
-        public async Task<List<Platforms>> GetTopThreePopularPlatforms()
+        public async Task<List<Platforms>> GetTopPopularPlatformsAsync(int count)
         {
             var result = await _dbContext.Products
                 .AsNoTracking()
@@ -23,13 +23,13 @@ namespace WebApp.DAL.Repository
                 .GroupBy(t => t.Platform)
                 .OrderByDescending(t => t.Count())
                 .Select(t=>t.Key)
-                .Take(3)
+                .Take(count)
                 .ToListAsync();
 
             return result;
         }
 
-        public async Task<List<Product>> GetProductByName(string term, int limit, int offset)
+        public async Task<List<Product>> GetProductByNameAsync(string term, int limit, int offset)
         {
             var result = await _dbContext.Products
                 .AsNoTracking()
