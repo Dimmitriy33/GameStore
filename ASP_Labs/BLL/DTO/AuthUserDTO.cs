@@ -4,9 +4,9 @@ namespace WebApp.BLL.DTO
 {
     public class AuthUserDTO
     {
-        [Required]
+        [Required, EmailAddress]
         public string Email { get; set; }
-        [Required]
+        [Required, StringLength(32, MinimumLength = 6)]
         public string Password { get; set; }
     }
 }

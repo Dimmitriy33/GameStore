@@ -6,9 +6,9 @@ namespace WebApp.BLL.Models
     {
         public ServiceResultType ErrorStatus { get; }
 
-        public CustomExceptions() { }
+        public CustomExceptions() {}
 
-        public CustomExceptions(string message) : base(message) { }
+        public CustomExceptions(string message) : base(message) {}
 
         public CustomExceptions(ServiceResultType errorStatus, string message) : base(message)
         {

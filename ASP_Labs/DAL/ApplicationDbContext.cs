@@ -4,7 +4,7 @@ using System;
 using WebApp.DAL.Configuration;
 using WebApp.DAL.Entities;
 
-namespace WebApp.DAL.EF
+namespace WebApp.DAL
 {
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, Guid>
     {

@@ -9,7 +9,7 @@ namespace WebApp.BLL.DTO
         public Guid Id { get; set; }
         [Required]
         public string OldPassword { get; set; }
-        [Required]
+        [Required, StringLength(100, MinimumLength = 6)]
         public string NewPassword { get; set; }
     }
 }

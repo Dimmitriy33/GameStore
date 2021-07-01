@@ -3,7 +3,6 @@ using System;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using WebApp.DAL.EF;
 using WebApp.DAL.Interfaces.Database;
 
 namespace WebApp.DAL.Repository

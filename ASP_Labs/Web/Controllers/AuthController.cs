@@ -12,8 +12,12 @@ namespace WebApp.Web.Controllers
     [Route("api/auth")]
     public class AuthController : Controller
     {
+        #region Services
+
         private readonly IUserService _userService;
         private readonly IEmailService _emailService;
+
+        #endregion
 
         #region Constants
 
@@ -21,7 +25,6 @@ namespace WebApp.Web.Controllers
         private static string InvalidConfirmEmailMessage = "Invalid Confirm Email Attempt";
 
         #endregion
-
 
         public AuthController(IUserService userService, IEmailService emailService)
         {
@@ -34,7 +37,7 @@ namespace WebApp.Web.Controllers
         {
             var registerStatus = await _userService.TryRegisterAsync(user);
 
-            if (registerStatus.ServiceResultType != ServiceResultType.Success)
+            if (registerStatus.ServiceResultType is not ServiceResultType.Success)
             {
                 return BadRequest(InvalidRegisterMessage);
             }
@@ -48,7 +51,6 @@ namespace WebApp.Web.Controllers
             }
 
             return Created(new Uri("api/home/info", UriKind.Relative), null);
-
         }
 
         [HttpGet("confirm")]
@@ -56,7 +58,7 @@ namespace WebApp.Web.Controllers
         {
             var isConfirmed = await _userService.ConfirmEmailAsync(email, token);
 
-            if (isConfirmed.ServiceResultType == ServiceResultType.Success)
+            if (isConfirmed.ServiceResultType is ServiceResultType.Success)
             {
                 return Ok();
             }
@@ -74,13 +76,12 @@ namespace WebApp.Web.Controllers
 
             var loginResult = await _userService.TryLoginAsync(user);
 
-            if (loginResult.ServiceResultType != ServiceResultType.Success)
+            if (loginResult.ServiceResultType is not ServiceResultType.Success)
             {
                 return Unauthorized();
             }
 
-            return Ok(loginResult.Result);
+            return Ok(loginResult.Message);
         }
-
     }
 }

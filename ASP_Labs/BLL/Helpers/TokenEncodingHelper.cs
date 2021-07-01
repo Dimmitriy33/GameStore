@@ -1,32 +1,38 @@
 ﻿using Microsoft.AspNetCore.WebUtilities;
 using System.Text;
+using WebApp.BLL.Interfaces;
 using WebApp.BLL.Models;
 
 namespace WebApp.BLL.Helpers
 {
-    public static class TokenEncodingHelper
+    public class TokenEncodingHelper : ITokenEncodingHelper
     {
         //constants
-        private const string invalidTokenMessage = "Invalid token";
-        public static string Encode(string token)
+        private const string InvalidTokenMessage = "Invalid token";
+
+        public string Encode(string token)
         {
             if (token is null)
             {
-                throw new CustomExceptions(ServiceResultType.Bad_Request, invalidTokenMessage);
+                throw new CustomExceptions(ServiceResultType.Bad_Request, InvalidTokenMessage);
             }
+
             var tokenGeneratedBytes = Encoding.UTF8.GetBytes(token);
             var codeEncoded = WebEncoders.Base64UrlEncode(tokenGeneratedBytes);
+
             return codeEncoded;
         }
 
-        public static string Decode(string token)
+        public string Decode(string token)
         {
             if (token is null)
             {
-                throw new CustomExceptions(ServiceResultType.Bad_Request, invalidTokenMessage);
+                throw new CustomExceptions(ServiceResultType.Bad_Request, InvalidTokenMessage);
             }
+
             var codeDecodedBytes = WebEncoders.Base64UrlDecode(token);
             var codeDecoded = Encoding.UTF8.GetString(codeDecodedBytes);
+
             return codeDecoded;
         }
     }

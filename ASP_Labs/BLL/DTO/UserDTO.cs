@@ -7,7 +7,7 @@ namespace WebApp.BLL.DTO
     {
         [Required]
         public Guid Id { get; set; }
-        [Required]
+        [Required, StringLength(100, MinimumLength = 6)]
         public string UserName { get; set; }
         [Required]
         public string ConcurrencyStamp { get; set; }

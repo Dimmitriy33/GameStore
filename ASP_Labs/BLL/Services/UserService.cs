@@ -4,7 +4,6 @@ using System;
 using System.Threading.Tasks;
 using WebApp.BLL.Constants;
 using WebApp.BLL.DTO;
-using WebApp.BLL.Helpers;
 using WebApp.BLL.Interfaces;
 using WebApp.BLL.Models;
 using WebApp.DAL.Entities;
@@ -27,11 +26,12 @@ namespace WebApp.BLL.Services
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly RoleManager<ApplicationRole> _roleManager;
         private readonly IJwtGenerator _jwtGenerator;
+        private readonly ITokenEncodingHelper _tokenEncodingHelper;
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
 
         public UserService(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IJwtGenerator jwtGenerator,
-            RoleManager<ApplicationRole> roleManager, IUserRepository userRepository, IMapper mapper)
+            RoleManager<ApplicationRole> roleManager, IUserRepository userRepository, IMapper mapper, ITokenEncodingHelper tokenEncodingHelper)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -39,6 +39,7 @@ namespace WebApp.BLL.Services
             _jwtGenerator = jwtGenerator;
             _userRepository = userRepository;
             _mapper = mapper;
+            _tokenEncodingHelper = tokenEncodingHelper;
         }
 
         public async Task<ServiceResultClass<string>> TryRegisterAsync(AuthUserDTO userDTO)
@@ -63,7 +64,7 @@ namespace WebApp.BLL.Services
 
             await _userManager.AddToRoleAsync(user, RolesConstants.User);
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-            var codeEncoded = TokenEncodingHelper.Encode(token);
+            var codeEncoded = _tokenEncodingHelper.Encode(token);
 
             return new ServiceResultClass<string>(codeEncoded, ServiceResultType.Success);
         }
@@ -94,7 +95,7 @@ namespace WebApp.BLL.Services
                 return new ServiceResult(NotFoundEmail, ServiceResultType.Invalid_Data);
             }
 
-            var codeDecoded = TokenEncodingHelper.Decode(token);
+            var codeDecoded = _tokenEncodingHelper.Decode(token);
             var result = await _userManager.ConfirmEmailAsync(user, codeDecoded);
 
             if (result.Succeeded)
