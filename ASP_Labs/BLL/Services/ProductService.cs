@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using WebApp.BLL.Interfaces;
 using WebApp.BLL.Models;
@@ -13,8 +14,9 @@ namespace WebApp.BLL.Services
         private const string NotFoundPlatforms = "Platforms not found";
         private const string NotFoundGames = "Games not found";
 
-        //services
+        //repositories
         private readonly IProductRepository _productRepository;
+
         public ProductService(IProductRepository productRepository)
         {
             _productRepository = productRepository;
@@ -22,7 +24,7 @@ namespace WebApp.BLL.Services
 
         public async Task<ServiceResultClass<List<string>>> GetTopThreePlatforms()
         {
-            var platforms = await _productRepository.GetTopThreePopularPlatforms();
+            var platforms = await _productRepository.GetTopThreePopularPlatformsAsync();
 
             if(platforms is null)
             {
@@ -40,7 +42,7 @@ namespace WebApp.BLL.Services
 
         public async Task<ServiceResultClass<List<Product>>> SearchGamesByName(string term, int limit, int offset)
         {
-            var games = await _productRepository.GetProductByName(term, limit, offset);
+            var games = await _productRepository.GetProductByNameAsync(term, limit, offset);
 
             if(games is null)
             {
@@ -48,6 +50,18 @@ namespace WebApp.BLL.Services
             }
 
             return new ServiceResultClass<List<Product>>(games, ServiceResultType.Success);
+        }
+
+        public async Task<ServiceResultClass<Product>> GetGameByIdAsync(Guid id)
+        {
+            var game = await _productRepository.GetGameByIdAsync(id);
+
+            if(game is null)
+            {
+                return new ServiceResultClass<Product>(ServiceResultType.Not_Found);
+            }
+
+            return new ServiceResultClass<Product>(game, ServiceResultType.Success);
         }
     }
 }

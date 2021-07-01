@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using System;
 using System.Threading.Tasks;
 using WebApp.BLL.Interfaces;
 using WebApp.BLL.Models;
@@ -45,6 +46,19 @@ namespace WebApp.Web.Controllers
             }
 
             return Ok(games.Result);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetGameById([BindRequired] Guid id)
+        {
+            var game = await _productService.GetGameByIdAsync(id);
+
+            if(game.ServiceResultType is not ServiceResultType.Success)
+            {
+                return StatusCode((int)game.ServiceResultType);
+            }
+
+            return Ok(game);
         }
     }
 }

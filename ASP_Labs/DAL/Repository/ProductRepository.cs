@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,7 +16,7 @@ namespace WebApp.DAL.Repository
         {
         }
 
-        public async Task<List<Platforms>> GetTopThreePopularPlatforms()
+        public async Task<List<Platforms>> GetTopThreePopularPlatformsAsync()
         {
             var result = await _dbContext.Products
                 .AsNoTracking()
@@ -29,7 +30,7 @@ namespace WebApp.DAL.Repository
             return result;
         }
 
-        public async Task<List<Product>> GetProductByName(string term, int limit, int offset)
+        public async Task<List<Product>> GetProductByNameAsync(string term, int limit, int offset)
         {
             var result = await _dbContext.Products
                 .AsNoTracking()
@@ -40,5 +41,8 @@ namespace WebApp.DAL.Repository
 
             return result;
         }
+
+        public async Task<Product> GetGameByIdAsync(Guid id) => 
+            await _dbContext.Products.Where(t => t.Id.Equals(id)).FirstOrDefaultAsync();
     }
 }

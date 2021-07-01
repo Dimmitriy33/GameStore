@@ -12,5 +12,11 @@ namespace WebApp.DAL.Entities
         public Platforms Platform { get; set; }
         public DateTime DateCreated { get; set; }
         public decimal TotalRating { get; set; }
+        public GamesGenres Genre { get; set; }
+        public GamesRating Rating { get; set; }
+        public string Logo { get; set; }
+        public string Background { get; set; }
+        public decimal Price { get; set; }
+        public int Count { get; set; }
     }
 }

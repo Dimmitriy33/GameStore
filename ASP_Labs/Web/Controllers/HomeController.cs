@@ -14,6 +14,7 @@ namespace WebApp.Web.Controllers
         private readonly ILogger<HomeController> _logger;
 
         #endregion
+
         public HomeController(ILogger<HomeController> logger)
         {
             _logger = logger;
