@@ -4,7 +4,6 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using WebApp.BLL.DTO;
-using WebApp.DAL.EF;
 using WebApp.DAL.Entities;
 using WebApp.DAL.Interfaces.Database;
 

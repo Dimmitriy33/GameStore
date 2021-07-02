@@ -4,7 +4,6 @@ using System;
 using System.Threading.Tasks;
 using WebApp.BLL.Constants;
 using WebApp.BLL.DTO;
-using WebApp.BLL.Helpers;
 using WebApp.BLL.Interfaces;
 using WebApp.BLL.Models;
 using WebApp.DAL.Entities;
@@ -14,24 +13,36 @@ namespace WebApp.BLL.Services
 {
     public class UserService : IUserService
     {
-        //constants
+        #region Constants
+
         private const string InvalidRegisterMessage = "Invalid Register Attempt";
         private const string InvalidLoginMessage = "Invalid Login Attempt";
         private const string MissingRole = "Missing role";
         private const string NotFoundEmail = "Email not found";
         private const string NotConfirmedEmail = "Email not confirmed"; 
-        private const string NotFoundUser = "User not found"; 
+        private const string NotFoundUser = "User not found";
 
-        //services
+        #endregion
+
+        #region Services
+
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly RoleManager<ApplicationRole> _roleManager;
         private readonly IJwtGenerator _jwtGenerator;
-        private readonly IUserRepository _userRepository;
+        private readonly ITokenEncodingHelper _tokenEncodingHelper;
         private readonly IMapper _mapper;
 
+        #endregion
+
+        #region Repositories
+
+        private readonly IUserRepository _userRepository;
+
+        #endregion
+
         public UserService(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IJwtGenerator jwtGenerator,
-            RoleManager<ApplicationRole> roleManager, IUserRepository userRepository, IMapper mapper)
+            RoleManager<ApplicationRole> roleManager, IUserRepository userRepository, IMapper mapper, ITokenEncodingHelper tokenEncodingHelper)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -39,6 +50,7 @@ namespace WebApp.BLL.Services
             _jwtGenerator = jwtGenerator;
             _userRepository = userRepository;
             _mapper = mapper;
+            _tokenEncodingHelper = tokenEncodingHelper;
         }
 
         public async Task<ServiceResultClass<string>> TryRegisterAsync(AuthUserDTO userDTO)
@@ -63,7 +75,7 @@ namespace WebApp.BLL.Services
 
             await _userManager.AddToRoleAsync(user, RolesConstants.User);
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-            var codeEncoded = TokenEncodingHelper.Encode(token);
+            var codeEncoded = _tokenEncodingHelper.Encode(token);
 
             return new ServiceResultClass<string>(codeEncoded, ServiceResultType.Success);
         }
@@ -75,7 +87,8 @@ namespace WebApp.BLL.Services
             {
                 return new ServiceResultClass<string>(InvalidLoginMessage, ServiceResultType.Bad_Request);
             }
-            var tryLogin = await _signInManager.PasswordSignInAsync(user.UserName, userDTO.Password, isPersistent: false, false);
+
+            var tryLogin = await _signInManager.CheckPasswordSignInAsync(user, userDTO.Password, false);
 
             if (tryLogin.Succeeded)
             {
@@ -94,7 +107,7 @@ namespace WebApp.BLL.Services
                 return new ServiceResult(NotFoundEmail, ServiceResultType.Invalid_Data);
             }
 
-            var codeDecoded = TokenEncodingHelper.Decode(token);
+            var codeDecoded = _tokenEncodingHelper.Decode(token);
             var result = await _userManager.ConfirmEmailAsync(user, codeDecoded);
 
             if (result.Succeeded)

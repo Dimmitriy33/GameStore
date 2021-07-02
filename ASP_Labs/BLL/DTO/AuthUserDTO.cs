@@ -4,9 +4,18 @@ namespace WebApp.BLL.DTO
 {
     public class AuthUserDTO
     {
-        [Required]
+        /// <summary>
+        /// User Email
+        /// </summary>
+        /// <example>string@gmail.com</example>
+        [Required, EmailAddress]
         public string Email { get; set; }
-        [Required]
+
+        /// <summary>
+        /// User password
+        /// </summary>
+        /// <example>HelloMyNameIsZuzi228</example>
+        [Required, StringLength(32, MinimumLength = 6)]
         public string Password { get; set; }
     }
 }

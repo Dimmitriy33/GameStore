@@ -5,6 +5,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Serialization;
 using Serilog;
 using System;
 using WebApp.Web.Startup.Configuration;
@@ -31,21 +33,21 @@ namespace WebApp.Web.Startup
             services.AddLogging(loggingBuilder =>
              loggingBuilder.AddSerilog(dispose: true));
 
-            services.AddControllers();
-            services.AddSwagger();
-            services.AddControllersWithViews().AddNewtonsoftJson(options =>
+            services.AddControllers().AddNewtonsoftJson(options =>
             {
                 options.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
+                options.SerializerSettings.Converters.Add(new StringEnumConverter { NamingStrategy = new CamelCaseNamingStrategy() });
             });
+
+            services.AddSwagger();
 
             services.ValidateSettingParameters(Configuration);
             services.RegisterDatabase(appSettings.DbSettings, LoggerFactory);
             services.RegisterServices(appSettings);
-            services.RegisterAuthencticationSettings(appSettings);
+            services.RegisterAuthenticationSettings(appSettings);
 
             services.AddCors();
             services.RegisterIdentity(appSettings);
-            services.RegisterIdentityServer();
 
             services.Configure<PasswordHasherOptions>(options =>
                 options.CompatibilityMode = PasswordHasherCompatibilityMode.IdentityV2
@@ -64,19 +66,20 @@ namespace WebApp.Web.Startup
             {
                 app.UseDeveloperExceptionPage();
 
-                app.UseCors(builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
-
                 #region Swagger
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "ASP_Labs v1"));
                 #endregion
             }
 
+            app.UseCors(builder => 
+                builder.AllowAnyOrigin()
+                    .AllowAnyHeader()
+                    .AllowAnyMethod());
+
             app.UseMiddleware<LoggingExtensions>();
 
             app.UseSerilogRequestLogging();
-
-            app.UseIdentityServer();
 
             app.UseHttpsRedirection();
 
@@ -88,7 +91,9 @@ namespace WebApp.Web.Startup
 
             app.UseAuthorization();
 
-            AuthenticationExtensions.SeedRoles(serviceProvider, appSettings.IdentitySettings.Roles).Wait();
+            AuthenticationExtensions
+                .SeedRoles(serviceProvider, appSettings.IdentitySettings.Roles)
+                .Wait();
 
             app.UseEndpoints(endpoints =>
             {

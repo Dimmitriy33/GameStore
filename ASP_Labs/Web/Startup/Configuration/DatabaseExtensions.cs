@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using WebApp.DAL.EF;
+using WebApp.DAL;
 using WebApp.Web.Startup.Settings;
 
 namespace WebApp.Web.Startup.Configuration

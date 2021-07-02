@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using WebApp.BLL.Helpers;
 using WebApp.BLL.Interfaces;
 using WebApp.BLL.Services;
 using WebApp.DAL.Interfaces.Database;
@@ -14,10 +15,14 @@ namespace WebApp.Web.Startup.Configuration
             //Services
             services.AddTransient<IJwtGenerator, JwtGenerator>();
             services.AddTransient<IUserService, UserService>();
-            services.AddTransient<IEmailService, EmailService>();
+            services.AddTransient<IEmailService, EmailService>(); 
+            services.AddTransient<IProductService, ProductService>();
+            services.AddTransient<IClaimsReader, ClaimsReader>();
+            services.AddTransient<ITokenEncodingHelper, TokenEncodingHelper>();
 
             //Repositories
             services.AddTransient<IUserRepository, UserRepository>();
+            services.AddTransient<IProductRepository, ProductRepository>();
 
             //AppSettings
             services.AddSingleton(appSettings);

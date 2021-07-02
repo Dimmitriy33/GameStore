@@ -1,7 +1,7 @@
 ﻿
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Serilog;
+using Microsoft.Extensions.Logging;
 
 namespace WebApp.Web.Controllers
 {
@@ -9,21 +9,28 @@ namespace WebApp.Web.Controllers
     [Route("api/home")]
     public class HomeController : ControllerBase
     {
-        private readonly ILogger _logger;
+        #region Services
 
-        public HomeController(ILogger logger)
+        private readonly ILogger<HomeController> _logger;
+
+        #endregion
+        public HomeController(ILogger<HomeController> logger)
         {
             _logger = logger;
         }
 
+        /// <summary>
+        /// Get information
+        /// </summary>
+        /// <response code="200">Output message</response>
         [Route("info")]
         [HttpGet]
         [Authorize(Roles = "Admin")]
-        public IActionResult GetInfo()
+        public ActionResult<string> GetInfo()
         {
             string GetInfoMessage = "Request GET /api/home/info";
 
-            _logger.Information(GetInfoMessage);
+            _logger.LogInformation(GetInfoMessage);
             return Ok(GetInfoMessage);
         }
     }

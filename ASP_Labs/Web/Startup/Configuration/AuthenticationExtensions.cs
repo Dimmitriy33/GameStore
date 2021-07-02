@@ -1,5 +1,4 @@
-﻿using IdentityServer4.Stores;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
@@ -9,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using WebApp.BLL.Models;
-using WebApp.DAL.EF;
+using WebApp.DAL;
 using WebApp.DAL.Entities;
 using WebApp.Web.Startup.Settings;
 
@@ -17,20 +16,20 @@ namespace WebApp.Web.Startup.Configuration
 {
     public static class AuthenticationExtensions
     {
-        public static void RegisterAuthencticationSettings(this IServiceCollection services, AppSettings appSettings)
+        public static void RegisterAuthenticationSettings(this IServiceCollection services, AppSettings appSettings)
         {
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(
-                opt =>
-                {
-                    opt.TokenValidationParameters = new TokenValidationParameters
+                    opt =>
                     {
-                        ValidateIssuerSigningKey = appSettings.JwtSettings.ValidateIssuerSigningKey,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(appSettings.JwtSettings.TokenKey)),
-                        ValidateAudience = appSettings.JwtSettings.ValidateAudience,
-                        ValidateIssuer = appSettings.JwtSettings.ValidateIssuer
-                    };
-                });
+                        opt.TokenValidationParameters = new TokenValidationParameters
+                        {
+                            ValidateIssuerSigningKey = appSettings.JwtSettings.ValidateIssuerSigningKey,
+                            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(appSettings.JwtSettings.TokenKey)),
+                            ValidateAudience = appSettings.JwtSettings.ValidateAudience,
+                            ValidateIssuer = appSettings.JwtSettings.ValidateIssuer
+                        };
+                    });
         }
         public static void RegisterIdentity(this IServiceCollection services, AppSettings appSettings)
         {
@@ -46,14 +45,6 @@ namespace WebApp.Web.Startup.Configuration
                     .AddRoles<ApplicationRole>()
                     .AddDefaultTokenProviders()
                     .AddEntityFrameworkStores<ApplicationDbContext>();
-        }
-
-        public static void RegisterIdentityServer(this IServiceCollection services)
-        {
-            services.AddIdentityServer().AddAspNetIdentity<ApplicationUser>()
-                .AddInMemoryCaching()
-                .AddClientStore<InMemoryClientStore>()
-                .AddResourceStore<InMemoryResourcesStore>();
         }
 
         public static async Task SeedRoles(IServiceProvider serviceProvider, ICollection<string> roles)

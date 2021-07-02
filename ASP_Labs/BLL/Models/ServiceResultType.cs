@@ -2,7 +2,7 @@
 {
     public enum ServiceResultType
     {
-        Success,
+        Success = 200,
         Bad_Request = 400,
         Invalid_Data = 422,
         Not_Found = 404,

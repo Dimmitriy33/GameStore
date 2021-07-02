@@ -2,10 +2,8 @@
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-using System;
 using System.Threading.Tasks;
 using WebApp.BLL.DTO;
-using WebApp.BLL.Helpers;
 using WebApp.BLL.Interfaces;
 using WebApp.BLL.Models;
 
@@ -16,54 +14,66 @@ namespace WebApp.Web.Controllers
     [Route("api/user")]
     public class UserController : ControllerBase
     {
-        private readonly IUserService _userService;
+        #region Services
 
-        public UserController(IUserService userService)
+        private readonly IUserService _userService;
+        private readonly IClaimsReader _claimsHelper;
+
+        #endregion
+
+        public UserController(IUserService userService, IClaimsReader claimsHelper)
         {
             _userService = userService;
+            _claimsHelper = claimsHelper;
         }
 
+        /// <summary>
+        /// Update user information
+        /// </summary>
+        /// /// <param name="user">User for update</param>
+        /// <response code="200">Successful update</response>
+        /// <response code="400">Failed update</response>
         [HttpPut]
-        public async Task<IActionResult> Update([BindRequired] UserDTO user)
+        public async Task<ActionResult<UserDTO>> Update([BindRequired] UserDTO user)
         {
             var updatedUser = await _userService.UpdateUserInfoAsync(user);
 
-            if (updatedUser.ServiceResultType != ServiceResultType.Success)
-            {
-                return BadRequest();
-            }
-
-            return Ok(updatedUser);
+            return StatusCode((int)updatedUser.ServiceResultType, updatedUser.Result);
         }
 
+        /// <summary>
+        /// Change user password
+        /// </summary>
+        /// <response code="200">Password successfully changed</response>
+        /// <response code="400">Failed password change</response>
         [HttpPatch("password")]
-        public async Task<IActionResult> ChangePassword([BindRequired, FromBody] JsonPatchDocument<ResetPasswordUserDTO> patch)
+        public async Task<ActionResult<string>> ChangePassword([BindRequired, FromBody] JsonPatchDocument<ResetPasswordUserDTO> patch)
         {
             var user = new ResetPasswordUserDTO();
             patch.ApplyTo(user);
 
-            var IsChanged = await _userService.ChangePasswordAsync(user);
+            var isChanged = await _userService.ChangePasswordAsync(user);
 
-            if (IsChanged.ServiceResultType != ServiceResultType.Success)
-            {
-                return BadRequest(IsChanged.Message);
-            }
-
-            return Ok();
+            return StatusCode((int)isChanged.ServiceResultType, isChanged.Message);
         }
 
-        [HttpGet("id/{id}")]
-        public async Task<IActionResult> GetUser()
+        /// <summary>
+        /// Get user by id
+        /// </summary>
+        /// <response code="200">Found user successfully</response>
+        /// <response code="400">Failed to find user</response>
+        [HttpGet]
+        public async Task<ActionResult<UserDTO>> GetUser()
         {
-            var userId = ClaimsHelper.GetUserId(User);
-            var foundUser = await _userService.FindUserByIdAsync(Guid.Parse(userId));
-
-            if (foundUser.ServiceResultType != ServiceResultType.Success)
+            var result = _claimsHelper.GetUserId(User);
+            if (result.ServiceResultType is not ServiceResultType.Success)
             {
-                return NotFound();
+                return StatusCode((int)result.ServiceResultType);
             }
 
-            return Ok(foundUser);
+            var foundUser = await _userService.FindUserByIdAsync(result.Result);
+
+            return StatusCode((int)foundUser.ServiceResultType, foundUser.Result);
         }
     }
 }
