@@ -13,22 +13,33 @@ namespace WebApp.BLL.Services
 {
     public class UserService : IUserService
     {
-        //constants
+        #region Constants
+
         private const string InvalidRegisterMessage = "Invalid Register Attempt";
         private const string InvalidLoginMessage = "Invalid Login Attempt";
         private const string MissingRole = "Missing role";
         private const string NotFoundEmail = "Email not found";
         private const string NotConfirmedEmail = "Email not confirmed"; 
-        private const string NotFoundUser = "User not found"; 
+        private const string NotFoundUser = "User not found";
 
-        //services
+        #endregion
+
+        #region Services
+
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly RoleManager<ApplicationRole> _roleManager;
         private readonly IJwtGenerator _jwtGenerator;
         private readonly ITokenEncodingHelper _tokenEncodingHelper;
-        private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
+
+        #endregion
+
+        #region Repositories
+
+        private readonly IUserRepository _userRepository;
+
+        #endregion
 
         public UserService(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IJwtGenerator jwtGenerator,
             RoleManager<ApplicationRole> roleManager, IUserRepository userRepository, IMapper mapper, ITokenEncodingHelper tokenEncodingHelper)
@@ -76,7 +87,8 @@ namespace WebApp.BLL.Services
             {
                 return new ServiceResultClass<string>(InvalidLoginMessage, ServiceResultType.Bad_Request);
             }
-            var tryLogin = await _signInManager.PasswordSignInAsync(user.UserName, userDTO.Password, isPersistent: false, false);
+
+            var tryLogin = await _signInManager.CheckPasswordSignInAsync(user, userDTO.Password, false);
 
             if (tryLogin.Succeeded)
             {

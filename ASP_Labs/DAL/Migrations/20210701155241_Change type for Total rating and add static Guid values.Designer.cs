@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebApp.DAL;
 
 namespace WebApp.DAL.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210701155241_Change type for Total rating and add static Guid values")]
+    partial class ChangetypeforTotalratingandaddstaticGuidvalues
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -224,25 +226,10 @@ namespace WebApp.DAL.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("ProductId");
 
-                    b.Property<string>("Background")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Count")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("DateCreated")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("getdate()");
-
-                    b.Property<string>("Genre")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("Logo")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -253,28 +240,14 @@ namespace WebApp.DAL.Migrations
 
                     b.Property<double>("TotalRating")
                         .HasColumnType("float");
-                        
-                    b.Property<decimal>("Price")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("Rating")
-                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Count");
-
                     b.HasIndex("DateCreated");
-
-                    b.HasIndex("Genre");
 
                     b.HasIndex("Name");
 
                     b.HasIndex("Platform");
-
-                    b.HasIndex("Price");
-
-                    b.HasIndex("Rating");
 
                     b.HasIndex("TotalRating");
 
@@ -283,227 +256,131 @@ namespace WebApp.DAL.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("185a0529-c29f-40b5-8e20-134aab3f80be"),
-                            Background = "https://img.rawpixel.com/s3fs-private/rawpixel_images/website_content/v462-n-130-textureidea_1.jpg?w=1300&dpr=1&fit=default&crop=default&q=80&vib=3&con=3&usm=15&bg=F4F4F3&ixlib=js-2.2.1&s=1ba69b5c4ae053e9c312677688c2c4a2",
-                            Count = 1090,
+                            Id = new Guid("a76d6bde-c48c-4dcb-b80a-7c6edce28c74"),
                             DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Genre = "Esports",
-                            Logo = "https://ru.wikipedia.org/wiki/FIFA_(%D1%81%D0%B5%D1%80%D0%B8%D1%8F_%D0%B8%D0%B3%D1%80)#/media/%D0%A4%D0%B0%D0%B9%D0%BB:FIFA_series_logo.svg.png",
                             Name = "FIFA 2020",
                             Platform = 1,
                             TotalRating = 7.3200000000000003
-                            Price = 10m,
-                            Rating = 0,
                         },
                         new
                         {
-                            Id = new Guid("92671361-3c28-4e43-9175-3a6f31ef1ef1"),
-                            Background = "https://img.rawpixel.com/s3fs-private/rawpixel_images/website_content/v462-n-130-textureidea_1.jpg?w=1300&dpr=1&fit=default&crop=default&q=80&vib=3&con=3&usm=15&bg=F4F4F3&ixlib=js-2.2.1&s=1ba69b5c4ae053e9c312677688c2c4a2",
-                            Count = 1080,
+                            Id = new Guid("7bad0c87-edd2-4a23-aade-aaff2e19f54f"),
                             DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Genre = "Strategy",
-                            Logo = "https://ru.wikipedia.org/wiki/God_of_War_(%D1%81%D0%B5%D1%80%D0%B8%D1%8F_%D0%B8%D0%B3%D1%80)#/media/%D0%A4%D0%B0%D0%B9%D0%BB:%D0%9B%D0%BE%D0%B3%D0%BE%D1%82%D0%B8%D0%BF_%D0%B8%D0%B3%D1%80%D1%8B_God_of_War.png",
                             Name = "God of War",
                             Platform = 1,
                             TotalRating = 8.3100000000000005
-                            Price = 20m,
-                            Rating = 16,
                         },
                         new
                         {
-                            Id = new Guid("a9a3a4db-3947-4a77-a8b6-27571ac1d3a1"),
-                            Background = "https://img.rawpixel.com/s3fs-private/rawpixel_images/website_content/v462-n-130-textureidea_1.jpg?w=1300&dpr=1&fit=default&crop=default&q=80&vib=3&con=3&usm=15&bg=F4F4F3&ixlib=js-2.2.1&s=1ba69b5c4ae053e9c312677688c2c4a2",
-                            Count = 1070,
+                            Id = new Guid("67550e04-f55d-40c6-bd72-3cbffef51317"),
                             DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Genre = "Action",
-                            Logo = "https://ru.wikipedia.org/wiki/Bloodborne#/media/%D0%A4%D0%B0%D0%B9%D0%BB:%D0%9E%D0%B1%D0%BB%D0%BE%D0%B6%D0%BA%D0%B0_Bloodborne.jpg",
                             Name = "Bloodborne",
                             Platform = 1,
                             TotalRating = 6.8099999999999996
-                            Price = 30m,
-                            Rating = 16,
                         },
                         new
                         {
-                            Id = new Guid("4857911c-cf2f-4803-87f0-bd99437eeeb8"),
-                            Background = "https://img.rawpixel.com/s3fs-private/rawpixel_images/website_content/v462-n-130-textureidea_1.jpg?w=1300&dpr=1&fit=default&crop=default&q=80&vib=3&con=3&usm=15&bg=F4F4F3&ixlib=js-2.2.1&s=1ba69b5c4ae053e9c312677688c2c4a2",
-                            Count = 1060,
+                            Id = new Guid("5acb3515-9b43-4b80-9338-1ff4e0dc972b"),
                             DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Genre = "Role_Playing",
-                            Logo = "https://ru.wikipedia.org/wiki/Among_Us#/media/%D0%A4%D0%B0%D0%B9%D0%BB:Among_Us.png",
                             Name = "Among Us",
                             Platform = 4,
                             TotalRating = 8.3200000000000003
-                            Price = 40m,
-                            Rating = 6,
                         },
                         new
                         {
-                            Id = new Guid("02811f45-9240-4f3d-a13f-361c0ca693e8"),
-                            Background = "https://img.rawpixel.com/s3fs-private/rawpixel_images/website_content/v462-n-130-textureidea_1.jpg?w=1300&dpr=1&fit=default&crop=default&q=80&vib=3&con=3&usm=15&bg=F4F4F3&ixlib=js-2.2.1&s=1ba69b5c4ae053e9c312677688c2c4a2",
-                            Count = 1050,
+                            Id = new Guid("ea803243-ed41-49e9-9670-29619e3e4961"),
                             DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Genre = "MMO",
-                            Logo = "https://ru.wikipedia.org/wiki/Brawl_Stars#/media/%D0%A4%D0%B0%D0%B9%D0%BB:Brawl_Stars.png",
                             Name = "Brawl Stars",
                             Platform = 4,
                             TotalRating = 10.0
-                            Price = 50m,
-                            Rating = 12,
                         },
                         new
                         {
-                            Id = new Guid("ae9993ac-2baa-4445-85a4-70097a1776cd"),
-                            Background = "https://img.rawpixel.com/s3fs-private/rawpixel_images/website_content/v462-n-130-textureidea_1.jpg?w=1300&dpr=1&fit=default&crop=default&q=80&vib=3&con=3&usm=15&bg=F4F4F3&ixlib=js-2.2.1&s=1ba69b5c4ae053e9c312677688c2c4a2",
-                            Count = 1040,
+                            Id = new Guid("77133fcf-3da2-42d0-9b9d-32ec0dc5f421"),
                             DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Genre = "Action",
-                            Logo = "https://ru.wikipedia.org/wiki/Fortnite#/media/%D0%A4%D0%B0%D0%B9%D0%BB:FortniteLogo.svg",
                             Name = "Fortnite",
                             Platform = 2,
                             TotalRating = 8.8800000000000008
-                            Price = 60m,
-                            Rating = 6,
                         },
                         new
                         {
-                            Id = new Guid("ff8d5672-43f3-47e8-afa6-673e2ba5759e"),
-                            Background = "https://img.rawpixel.com/s3fs-private/rawpixel_images/website_content/v462-n-130-textureidea_1.jpg?w=1300&dpr=1&fit=default&crop=default&q=80&vib=3&con=3&usm=15&bg=F4F4F3&ixlib=js-2.2.1&s=1ba69b5c4ae053e9c312677688c2c4a2",
-                            Count = 1030,
+                            Id = new Guid("0e70d082-9558-48aa-84a8-5a34ac95af08"),
                             DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Genre = "Simulation",
-                            Logo = "https://ru.wikipedia.org/wiki/Minecraft#/media/%D0%A4%D0%B0%D0%B9%D0%BB:MinecraftLogo.svg",
                             Name = "Minecraft",
                             Platform = 2,
                             TotalRating = 9.5099999999999998
-                            Price = 70m,
-                            Rating = 6,
                         },
                         new
                         {
-                            Id = new Guid("1b27708f-f9da-4a83-9d54-041cd2889101"),
-                            Background = "https://img.rawpixel.com/s3fs-private/rawpixel_images/website_content/v462-n-130-textureidea_1.jpg?w=1300&dpr=1&fit=default&crop=default&q=80&vib=3&con=3&usm=15&bg=F4F4F3&ixlib=js-2.2.1&s=1ba69b5c4ae053e9c312677688c2c4a2",
-                            Count = 1020,
+                            Id = new Guid("50973345-c933-4098-9513-3c16d82dcc0a"),
                             DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Genre = "Action",
-                            Logo = "https://ru.wikipedia.org/wiki/Forza_Horizon_4#/media/%D0%A4%D0%B0%D0%B9%D0%BB:Forza_Horizon_4_coverart.jpg",
                             Name = "Forza Horizon 4",
                             Platform = 2,
                             TotalRating = 9.4900000000000002
-                            Price = 80m,
-                            Rating = 6,
                         },
                         new
                         {
-                            Id = new Guid("4d393685-ac1f-4fd4-b6a1-f5b6f8df39de"),
-                            Background = "https://img.rawpixel.com/s3fs-private/rawpixel_images/website_content/v462-n-130-textureidea_1.jpg?w=1300&dpr=1&fit=default&crop=default&q=80&vib=3&con=3&usm=15&bg=F4F4F3&ixlib=js-2.2.1&s=1ba69b5c4ae053e9c312677688c2c4a2",
-                            Count = 1010,
+                            Id = new Guid("cd4e1a11-ef0c-402c-a2ab-b18622ea1eb9"),
                             DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Genre = "Action",
-                            Logo = "https://ru.wikipedia.org/wiki/Super_Smash_Bros._Ultimate#/media/%D0%A4%D0%B0%D0%B9%D0%BB:Super_Smash_Bros._Ultimate.png",
                             Name = "Super Smash Bros. Ultimate",
                             Platform = 5,
-                            Price = 90m,
-                            Rating = 6,
                             TotalRating = 8.3599999999999994
                         },
                         new
                         {
-                            Id = new Guid("789e46b7-6d01-40dc-9ad6-0469208097ba"),
-                            Background = "https://img.rawpixel.com/s3fs-private/rawpixel_images/website_content/v462-n-130-textureidea_1.jpg?w=1300&dpr=1&fit=default&crop=default&q=80&vib=3&con=3&usm=15&bg=F4F4F3&ixlib=js-2.2.1&s=1ba69b5c4ae053e9c312677688c2c4a2",
-                            Count = 100,
+                            Id = new Guid("82e27206-1bfd-4d62-a6bf-be44ad030b25"),
                             DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Genre = "Strategy",
-                            Logo = "https://ru.wikipedia.org/wiki/Super_Mario_Odyssey#/media/%D0%A4%D0%B0%D0%B9%D0%BB:Super_Mario_Odyssey_box.jpg",
                             Name = "Super Mario Odyssey",
                             Platform = 5,
-                            Price = 100m,
-                            Rating = 0,
                             TotalRating = 8.4299999999999997
                         },
                         new
                         {
-                            Id = new Guid("f092c4d6-5e3c-4860-a8cb-c8e14eae5e8d"),
-                            Background = "https://img.rawpixel.com/s3fs-private/rawpixel_images/website_content/v462-n-130-textureidea_1.jpg?w=1300&dpr=1&fit=default&crop=default&q=80&vib=3&con=3&usm=15&bg=F4F4F3&ixlib=js-2.2.1&s=1ba69b5c4ae053e9c312677688c2c4a2",
-                            Count = 1600,
+                            Id = new Guid("a1c40a91-a1a4-4d9e-960d-b0c19b425c8c"),
                             DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Genre = "Adventure",
-                            Logo = "https://ru.wikipedia.org/wiki/Animal_Crossing#/media/%D0%A4%D0%B0%D0%B9%D0%BB:Animal_Crossing_Logo.png",
                             Name = "Animal Crossing",
                             Platform = 5,
-                            Price = 110m,
-                            Rating = 0,
                             TotalRating = 7.5499999999999998
                         },
                         new
                         {
-                            Id = new Guid("70bd5995-fe29-4b93-8425-5a12e961c68b"),
-                            Background = "https://img.rawpixel.com/s3fs-private/rawpixel_images/website_content/v462-n-130-textureidea_1.jpg?w=1300&dpr=1&fit=default&crop=default&q=80&vib=3&con=3&usm=15&bg=F4F4F3&ixlib=js-2.2.1&s=1ba69b5c4ae053e9c312677688c2c4a2",
-                            Count = 1500,
+                            Id = new Guid("1952c825-184a-40e9-8864-80358a9f1da6"),
                             DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Genre = "Strategy",
-                            Logo = "https://ru.wikipedia.org/wiki/Dota_2#/media/%D0%A4%D0%B0%D0%B9%D0%BB:%D0%9E%D0%B1%D0%BB%D0%BE%D0%B6%D0%BA%D0%B0_Dota_2.jpg",
                             Name = "Dota 2",
                             Platform = 3,
                             TotalRating = 7.6399999999999997
-                            Price = 120m,
-                            Rating = 12,
                         },
                         new
                         {
-                            Id = new Guid("52b2bbf2-5e51-4789-9ddf-bc6d39f33b73"),
-                            Background = "https://img.rawpixel.com/s3fs-private/rawpixel_images/website_content/v462-n-130-textureidea_1.jpg?w=1300&dpr=1&fit=default&crop=default&q=80&vib=3&con=3&usm=15&bg=F4F4F3&ixlib=js-2.2.1&s=1ba69b5c4ae053e9c312677688c2c4a2",
-                            Count = 1400,
+                            Id = new Guid("d4b797a8-2f74-446e-ad0c-71dad9e37e59"),
                             DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Genre = "MMO",
-                            Logo = "https://ru.wikipedia.org/wiki/Counter-Strike:_Global_Offensive#/media/%D0%A4%D0%B0%D0%B9%D0%BB:%D0%9B%D0%BE%D0%B3%D0%BE%D1%82%D0%B8%D0%BF_Counter-Strike_Global_Offensive.svg",
                             Name = "CS GO",
                             Platform = 3,
                             TotalRating = 8.2699999999999996
-                            Price = 130m,
-                            Rating = 16,
                         },
                         new
                         {
-                            Id = new Guid("832ff5f9-06c2-406e-8d4c-87e83a6a4aec"),
-                            Background = "https://img.rawpixel.com/s3fs-private/rawpixel_images/website_content/v462-n-130-textureidea_1.jpg?w=1300&dpr=1&fit=default&crop=default&q=80&vib=3&con=3&usm=15&bg=F4F4F3&ixlib=js-2.2.1&s=1ba69b5c4ae053e9c312677688c2c4a2",
-                            Count = 1300,
+                            Id = new Guid("c3279ca3-8fe4-45c9-8606-ae09f8b7f259"),
                             DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Genre = "MMO",
-                            Logo = "https://en.wikipedia.org/wiki/Overwatch_(video_game)#/media/File:Overwatch_cover_art.jpg",
                             Name = "Overwatch",
                             Platform = 3,
                             TotalRating = 7.7199999999999998
-                            Price = 140m,
-                            Rating = 12,
                         },
                         new
                         {
-                            Id = new Guid("dccff4b0-23e8-479e-8091-cd1145a5cd36"),
-                            Background = "https://img.rawpixel.com/s3fs-private/rawpixel_images/website_content/v462-n-130-textureidea_1.jpg?w=1300&dpr=1&fit=default&crop=default&q=80&vib=3&con=3&usm=15&bg=F4F4F3&ixlib=js-2.2.1&s=1ba69b5c4ae053e9c312677688c2c4a2",
-                            Count = 1200,
+                            Id = new Guid("00189d6e-ed62-482b-a4d9-335dfa68d58e"),
                             DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Genre = "Strategy",
-                            Logo = "https://ru.wikipedia.org/wiki/Half-Life_2#/media/%D0%A4%D0%B0%D0%B9%D0%BB:HL2box.jpg",
                             Name = "Half-Life",
                             Platform = 3,
                             TotalRating = 6.9800000000000004
-                            Price = 150m,
-                            Rating = 16,
                         },
                         new
                         {
-                            Id = new Guid("3e2bb91e-fb78-467f-a553-447cbd149f36"),
-                            Background = "https://img.rawpixel.com/s3fs-private/rawpixel_images/website_content/v462-n-130-textureidea_1.jpg?w=1300&dpr=1&fit=default&crop=default&q=80&vib=3&con=3&usm=15&bg=F4F4F3&ixlib=js-2.2.1&s=1ba69b5c4ae053e9c312677688c2c4a2",
-                            Count = 1100,
+                            Id = new Guid("1ad798c4-da8c-4e87-a020-9272e4e71d2b"),
                             DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Genre = "Strategy",
-                            Logo = "https://ru.wikipedia.org/wiki/Portal#/media/%D0%A4%D0%B0%D0%B9%D0%BB:Portal_boxcover.jpg",
                             Name = "Portal 2",
                             Platform = 3,
                             TotalRating = 8.5600000000000005
-                            Price = 160m,
-                            Rating = 0,
                         });
                 });
 

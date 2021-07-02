@@ -8,8 +8,8 @@ namespace WebApp.DAL.Interfaces.Database
 {
     public interface IProductRepository : IRepository<Product>
     {
-        Task<Product> GetGameByIdAsync(Guid id);
         Task<List<Product>> GetProductByNameAsync(string term, int limit, int offset);
-        Task<List<Platforms>> GetTopThreePopularPlatformsAsync();
+        Task<List<Platforms>> GetTopPopularPlatformsAsync(int count);
+        Task<Product> GetGameByIdAsync(Guid id);
     }
 }

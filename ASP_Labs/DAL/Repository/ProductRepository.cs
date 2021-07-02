@@ -12,11 +12,9 @@ namespace WebApp.DAL.Repository
 {
     public class ProductRepository : Repository<ApplicationDbContext, Product>, IProductRepository
     {
-        public ProductRepository(ApplicationDbContext dbContext) : base(dbContext)
-        {
-        }
+        public ProductRepository(ApplicationDbContext dbContext) : base(dbContext) {}
 
-        public async Task<List<Platforms>> GetTopThreePopularPlatformsAsync()
+        public async Task<List<Platforms>> GetTopPopularPlatformsAsync(int count)
         {
             var result = await _dbContext.Products
                 .AsNoTracking()
@@ -24,7 +22,7 @@ namespace WebApp.DAL.Repository
                 .GroupBy(t => t.Platform)
                 .OrderByDescending(t => t.Count())
                 .Select(t=>t.Key)
-                .Take(3)
+                .Take(count)
                 .ToListAsync();
 
             return result;
