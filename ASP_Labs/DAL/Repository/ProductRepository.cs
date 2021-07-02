@@ -11,9 +11,7 @@ namespace WebApp.DAL.Repository
 {
     public class ProductRepository : Repository<ApplicationDbContext, Product>, IProductRepository
     {
-        public ProductRepository(ApplicationDbContext dbContext) : base(dbContext)
-        {
-        }
+        public ProductRepository(ApplicationDbContext dbContext) : base(dbContext) {}
 
         public async Task<List<Platforms>> GetTopPopularPlatformsAsync(int count)
         {

@@ -26,7 +26,7 @@ namespace WebApp.Web.Controllers
         [Route("info")]
         [HttpGet]
         [Authorize(Roles = "Admin")]
-        public ActionResult GetInfo()
+        public ActionResult<string> GetInfo()
         {
             string GetInfoMessage = "Request GET /api/home/info";
 

@@ -34,16 +34,11 @@ namespace WebApp.Web.Controllers
         /// <response code="200">Successful update</response>
         /// <response code="400">Failed update</response>
         [HttpPut]
-        public async Task<ActionResult> Update([BindRequired] UserDTO user)
+        public async Task<ActionResult<UserDTO>> Update([BindRequired] UserDTO user)
         {
             var updatedUser = await _userService.UpdateUserInfoAsync(user);
 
-            if (updatedUser.ServiceResultType is not ServiceResultType.Success)
-            {
-                return BadRequest();
-            }
-
-            return Ok(updatedUser);
+            return StatusCode((int)updatedUser.ServiceResultType, updatedUser.Result);
         }
 
         /// <summary>
@@ -52,19 +47,14 @@ namespace WebApp.Web.Controllers
         /// <response code="200">Password successfully changed</response>
         /// <response code="400">Failed password change</response>
         [HttpPatch("password")]
-        public async Task<ActionResult> ChangePassword([BindRequired, FromBody] JsonPatchDocument<ResetPasswordUserDTO> patch)
+        public async Task<ActionResult<string>> ChangePassword([BindRequired, FromBody] JsonPatchDocument<ResetPasswordUserDTO> patch)
         {
             var user = new ResetPasswordUserDTO();
             patch.ApplyTo(user);
 
-            var IsChanged = await _userService.ChangePasswordAsync(user);
+            var isChanged = await _userService.ChangePasswordAsync(user);
 
-            if (IsChanged.ServiceResultType is not ServiceResultType.Success)
-            {
-                return BadRequest(IsChanged.Message);
-            }
-
-            return Ok();
+            return StatusCode((int)isChanged.ServiceResultType, isChanged.Message);
         }
 
         /// <summary>
@@ -73,7 +63,7 @@ namespace WebApp.Web.Controllers
         /// <response code="200">Found user successfully</response>
         /// <response code="400">Failed to find user</response>
         [HttpGet]
-        public async Task<ActionResult> GetUser()
+        public async Task<ActionResult<UserDTO>> GetUser()
         {
             var result = _claimsHelper.GetUserId(User);
             if (result.ServiceResultType is not ServiceResultType.Success)
@@ -83,12 +73,7 @@ namespace WebApp.Web.Controllers
 
             var foundUser = await _userService.FindUserByIdAsync(result.Result);
 
-            if (foundUser.ServiceResultType is not ServiceResultType.Success)
-            {
-                return NotFound();
-            }
-
-            return Ok(foundUser.Result);
+            return StatusCode((int)foundUser.ServiceResultType, foundUser.Result);
         }
     }
 }
