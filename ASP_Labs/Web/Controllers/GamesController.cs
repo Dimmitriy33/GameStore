@@ -1,9 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-using System.Collections.Generic;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using WebApp.BLL.DTO;
 using WebApp.BLL.Interfaces;
+using WebApp.BLL.Models;
 using WebApp.DAL.Entities;
 
 namespace WebApp.Web.Controllers
@@ -14,7 +17,7 @@ namespace WebApp.Web.Controllers
     {
         #region Constants
 
-        public const int CountOfTopPlatforms = 3;
+        private const int CountOfTopPlatforms = 3;
 
         #endregion
         #region Services
@@ -58,16 +61,48 @@ namespace WebApp.Web.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetGameById([BindRequired] Guid id)
+        public async Task<ActionResult<Product>> GetGameById([BindRequired] Guid id)
         {
             var game = await _productService.GetGameByIdAsync(id);
 
-            if(game.ServiceResultType is not ServiceResultType.Success)
+            return StatusCode((int)game.ServiceResultType, game.Result);
+        }
+
+        [HttpDelete("Softdelete/{id}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<ActionResult> SoftDeleteGameById([BindRequired] Guid id)
+        {
+            var result = await _productService.SoftDeleteGameAsync(id);
+
+            if(result.ServiceResultType is ServiceResultType.Success)
             {
-                return StatusCode((int)game.ServiceResultType);
+                return NoContent();
             }
 
-            return Ok(game);
+            return StatusCode((int)result.ServiceResultType);
+        }
+
+        [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<ActionResult> DeleteGameById([BindRequired] Guid id)
+        {
+            var result = await _productService.DeleteGameAsync(id);
+
+            if (result.ServiceResultType is ServiceResultType.Success)
+            {
+                return NoContent();
+            }
+
+            return StatusCode((int)result.ServiceResultType);
+        }
+
+        [HttpPut]
+        [Authorize(Roles = "Admin")]
+        public async Task<ActionResult> UpdateGameById([BindRequired] GameDTO gameDTO)
+        {
+            var result = await _productService.UpdateGameAsync(gameDTO);
+
+            return StatusCode((int)result.ServiceResultType, result.Result);
         }
     }
 }

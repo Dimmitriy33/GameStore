@@ -92,7 +92,9 @@ namespace WebApp.BLL.Services
 
             if (tryLogin.Succeeded)
             {
+                await _signInManager.SignInAsync(user, false); // <----------------------
                 var jwtToken = _jwtGenerator.CreateToken(user.Id, user.UserName, _userManager.GetRolesAsync(user).Result[0]);
+
                 return new ServiceResultClass<string>(jwtToken, ServiceResultType.Success);
             }
 

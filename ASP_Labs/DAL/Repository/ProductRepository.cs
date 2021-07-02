@@ -40,7 +40,13 @@ namespace WebApp.DAL.Repository
             return result;
         }
 
-        public async Task<Product> GetGameByIdAsync(Guid id) => 
-            await _dbContext.Products.Where(t => t.Id.Equals(id)).FirstOrDefaultAsync();
+        public async Task<Product> GetGameByIdAsync(Guid id) =>
+            await _dbContext.Products.AsNoTracking().Where(t => t.Id.Equals(id)).FirstAsync();
+
+        public async Task SoftDeleteAsync(Product item)
+        {
+            item.IsDeleted = true;
+            await UpdateItemAsync(item);
+        }
     }
 }

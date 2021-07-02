@@ -16,5 +16,6 @@ namespace WebApp.DAL.Entities
         public string Background { get; set; }
         public decimal Price { get; set; }
         public int Count { get; set; }
+        public bool IsDeleted { get; set; }
     }
 }

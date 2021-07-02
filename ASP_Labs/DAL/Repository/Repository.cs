@@ -65,11 +65,11 @@ namespace WebApp.DAL.Repository
             return item;
         }
 
-        public async Task DeleteAsync(Expression<Func<T, bool>> expression)
+        public async Task DeleteAsync(T item)
         {
             try
             {
-                _dbSet.RemoveRange(_dbSet.Where(expression));
+                _dbSet.Remove(item);
 
                 await _dbContext.SaveChangesAsync();
             }

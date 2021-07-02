@@ -9,6 +9,6 @@ namespace WebApp.DAL.Interfaces.Database
         Task<T> CreateAsync(T item);
         Task<int> CountAsync(Expression<Func<T, bool>> expression);
         Task<T> UpdateItemAsync(T item);
-        Task DeleteAsync(Expression<Func<T, bool>> expression);
+        Task DeleteAsync(T item);
     }
 }

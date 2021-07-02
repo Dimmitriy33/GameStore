@@ -11,5 +11,6 @@ namespace WebApp.DAL.Interfaces.Database
         Task<List<Product>> GetProductByNameAsync(string term, int limit, int offset);
         Task<List<Platforms>> GetTopPopularPlatformsAsync(int count);
         Task<Product> GetGameByIdAsync(Guid id);
+        Task SoftDeleteAsync(Product item);
     }
 }

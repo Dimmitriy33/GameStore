@@ -19,6 +19,7 @@ namespace WebApp.Web.Startup.Configuration
             services.AddTransient<IProductService, ProductService>();
             services.AddTransient<IClaimsReader, ClaimsReader>();
             services.AddTransient<ITokenEncodingHelper, TokenEncodingHelper>();
+            services.AddTransient<ICloudinaryService, CloudinaryService>();
 
             //Repositories
             services.AddTransient<IUserRepository, UserRepository>();

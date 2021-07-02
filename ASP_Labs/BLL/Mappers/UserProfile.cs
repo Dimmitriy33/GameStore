@@ -9,6 +9,7 @@ namespace WebApp.BLL.Mappers
         public UserProfile()
         {
             CreateMap<ApplicationUser, UserDTO>().ReverseMap();
+            CreateMap<Product, GameDTO>().ReverseMap();
         }
     }
 }
