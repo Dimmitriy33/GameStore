@@ -53,12 +53,14 @@ namespace WebApp.BLL.Services
             _tokenEncodingHelper = tokenEncodingHelper;
         }
 
-        public async Task<ServiceResultClass<string>> TryRegisterAsync(AuthUserDTO userDTO)
+        public async Task<ServiceResultClass<string>> TryRegisterAsync(SignUpUserDTO userDTO)
         {
             var user = new ApplicationUser
             {
                 Email = userDTO.Email,
-                UserName = userDTO.Email
+                UserName = userDTO.UserName,
+                AddressDelivery = userDTO.AddressDelivery,
+                PhoneNumber = userDTO.PhoneNumber
             };
 
             var tryRegister = await _userManager.CreateAsync(user, userDTO.Password);
@@ -80,7 +82,7 @@ namespace WebApp.BLL.Services
             return new ServiceResultClass<string>(codeEncoded, ServiceResultType.Success);
         }
 
-        public async Task<ServiceResultClass<string>> TryLoginAsync(AuthUserDTO userDTO)
+        public async Task<ServiceResultClass<string>> TryLoginAsync(SignInUserDTO userDTO)
         {
             var user = await _userManager.FindByEmailAsync(userDTO.Email);
             if (user is null)
@@ -92,7 +94,6 @@ namespace WebApp.BLL.Services
 
             if (tryLogin.Succeeded)
             {
-                await _signInManager.SignInAsync(user, false); // <----------------------
                 var jwtToken = _jwtGenerator.CreateToken(user.Id, user.UserName, _userManager.GetRolesAsync(user).Result[0]);
 
                 return new ServiceResultClass<string>(jwtToken, ServiceResultType.Success);

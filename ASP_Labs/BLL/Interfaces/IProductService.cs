@@ -16,5 +16,6 @@ namespace WebApp.BLL.Interfaces
         Task<ServiceResult> DeleteGameAsync(Guid id);
         Task<ServiceResult> SoftDeleteGameAsync(Guid id);
         Task<ServiceResultClass<Product>> UpdateGameAsync(GameDTO gameDTO);
+        Task<ServiceResultClass<Product>> CreateGameAsync(GameDTO gameDTO);
     }
 }

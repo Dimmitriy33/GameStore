@@ -14,6 +14,8 @@ namespace WebApp.Web.Startup.Settings
         [Required]
         public string ApiSecret { get; set; }
 
+        public string DefaultCloudinaryFolder { get; set; }
+
         public void Validate()
         {
             Validator.ValidateObject(this, new ValidationContext(this), true);

@@ -29,13 +29,15 @@ namespace WebApp.BLL.Services
         #region Services
 
         private readonly IMapper _mapper;
+        private readonly ICloudinaryService _cloudinaryService;
 
         #endregion
 
-        public ProductService(IProductRepository productRepository, IMapper mapper)
+        public ProductService(IProductRepository productRepository, IMapper mapper, ICloudinaryService cloudinaryService)
         {
             _productRepository = productRepository;
             _mapper = mapper;
+            _cloudinaryService = cloudinaryService;
         }
 
         public async Task<ServiceResultClass<List<Platforms>>> GetTopPlatformsAsync(int count)
@@ -62,6 +64,19 @@ namespace WebApp.BLL.Services
             }
 
             return new ServiceResultClass<Product>(game, ServiceResultType.Success);
+        }
+
+        public async Task<ServiceResultClass<Product>> CreateGameAsync(GameDTO gameDTO)
+        {
+            var product = _mapper.Map<Product>(gameDTO);
+            
+            product.Logo = await _cloudinaryService.UploadImage(gameDTO.Logo);
+            product.Background = await _cloudinaryService.UploadImage(gameDTO.Background);
+            product.DateCreated = DateTime.Now;
+
+            var newGame = await _productRepository.CreateAsync(product);
+
+            return new ServiceResultClass<Product>(newGame, ServiceResultType.Success);
         }
 
         public async Task<ServiceResult> DeleteGameAsync(Guid id)
@@ -95,12 +110,15 @@ namespace WebApp.BLL.Services
         public async Task<ServiceResultClass<Product>> UpdateGameAsync(GameDTO gameDTO)
         {
             var mappedGame = _mapper.Map<Product>(gameDTO);
-            var game = await _productRepository.GetGameByIdAsync(mappedGame.Id);
+            var game = await _productRepository.GetGameByIdAsync(gameDTO.Id);
 
-            if(game is null)
+            if (game is null)
             {
                 return new ServiceResultClass<Product>(ServiceResultType.Not_Found);
             }
+
+            game.Logo = await _cloudinaryService.UploadImage(gameDTO.Logo);
+            game.Background = await _cloudinaryService.UploadImage(gameDTO.Background);
 
             var updatedGame = await _productRepository.UpdateItemAsync(mappedGame);
 

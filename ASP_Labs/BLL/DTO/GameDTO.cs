@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.ComponentModel.DataAnnotations;
 using WebApp.DAL.Enums;
 
@@ -45,18 +46,18 @@ namespace WebApp.BLL.DTO
         public GamesRating Rating { get; set; }
 
         /// <summary>
-        /// Game logotype link
+        /// Game logotype image
         /// </summary>
-        /// <example>https://best.games/Nardi.png</example>
-        [Required, Url]
-        public string Logo { get; set; }
+        [Required]
+        [MinLength(1), MaxLength(10485760)]
+        public IFormFile Logo { get; set; }
 
         /// <summary>
-        /// Game background image link
+        /// Game background image
         /// </summary>
-        /// <example>https://best.backgrounds/Fire.png</example>
-        [Required, Url]
-        public string Background { get; set; }
+        [Required]
+        [MinLength(1), MaxLength(10485760)]
+        public IFormFile Background { get; set; }
 
         /// <summary>
         /// Game price

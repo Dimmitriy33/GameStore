@@ -68,7 +68,16 @@ namespace WebApp.Web.Controllers
             return StatusCode((int)game.ServiceResultType, game.Result);
         }
 
-        [HttpDelete("Softdelete/{id}")]
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        public async Task<ActionResult<Product>> CreateGame([BindRequired, FromForm] GameDTO gameDTO)
+        {
+            var newGame = await _productService.CreateGameAsync(gameDTO);
+
+            return StatusCode(201, newGame.Result);
+        }
+
+        [HttpDelete("soft-remove/id/{id}")]
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult> SoftDeleteGameById([BindRequired] Guid id)
         {
@@ -82,7 +91,7 @@ namespace WebApp.Web.Controllers
             return StatusCode((int)result.ServiceResultType);
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("id/{id}")]
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult> DeleteGameById([BindRequired] Guid id)
         {
@@ -98,7 +107,7 @@ namespace WebApp.Web.Controllers
 
         [HttpPut]
         [Authorize(Roles = "Admin")]
-        public async Task<ActionResult> UpdateGameById([BindRequired] GameDTO gameDTO)
+        public async Task<ActionResult> UpdateGameById([BindRequired, FromForm] GameDTO gameDTO)
         {
             var result = await _productService.UpdateGameAsync(gameDTO);
 
