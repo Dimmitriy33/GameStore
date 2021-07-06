@@ -41,11 +41,11 @@ namespace WebApp.DAL.Repository
         }
 
         public async Task<Product> GetGameByIdAsync(Guid id) =>
-            await _dbContext.Products.AsNoTracking().Where(t => t.Id.Equals(id)).FirstAsync();
+            await _dbContext.Products.AsNoTracking().FirstOrDefaultAsync(t => t.Id == id);
 
         public async Task SoftDeleteAsync(Guid id)
         {
-            var item = new Product() 
+            var item = new Product 
             { 
                 Id = id,
                 IsDeleted = true 

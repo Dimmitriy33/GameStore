@@ -13,13 +13,6 @@ namespace WebApp.BLL.Services
 {
     public class ProductService : IProductService
     {
-        #region Constants
-
-        private const string NotFoundPlatforms = "Platforms not found";
-        private const string NotFoundGames = "Games not found";
-
-        #endregion
-
         #region Repositories
 
         private readonly IProductRepository _productRepository;
@@ -32,6 +25,8 @@ namespace WebApp.BLL.Services
         private readonly ICloudinaryService _cloudinaryService;
 
         #endregion
+
+        private delegate Task<Product> Operation(Product item);
 
         public ProductService(IProductRepository productRepository, IMapper mapper, ICloudinaryService cloudinaryService)
         {
@@ -47,35 +42,44 @@ namespace WebApp.BLL.Services
             return new ServiceResultClass<List<Platforms>>(platforms, ServiceResultType.Success);
         }
 
-        public async Task<ServiceResultClass<List<Product>>> SearchGamesByNameAsync(string term, int limit, int offset)
+        public async Task<ServiceResultClass<List<GameResponceDTO>>> SearchGamesByNameAsync(string term, int limit, int offset)
         {
             var games = await _productRepository.GetProductByNameAsync(term, limit, offset);
 
-            return new ServiceResultClass<List<Product>>(games, ServiceResultType.Success);
+            return new ServiceResultClass<List<GameResponceDTO>>(_mapper.Map<List<GameResponceDTO>>(games), ServiceResultType.Success);
         }
 
-        public async Task<ServiceResultClass<Product>> GetGameByIdAsync(Guid id)
+        public async Task<ServiceResultClass<GameResponceDTO>> GetGameByIdAsync(Guid id)
         {
             var game = await _productRepository.GetGameByIdAsync(id);
 
             if(game is null)
             {
-                return new ServiceResultClass<Product>(ServiceResultType.Not_Found);
+                return new ServiceResultClass<GameResponceDTO>(ServiceResultType.Not_Found);
             }
 
-            return new ServiceResultClass<Product>(game, ServiceResultType.Success);
+            return new ServiceResultClass<GameResponceDTO>(_mapper.Map<GameResponceDTO>(game), ServiceResultType.Success);
         }
 
-        public async Task<ServiceResultClass<Product>> CreateGameAsync(GameDTO gameDTO)
+        public async Task<ServiceResultClass<GameResponceDTO>> CreateGameAsync(GameRequestDTO gameDTO)
         {
-            var product = _mapper.Map<Product>(gameDTO);
-            
-            product.Logo = await _cloudinaryService.UploadImage(gameDTO.Logo);
-            product.Background = await _cloudinaryService.UploadImage(gameDTO.Background);
+            var newGame = await GetGameResponceDTOFromGameRequestDTO(gameDTO, _productRepository.CreateAsync);
 
-            var newGame = await _productRepository.CreateAsync(product);
+            return new ServiceResultClass<GameResponceDTO>(newGame, ServiceResultType.Success);
+        }
 
-            return new ServiceResultClass<Product>(newGame, ServiceResultType.Success);
+        public async Task<ServiceResultClass<GameResponceDTO>> UpdateGameAsync(GameRequestDTO gameDTO)
+        {
+            var game = await _productRepository.GetGameByIdAsync(gameDTO.Id);
+
+            if (game is null)
+            {
+                return new ServiceResultClass<GameResponceDTO>(ServiceResultType.Not_Found);
+            }
+
+            var updatedGame = await GetGameResponceDTOFromGameRequestDTO(gameDTO, _productRepository.UpdateItemAsync);
+
+            return new ServiceResultClass<GameResponceDTO>(updatedGame, ServiceResultType.Success);
         }
 
         public async Task<ServiceResult> DeleteGameAsync(Guid id)
@@ -87,7 +91,7 @@ namespace WebApp.BLL.Services
                 return new ServiceResult(ServiceResultType.Not_Found);
             }
 
-            await _productRepository.DeleteAsync(game);
+            await _productRepository.DeleteAsync(g => g.Id == id);
 
             return new ServiceResult(ServiceResultType.Success);
         }
@@ -106,22 +110,15 @@ namespace WebApp.BLL.Services
             return new ServiceResult(ServiceResultType.Success);
         }
 
-        public async Task<ServiceResultClass<Product>> UpdateGameAsync(GameDTO gameDTO)
+        private async Task<GameResponceDTO> GetGameResponceDTOFromGameRequestDTO(GameRequestDTO gameDTO, Operation operation)
         {
-            var mappedGame = _mapper.Map<Product>(gameDTO);
-            var game = await _productRepository.GetGameByIdAsync(gameDTO.Id);
+            var product = _mapper.Map<Product>(gameDTO);
 
-            if (game is null)
-            {
-                return new ServiceResultClass<Product>(ServiceResultType.Not_Found);
-            }
+            product.Logo = await _cloudinaryService.UploadImage(gameDTO.Logo);
+            product.Background = await _cloudinaryService.UploadImage(gameDTO.Background);
 
-            game.Logo = await _cloudinaryService.UploadImage(gameDTO.Logo);
-            game.Background = await _cloudinaryService.UploadImage(gameDTO.Background);
-
-            var updatedGame = await _productRepository.UpdateItemAsync(mappedGame);
-
-            return new ServiceResultClass<Product>(updatedGame, ServiceResultType.Success);
+            var result = await operation.Invoke(product);
+            return _mapper.Map<GameResponceDTO>(result);
         }
     }
 }

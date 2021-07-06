@@ -335,7 +335,7 @@ namespace WebApp.DAL.Migrations
                             Background = "https://res.cloudinary.com/dimmitriy33/image/upload/v1625229442/ASP_Labs/v462-n-130-textureidea_1.jpg_ghjewf.jpg",
                             Count = 1060,
                             DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Genre = "Role_Playing",
+                            Genre = "RolePlaying",
                             IsDeleted = false,
                             Logo = "https://res.cloudinary.com/dimmitriy33/image/upload/v1625229203/ASP_Labs/Among_Us_y6hnjs.png",
                             Name = "Among Us",
