@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using System;
 using System.ComponentModel.DataAnnotations;
+using WebApp.BLL.Constants;
 using WebApp.DAL.Enums;
 
 namespace WebApp.BLL.DTO
@@ -49,14 +50,14 @@ namespace WebApp.BLL.DTO
         /// Game logotype image
         /// </summary>
         [Required]
-        [MinLength(1), MaxLength(10485760)]
+        [MinLength(FilesConstants.defaultMinFileSize), MaxLength(FilesConstants.defaultMaxFileSize)]
         public IFormFile Logo { get; set; }
 
         /// <summary>
         /// Game background image
         /// </summary>
         [Required]
-        [MinLength(1), MaxLength(10485760)]
+        [MinLength(FilesConstants.defaultMinFileSize), MaxLength(FilesConstants.defaultMaxFileSize)]
         public IFormFile Background { get; set; }
 
         /// <summary>

@@ -3,7 +3,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
+using WebApp.BLL.Constants;
 using WebApp.BLL.DTO;
 using WebApp.BLL.Interfaces;
 using WebApp.BLL.Models;
@@ -69,16 +71,16 @@ namespace WebApp.Web.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = RolesConstants.Admin)]
         public async Task<ActionResult<Product>> CreateGame([BindRequired, FromForm] GameDTO gameDTO)
         {
             var newGame = await _productService.CreateGameAsync(gameDTO);
 
-            return StatusCode(201, newGame.Result);
+            return StatusCode((int)HttpStatusCode.Created, newGame.Result);
         }
 
         [HttpDelete("soft-remove/id/{id}")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = RolesConstants.Admin)]
         public async Task<ActionResult> SoftDeleteGameById([BindRequired] Guid id)
         {
             var result = await _productService.SoftDeleteGameAsync(id);
@@ -92,7 +94,7 @@ namespace WebApp.Web.Controllers
         }
 
         [HttpDelete("id/{id}")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = RolesConstants.Admin)]
         public async Task<ActionResult> DeleteGameById([BindRequired] Guid id)
         {
             var result = await _productService.DeleteGameAsync(id);
@@ -106,7 +108,7 @@ namespace WebApp.Web.Controllers
         }
 
         [HttpPut]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = RolesConstants.Admin)]
         public async Task<ActionResult> UpdateGameById([BindRequired, FromForm] GameDTO gameDTO)
         {
             var result = await _productService.UpdateGameAsync(gameDTO);

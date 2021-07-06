@@ -72,7 +72,6 @@ namespace WebApp.BLL.Services
             
             product.Logo = await _cloudinaryService.UploadImage(gameDTO.Logo);
             product.Background = await _cloudinaryService.UploadImage(gameDTO.Background);
-            product.DateCreated = DateTime.Now;
 
             var newGame = await _productRepository.CreateAsync(product);
 
@@ -102,7 +101,7 @@ namespace WebApp.BLL.Services
                 return new ServiceResult(ServiceResultType.Not_Found);
             }
 
-            await _productRepository.SoftDeleteAsync(game);
+            await _productRepository.SoftDeleteAsync(game.Id);
 
             return new ServiceResult(ServiceResultType.Success);
         }
