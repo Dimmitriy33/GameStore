@@ -62,6 +62,8 @@ namespace WebApp.DAL.Configuration
             builder.HasIndex(b => b.Price);
             builder.HasIndex(b => b.Count);
 
+            builder.HasQueryFilter(e => !e.IsDeleted);
+
             builder.HasData(
                 new Product { Id = Guid.Parse("a76d6bde-c48c-4dcb-b80a-7c6edce28c74"), Name = "FIFA 2020", Platform = Platforms.Playstation, TotalRating = 7.32, Genre = GamesGenres.Esports, Rating = GamesRating.Rating0, Logo= @"https://res.cloudinary.com/dimmitriy33/image/upload/v1625229539/ASP_Labs/FIFA_series_logo.svg_geizkx.png", Background= @"https://res.cloudinary.com/dimmitriy33/image/upload/v1625229442/ASP_Labs/v462-n-130-textureidea_1.jpg_ghjewf.jpg", Price = 10, Count=1090 },
                 new Product { Id = Guid.Parse("7bad0c87-edd2-4a23-aade-aaff2e19f54f"), Name = "God of War", Platform = Platforms.Playstation, TotalRating = 8.31, Genre = GamesGenres.Strategy, Rating = GamesRating.Rating16, Logo = @"https://res.cloudinary.com/dimmitriy33/image/upload/v1625229190/ASP_Labs/D0_9B_D0_BE_D0_B3_D0_BE_D1_82_D0_B8_D0_BF__D0_B8_D0_B3_D1_80_D1_8B_God_of_War_mgno9l.png", Background= @"https://res.cloudinary.com/dimmitriy33/image/upload/v1625229442/ASP_Labs/v462-n-130-textureidea_1.jpg_ghjewf.jpg", Price = 20, Count = 1080 },

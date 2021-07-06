@@ -17,6 +17,7 @@ namespace WebApp.DAL
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new ProductConfiguration());
+            modelBuilder.ApplyConfiguration(new ProductRatingConfiguration());
             base.OnModelCreating(modelBuilder);
         }
     }
