@@ -331,7 +331,7 @@ namespace WebApp.DAL.Migrations
                             Background = "https://img.rawpixel.com/s3fs-private/rawpixel_images/website_content/v462-n-130-textureidea_1.jpg?w=1300&dpr=1&fit=default&crop=default&q=80&vib=3&con=3&usm=15&bg=F4F4F3&ixlib=js-2.2.1&s=1ba69b5c4ae053e9c312677688c2c4a2",
                             Count = 1060,
                             DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Genre = "Role_Playing",
+                            Genre = "RolePlaying",
                             Logo = "https://ru.wikipedia.org/wiki/Among_Us#/media/%D0%A4%D0%B0%D0%B9%D0%BB:Among_Us.png",
                             Name = "Among Us",
                             Platform = 4,

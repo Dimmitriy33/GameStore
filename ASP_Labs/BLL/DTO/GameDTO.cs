@@ -1,7 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
-using System;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
-using WebApp.BLL.Constants;
 using WebApp.DAL.Enums;
 
 namespace WebApp.BLL.DTO
@@ -49,23 +47,8 @@ namespace WebApp.BLL.DTO
         /// <summary>
         /// Game logotype image
         /// </summary>
-        [Required]
-        [MinLength(FilesConstants.defaultMinFileSize), MaxLength(FilesConstants.defaultMaxFileSize)]
-        public IFormFile Logo { get; set; }
 
-        /// <summary>
-        /// Game background image
-        /// </summary>
-        [Required]
-        [MinLength(FilesConstants.defaultMinFileSize), MaxLength(FilesConstants.defaultMaxFileSize)]
-        public IFormFile Background { get; set; }
-
-        /// <summary>
-        /// Game price
-        /// </summary>
-        /// <example>20.5</example>
-
-        [Range(0.0, Double.MaxValue)]
+        [Range(0.0, double.MaxValue)]
         public decimal Price { get; set; }
 
         /// <summary>
