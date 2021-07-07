@@ -16,5 +16,9 @@ namespace WebApp.BLL.Interfaces
         Task<ServiceResultClass<GameResponceDTO>> CreateGameAsync(GameRequestDTO gameDTO);
         Task<ServiceResultClass<GameResponceDTO>> GetGameByIdAsync(Guid id);
         Task<ServiceResultClass<GameResponceDTO>> UpdateGameAsync(GameRequestDTO gameDTO);
+        Task<ServiceResultClass<List<GameResponceDTO>>> SortDescGamesByRatingAsync();
+        Task<ServiceResultClass<List<GameResponceDTO>>> SortGamesByRatingAsync();
+        Task<ServiceResultClass<List<GameResponceDTO>>> SortDescGamesByPriceAsync();
+        Task<ServiceResultClass<List<GameResponceDTO>>> SortGamesByPriceAsync();
     }
 }

@@ -1,8 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using WebApp.DAL.Enums;
 using WebApp.DAL.Interfaces.Database;
 
 namespace WebApp.DAL.Repository
@@ -78,6 +80,16 @@ namespace WebApp.DAL.Repository
                 Console.WriteLine(e);
                 throw new Exception($"Unable to remove item or items. Error: {e.Message}");
             }
+        }
+
+        public async Task<List<T>> SortItemsAsync<TKey>(Expression<Func<T, TKey>> sort, OrderType orderType)
+        {
+            if (orderType is OrderType.Asc)
+            {
+                return await _dbSet.OrderBy(sort).AsNoTracking().ToListAsync();
+            }
+
+            return await _dbSet.OrderByDescending(sort).AsNoTracking().ToListAsync();
         }
     }
 }

@@ -55,5 +55,19 @@ namespace WebApp.DAL.Repository
 
             await _dbContext.SaveChangesAsync();
         }
+
+        public async Task<List<Product>> SortGamesByRatingAsync(OrderType orderType)
+        {
+            var games = await _dbContext.Products.ToListAsync();
+
+            return await SortItemsAsync(games => games.Rating, orderType); 
+        }
+
+        public async Task<List<Product>> SortGamesByPriceAsync(OrderType orderType)
+        {
+            var games = await _dbContext.Products.ToListAsync();
+
+            return await SortItemsAsync(games => games.Price, orderType);
+        }
     }
 }

@@ -27,6 +27,7 @@ namespace WebApp.BLL.Services
         #endregion
 
         private delegate Task<Product> Operation(Product item);
+        private delegate Task<List<Product>> SortOperation(OrderType orderType);
 
         public ProductService(IProductRepository productRepository, IMapper mapper, ICloudinaryService cloudinaryService)
         {
@@ -110,6 +111,18 @@ namespace WebApp.BLL.Services
             return new ServiceResult(ServiceResultType.Success);
         }
 
+        public async Task<ServiceResultClass<List<GameResponceDTO>>> SortDescGamesByRatingAsync() 
+            => await GetSortedGames(_productRepository.SortGamesByRatingAsync, OrderType.Desc);
+
+        public async Task<ServiceResultClass<List<GameResponceDTO>>> SortGamesByRatingAsync() 
+            => await GetSortedGames(_productRepository.SortGamesByRatingAsync, OrderType.Asc);
+
+        public async Task<ServiceResultClass<List<GameResponceDTO>>> SortDescGamesByPriceAsync() 
+            => await GetSortedGames(_productRepository.SortGamesByPriceAsync, OrderType.Desc);
+
+        public async Task<ServiceResultClass<List<GameResponceDTO>>> SortGamesByPriceAsync()
+            => await GetSortedGames(_productRepository.SortGamesByPriceAsync, OrderType.Asc);
+
         private async Task<GameResponceDTO> GetGameResponceDTOFromGameRequestDTO(GameRequestDTO gameDTO, Operation operation)
         {
             var product = _mapper.Map<Product>(gameDTO);
@@ -119,6 +132,18 @@ namespace WebApp.BLL.Services
 
             var result = await operation.Invoke(product);
             return _mapper.Map<GameResponceDTO>(result);
+        }
+
+        private async Task<ServiceResultClass<List<GameResponceDTO>>> GetSortedGames(SortOperation sortOperation, OrderType orderType)
+        {
+            var games = await sortOperation(orderType);
+
+            if (games is null)
+            {
+                return new ServiceResultClass<List<GameResponceDTO>>(ServiceResultType.Not_Found);
+            }
+
+            return new ServiceResultClass<List<GameResponceDTO>>(_mapper.Map<List<GameResponceDTO>>(games), ServiceResultType.Success);
         }
     }
 }
