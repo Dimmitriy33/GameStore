@@ -4,7 +4,7 @@ using WebApp.DAL.Enums;
 
 namespace WebApp.BLL.DTO
 {
-    public class GameDTO
+    public abstract class BaseGameModel
     {
         /// <summary>
         /// Game unique identifier
