@@ -10,10 +10,10 @@ namespace WebApp.BLL.Mappers
         public UserProfile()
         {
             CreateMap<ApplicationUser, UserDTO>().ReverseMap();
-            CreateMap<GameResponceDTO, Product>().ForMember(dest => dest.IsDeleted, opt => opt.MapFrom(src => false));
+            CreateMap<GameResponseDTO, Product>().ForMember(dest => dest.IsDeleted, opt => opt.MapFrom(src => false));
             CreateMap<GameRequestDTO, Product>().ForMember(dest => dest.IsDeleted, opt => opt.MapFrom(src => false));
-            CreateMap<IEnumerable<Product>, IEnumerable<GameResponceDTO>>().ReverseMap();
-            CreateMap<Product, GameResponceDTO>();
+            CreateMap<IEnumerable<Product>, IEnumerable<GameResponseDTO>>().ReverseMap();
+            CreateMap<Product, GameResponseDTO>();
         }
     }
 }

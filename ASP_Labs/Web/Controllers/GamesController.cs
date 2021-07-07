@@ -54,7 +54,7 @@ namespace WebApp.Web.Controllers
         /// <response code="200">Found games successfully</response>
         /// <response code="404">Unable to find games</response>
         [HttpGet("search")]
-        public async Task<ActionResult<List<GameResponceDTO>>> SearchGamesByName([BindRequired, FromQuery]string term, [BindRequired, FromQuery] int limit, [BindRequired, FromQuery] int offset)
+        public async Task<ActionResult<List<GameResponseDTO>>> SearchGamesByName([BindRequired, FromQuery]string term, [BindRequired, FromQuery] int limit, [BindRequired, FromQuery] int offset)
         {
             var games = await _productService.SearchGamesByNameAsync(term, limit,offset);
 
@@ -62,7 +62,7 @@ namespace WebApp.Web.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<GameResponceDTO>> GetGameById([BindRequired] Guid id)
+        public async Task<ActionResult<GameResponseDTO>> GetGameById([BindRequired] Guid id)
         {
             var game = await _productService.GetGameByIdAsync(id);
 
@@ -71,7 +71,7 @@ namespace WebApp.Web.Controllers
 
         [HttpPost]
         [Authorize(Roles = RolesConstants.Admin)]
-        public async Task<ActionResult<GameResponceDTO>> CreateGame([BindRequired, FromForm] GameRequestDTO gameDTO)
+        public async Task<ActionResult<GameResponseDTO>> CreateGame([BindRequired, FromForm] GameRequestDTO gameDTO)
         {
             var newGame = await _productService.CreateGameAsync(gameDTO);
 
@@ -108,7 +108,7 @@ namespace WebApp.Web.Controllers
 
         [HttpPut]
         [Authorize(Roles = RolesConstants.Admin)]
-        public async Task<ActionResult<GameResponceDTO>> UpdateGameById([BindRequired, FromForm] GameRequestDTO gameDTO)
+        public async Task<ActionResult<GameResponseDTO>> UpdateGameById([BindRequired, FromForm] GameRequestDTO gameDTO)
         {
             var result = await _productService.UpdateGameAsync(gameDTO);
 

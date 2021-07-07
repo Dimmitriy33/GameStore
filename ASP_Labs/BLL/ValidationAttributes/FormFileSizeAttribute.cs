@@ -5,7 +5,7 @@ namespace WebApp.BLL.ValidationAttributes
 {
     public class FormFileSizeAttribute : ValidationAttribute
     {
-        private readonly int _maxFileSize;
+        private readonly int? _maxFileSize = null;
         private readonly int? _minFileSize = null;
 
         public FormFileSizeAttribute(int maxFileSize)
@@ -23,25 +23,20 @@ namespace WebApp.BLL.ValidationAttributes
         {
             var file = value as IFormFile;
 
-            if (file.Length > _maxFileSize)
+            if (!_maxFileSize.HasValue || file.Length > _maxFileSize)
             {
                 return new ValidationResult(GetErrorMessage(_maxFileSize));
             }
 
-            if(_minFileSize != null)
+            if (!_minFileSize.HasValue || file.Length < _minFileSize)
             {
-                if (file.Length < _minFileSize)
-                {
-                    return new ValidationResult(GetErrorMessage((int)_minFileSize));
-                }
+                return new ValidationResult(GetErrorMessage(_minFileSize));
             }
 
             return ValidationResult.Success;
         }
 
-        private string GetErrorMessage(int fileSize)
-        {
-            return $"Maximum allowed file size is { fileSize} bytes.";
-        }
+        private string GetErrorMessage(int? fileSize)
+            => $"Maximum allowed file size is { fileSize} bytes.";
     }
 }
