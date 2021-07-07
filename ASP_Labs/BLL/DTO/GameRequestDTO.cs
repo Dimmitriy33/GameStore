@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
+using WebApp.BLL.Constants;
 using WebApp.BLL.ValidationAttributes;
 
 namespace WebApp.BLL.DTO
@@ -10,14 +11,14 @@ namespace WebApp.BLL.DTO
         /// Game logotype uploaded file
         /// </summary>
         [Required]
-        [FormFileSize]
+        [FormFileSize(FilesConstants.defaultMinFileSize, FilesConstants.defaultMaxFileSize)]
         public IFormFile Logo { get; set; }
 
         /// <summary>
         /// Game background uploaded file
         /// </summary>
         [Required]
-        [FormFileSize]
+        [FormFileSize(FilesConstants.defaultMinFileSize, FilesConstants.defaultMaxFileSize)]
         public IFormFile Background { get; set; }
 
     }

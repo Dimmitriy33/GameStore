@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
-using WebApp.BLL.Constants;
 
 namespace WebApp.BLL.ValidationAttributes
 {
@@ -9,7 +8,12 @@ namespace WebApp.BLL.ValidationAttributes
         private readonly int? _maxFileSize = null;
         private readonly int? _minFileSize = null;
 
-        public FormFileSizeAttribute(int minFileSize = FilesConstants.defaultMinFileSize, int maxFileSize = FilesConstants.defaultMaxFileSize)
+        public FormFileSizeAttribute(int maxFileSize)
+        {
+            _maxFileSize = maxFileSize;
+        }
+
+        public FormFileSizeAttribute(int minFileSize, int maxFileSize)
         {
             _maxFileSize = maxFileSize;
             _minFileSize = minFileSize;
@@ -24,15 +28,15 @@ namespace WebApp.BLL.ValidationAttributes
                 return new ValidationResult(GetErrorMessage(_maxFileSize));
             }
 
-            if(!_minFileSize.HasValue || file.Length < _minFileSize)
+            if (!_minFileSize.HasValue || file.Length < _minFileSize)
             {
-                  return new ValidationResult(GetErrorMessage(_minFileSize));
+                return new ValidationResult(GetErrorMessage(_minFileSize));
             }
 
             return ValidationResult.Success;
         }
 
-        private string GetErrorMessage(int? fileSize) 
+        private string GetErrorMessage(int? fileSize)
             => $"Maximum allowed file size is { fileSize} bytes.";
     }
 }

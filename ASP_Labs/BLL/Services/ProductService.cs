@@ -26,8 +26,6 @@ namespace WebApp.BLL.Services
 
         #endregion
 
-        private delegate Task<Product> Operation(Product item);
-
         public ProductService(IProductRepository productRepository, IMapper mapper, ICloudinaryService cloudinaryService)
         {
             _productRepository = productRepository;
@@ -110,14 +108,14 @@ namespace WebApp.BLL.Services
             return new ServiceResult(ServiceResultType.Success);
         }
 
-        private async Task<GameResponseDTO> GetGameResponceDTOFromGameRequestDTO(GameRequestDTO gameDTO, Operation operation)
+        private async Task<GameResponseDTO> GetGameResponceDTOFromGameRequestDTO(GameRequestDTO gameDTO, Func<Product, Task<Product>> operation)
         {
             var product = _mapper.Map<Product>(gameDTO);
 
             product.Logo = await _cloudinaryService.UploadImage(gameDTO.Logo);
             product.Background = await _cloudinaryService.UploadImage(gameDTO.Background);
 
-            var result = await operation.Invoke(product);
+            var result = await operation(product);
             return _mapper.Map<GameResponseDTO>(result);
         }
     }
