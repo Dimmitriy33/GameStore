@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -37,6 +38,22 @@ namespace WebApp.DAL.Repository
                 .ToListAsync();
 
             return result;
+        }
+
+        public async Task<Product> GetGameByIdAsync(Guid id) =>
+            await _dbContext.Products.AsNoTracking().FirstOrDefaultAsync(t => t.Id == id);
+
+        public async Task SoftDeleteAsync(Guid id)
+        {
+            var item = new Product 
+            { 
+                Id = id,
+                IsDeleted = true 
+            }; 
+
+            _dbContext.Entry(item).Property(i=>i.IsDeleted).IsModified = true;
+
+            await _dbContext.SaveChangesAsync();
         }
     }
 }

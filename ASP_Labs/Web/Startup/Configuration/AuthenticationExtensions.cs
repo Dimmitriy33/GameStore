@@ -18,7 +18,10 @@ namespace WebApp.Web.Startup.Configuration
     {
         public static void RegisterAuthenticationSettings(this IServiceCollection services, AppSettings appSettings)
         {
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            services.AddAuthentication(cfg =>
+            {
+                cfg.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
                 .AddJwtBearer(
                     opt =>
                     {
@@ -27,7 +30,9 @@ namespace WebApp.Web.Startup.Configuration
                             ValidateIssuerSigningKey = appSettings.JwtSettings.ValidateIssuerSigningKey,
                             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(appSettings.JwtSettings.TokenKey)),
                             ValidateAudience = appSettings.JwtSettings.ValidateAudience,
-                            ValidateIssuer = appSettings.JwtSettings.ValidateIssuer
+                            ValidateIssuer = appSettings.JwtSettings.ValidateIssuer,
+                            ValidIssuer = appSettings.JwtSettings.Issuer,
+                            ValidAudience = appSettings.JwtSettings.Audience
                         };
                     });
         }
@@ -36,13 +41,13 @@ namespace WebApp.Web.Startup.Configuration
 
             services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
                 {
+                    options.User.RequireUniqueEmail = true;
                     options.SignIn.RequireConfirmedEmail = appSettings.IdentitySettings.SignInRequireConfirmedEmail;
                     options.Password.RequireDigit = appSettings.IdentitySettings.PasswordRequireDigit;
                     options.Password.RequireNonAlphanumeric = appSettings.IdentitySettings.PasswordRequireNonAlphanumeric;
                     options.Password.RequireUppercase = appSettings.IdentitySettings.PasswordRequireUppercase;
                     options.Password.RequireLowercase = appSettings.IdentitySettings.PasswordRequireLowercase;
                 })
-                    .AddRoles<ApplicationRole>()
                     .AddDefaultTokenProviders()
                     .AddEntityFrameworkStores<ApplicationDbContext>();
         }

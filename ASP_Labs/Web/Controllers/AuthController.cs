@@ -39,7 +39,7 @@ namespace WebApp.Web.Controllers
         /// <response code="201">Successful customer registration</response>
         /// <response code="400">Failed customer registration</response>
         [HttpPost("sign-up")]
-        public async Task<ActionResult<string>> Register([BindRequired] AuthUserDTO user)
+        public async Task<ActionResult<string>> Register([BindRequired] SignUpUserDTO user)
         {
             var registerStatus = await _userService.TryRegisterAsync(user);
 
@@ -81,7 +81,7 @@ namespace WebApp.Web.Controllers
         /// <response code="200">Successful authentication</response>
         /// <response code="401">Failed authentication</response>
         [HttpPost("sign-in")]
-        public async Task<ActionResult<string>> Login([BindRequired] AuthUserDTO user)
+        public async Task<ActionResult<string>> Login([BindRequired] SignInUserDTO user)
         {
             if (!ModelState.IsValid)
             {

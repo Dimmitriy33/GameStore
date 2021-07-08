@@ -44,10 +44,11 @@ namespace WebApp.Web.Startup
             services.ValidateSettingParameters(Configuration);
             services.RegisterDatabase(appSettings.DbSettings, LoggerFactory);
             services.RegisterServices(appSettings);
+
+            services.RegisterIdentity(appSettings);
             services.RegisterAuthenticationSettings(appSettings);
 
             services.AddCors();
-            services.RegisterIdentity(appSettings);
 
             services.Configure<PasswordHasherOptions>(options =>
                 options.CompatibilityMode = PasswordHasherCompatibilityMode.IdentityV2
@@ -107,13 +108,15 @@ namespace WebApp.Web.Startup
             var identitySettings = configuration.GetSection(nameof(AppSettings.IdentitySettings)).Get<IdentitySettings>();
             var emailSettings = configuration.GetSection(nameof(AppSettings.EmailSettings)).Get<EmailSettings>();
             var jwtSettings = configuration.GetSection(nameof(AppSettings.JwtSettings)).Get<JwtSettings>();
+            var cloudinarySettings = configuration.GetSection(nameof(AppSettings.CloudinarySettings)).Get<CloudinarySettings>();
 
             return new AppSettings
             {
                 DbSettings = dbSettings,
                 IdentitySettings = identitySettings,
                 EmailSettings = emailSettings,
-                JwtSettings = jwtSettings
+                JwtSettings = jwtSettings,
+                CloudinarySettings = cloudinarySettings
             };
         }
 

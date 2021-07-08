@@ -2,7 +2,7 @@
 
 namespace WebApp.BLL.DTO
 {
-    public class AuthUserDTO
+    public class SignInUserDTO
     {
         /// <summary>
         /// User Email

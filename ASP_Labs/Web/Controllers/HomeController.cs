@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using WebApp.BLL.Constants;
 
 namespace WebApp.Web.Controllers
 {
@@ -14,6 +15,7 @@ namespace WebApp.Web.Controllers
         private readonly ILogger<HomeController> _logger;
 
         #endregion
+
         public HomeController(ILogger<HomeController> logger)
         {
             _logger = logger;
@@ -25,7 +27,7 @@ namespace WebApp.Web.Controllers
         /// <response code="200">Output message</response>
         [Route("info")]
         [HttpGet]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = RolesConstants.Admin)]
         public ActionResult<string> GetInfo()
         {
             string GetInfoMessage = "Request GET /api/home/info";

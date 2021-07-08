@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using WebApp.DAL.Entities;
 using WebApp.DAL.Enums;
@@ -9,5 +10,7 @@ namespace WebApp.DAL.Interfaces.Database
     {
         Task<List<Product>> GetProductByNameAsync(string term, int limit, int offset);
         Task<List<Platforms>> GetTopPopularPlatformsAsync(int count);
+        Task<Product> GetGameByIdAsync(Guid id);
+        Task SoftDeleteAsync(Guid id);
     }
 }

@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebApp.DAL;
 
 namespace WebApp.DAL.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210702124737_Change links for test images of products")]
+    partial class Changelinksfortestimagesofproducts
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -240,9 +242,6 @@ namespace WebApp.DAL.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
                     b.Property<string>("Logo")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -291,7 +290,6 @@ namespace WebApp.DAL.Migrations
                             Count = 1090,
                             DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Genre = "Esports",
-                            IsDeleted = false,
                             Logo = "https://res.cloudinary.com/dimmitriy33/image/upload/v1625229539/ASP_Labs/FIFA_series_logo.svg_geizkx.png",
                             Name = "FIFA 2020",
                             Platform = 1,
@@ -306,7 +304,6 @@ namespace WebApp.DAL.Migrations
                             Count = 1080,
                             DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Genre = "Strategy",
-                            IsDeleted = false,
                             Logo = "https://res.cloudinary.com/dimmitriy33/image/upload/v1625229190/ASP_Labs/D0_9B_D0_BE_D0_B3_D0_BE_D1_82_D0_B8_D0_BF__D0_B8_D0_B3_D1_80_D1_8B_God_of_War_mgno9l.png",
                             Name = "God of War",
                             Platform = 1,
@@ -321,7 +318,6 @@ namespace WebApp.DAL.Migrations
                             Count = 1070,
                             DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Genre = "Action",
-                            IsDeleted = false,
                             Logo = "https://res.cloudinary.com/dimmitriy33/image/upload/v1625229196/ASP_Labs/D0_9E_D0_B1_D0_BB_D0_BE_D0_B6_D0_BA_D0_B0_Bloodborne_zsqu5h.jpg",
                             Name = "Bloodborne",
                             Platform = 1,
@@ -336,7 +332,6 @@ namespace WebApp.DAL.Migrations
                             Count = 1060,
                             DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Genre = "RolePlaying",
-                            IsDeleted = false,
                             Logo = "https://res.cloudinary.com/dimmitriy33/image/upload/v1625229203/ASP_Labs/Among_Us_y6hnjs.png",
                             Name = "Among Us",
                             Platform = 4,
@@ -351,7 +346,6 @@ namespace WebApp.DAL.Migrations
                             Count = 1050,
                             DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Genre = "MMO",
-                            IsDeleted = false,
                             Logo = "https://res.cloudinary.com/dimmitriy33/image/upload/v1625229211/ASP_Labs/Brawl_Stars_w86qfv.png",
                             Name = "Brawl Stars",
                             Platform = 4,
@@ -366,7 +360,6 @@ namespace WebApp.DAL.Migrations
                             Count = 1040,
                             DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Genre = "Action",
-                            IsDeleted = false,
                             Logo = "https://res.cloudinary.com/dimmitriy33/image/upload/v1625229220/ASP_Labs/1920px-FortniteLogo.svg_kcwnbv.png",
                             Name = "Fortnite",
                             Platform = 2,
@@ -381,7 +374,6 @@ namespace WebApp.DAL.Migrations
                             Count = 1030,
                             DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Genre = "Simulation",
-                            IsDeleted = false,
                             Logo = "https://res.cloudinary.com/dimmitriy33/image/upload/v1625229230/ASP_Labs/1920px-MinecraftLogo.svg_gamutf.png",
                             Name = "Minecraft",
                             Platform = 2,
@@ -396,7 +388,6 @@ namespace WebApp.DAL.Migrations
                             Count = 1020,
                             DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Genre = "Action",
-                            IsDeleted = false,
                             Logo = "https://res.cloudinary.com/dimmitriy33/image/upload/v1625229084/ASP_Labs/Forza_Horizon_4_coverart_qmuz6l.jpg",
                             Name = "Forza Horizon 4",
                             Platform = 2,
@@ -411,7 +402,6 @@ namespace WebApp.DAL.Migrations
                             Count = 1010,
                             DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Genre = "Action",
-                            IsDeleted = false,
                             Logo = "https://res.cloudinary.com/dimmitriy33/image/upload/v1625229253/ASP_Labs/Super_Smash_Bros._Ultimate_yvp3wa.png",
                             Name = "Super Smash Bros. Ultimate",
                             Platform = 5,
@@ -426,7 +416,6 @@ namespace WebApp.DAL.Migrations
                             Count = 100,
                             DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Genre = "Strategy",
-                            IsDeleted = false,
                             Logo = "https://res.cloudinary.com/dimmitriy33/image/upload/v1625229266/ASP_Labs/Super_Mario_Odyssey_box_ydaxqk.jpg",
                             Name = "Super Mario Odyssey",
                             Platform = 5,
@@ -441,7 +430,6 @@ namespace WebApp.DAL.Migrations
                             Count = 1600,
                             DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Genre = "Adventure",
-                            IsDeleted = false,
                             Logo = "https://res.cloudinary.com/dimmitriy33/image/upload/v1625229280/ASP_Labs/Animal_Crossing_Logo_tbw4bw.png",
                             Name = "Animal Crossing",
                             Platform = 5,
@@ -456,7 +444,6 @@ namespace WebApp.DAL.Migrations
                             Count = 1500,
                             DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Genre = "Strategy",
-                            IsDeleted = false,
                             Logo = "https://res.cloudinary.com/dimmitriy33/image/upload/v1625229295/ASP_Labs/D0_9E_D0_B1_D0_BB_D0_BE_D0_B6_D0_BA_D0_B0_Dota_2_rd8cox.jpg",
                             Name = "Dota 2",
                             Platform = 3,
@@ -471,7 +458,6 @@ namespace WebApp.DAL.Migrations
                             Count = 1400,
                             DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Genre = "MMO",
-                            IsDeleted = false,
                             Logo = "https://res.cloudinary.com/dimmitriy33/image/upload/v1625229311/ASP_Labs/1920px-_D0_9B_D0_BE_D0_B3_D0_BE_D1_82_D0_B8_D0_BF_Counter-Strike_Global_Offensive.svg_cg9fcb.png",
                             Name = "CS GO",
                             Platform = 3,
@@ -486,7 +472,6 @@ namespace WebApp.DAL.Migrations
                             Count = 1300,
                             DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Genre = "MMO",
-                            IsDeleted = false,
                             Logo = "https://res.cloudinary.com/dimmitriy33/image/upload/v1625229328/ASP_Labs/Overwatch_cover_art_whuqso.jpg",
                             Name = "Overwatch",
                             Platform = 3,
@@ -501,7 +486,6 @@ namespace WebApp.DAL.Migrations
                             Count = 1200,
                             DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Genre = "Strategy",
-                            IsDeleted = false,
                             Logo = "https://res.cloudinary.com/dimmitriy33/image/upload/v1625229345/ASP_Labs/HL2box_lhx2ag.jpg",
                             Name = "Half-Life",
                             Platform = 3,
@@ -516,7 +500,6 @@ namespace WebApp.DAL.Migrations
                             Count = 1100,
                             DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Genre = "Strategy",
-                            IsDeleted = false,
                             Logo = "https://res.cloudinary.com/dimmitriy33/image/upload/v1625229364/ASP_Labs/Portal_boxcover_ojqdry.jpg",
                             Name = "Portal 2",
                             Platform = 3,
