@@ -23,6 +23,7 @@ namespace WebApp.BLL.DTO
         /// Game platform
         /// </summary>
         /// <example>1 or PC</example>
+        [EnumDataType(typeof(Platforms))]
         public Platforms Platform { get; set; }
 
         /// <summary>
@@ -36,12 +37,14 @@ namespace WebApp.BLL.DTO
         /// Game genre
         /// </summary>
         /// <example>MMO</example>
+        [EnumDataType(typeof(GamesGenres))]
         public GamesGenres Genre { get; set; }
 
         /// <summary>
         /// Game rating by age
         /// </summary>
         /// <example>6</example>
+        [EnumDataType(typeof(GamesRating))]
         public GamesRating Rating { get; set; }
 
         /// <summary>

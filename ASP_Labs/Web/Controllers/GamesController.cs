@@ -3,12 +3,15 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Net;
 using System.Threading.Tasks;
 using WebApp.BLL.Constants;
 using WebApp.BLL.DTO;
 using WebApp.BLL.Interfaces;
 using WebApp.BLL.Models;
+using WebApp.DAL.Entities;
+using WebApp.Web.ActionFilters;
 
 namespace WebApp.Web.Controllers
 {
@@ -23,13 +26,15 @@ namespace WebApp.Web.Controllers
         #endregion
         #region Services
 
+        private readonly IClaimsReader _claimsHelper;
         private readonly IProductService _productService;
 
         #endregion
 
-        public GamesController(IProductService productService)
+        public GamesController(IProductService productService, IClaimsReader claimsHelper)
         {
             _productService = productService;
+            _claimsHelper = claimsHelper;
         }
 
         /// <summary>
@@ -61,6 +66,12 @@ namespace WebApp.Web.Controllers
             return StatusCode((int)games.ServiceResultType, games.Result);
         }
 
+        /// <summary>
+        /// Get game by id
+        /// </summary>
+        /// /// <param name="id">Game id</param>
+        /// <response code="200">Found game successfully</response>
+        /// <response code="404">Unable to find games</response>
         [HttpGet("{id}")]
         public async Task<ActionResult<GameResponseDTO>> GetGameById([BindRequired] Guid id)
         {
@@ -69,6 +80,12 @@ namespace WebApp.Web.Controllers
             return StatusCode((int)game.ServiceResultType, game.Result);
         }
 
+        /// <summary>
+        /// Create game
+        /// </summary>
+        /// /// <param name="gameDTO">New game </param>
+        /// <response code="201">Game created successfully</response>
+        /// <response code="400">Unable to create game</response>
         [HttpPost]
         [Authorize(Roles = RolesConstants.Admin)]
         public async Task<ActionResult<GameResponseDTO>> CreateGame([BindRequired, FromForm] GameRequestDTO gameDTO)
@@ -78,6 +95,12 @@ namespace WebApp.Web.Controllers
             return StatusCode((int)HttpStatusCode.Created, newGame.Result);
         }
 
+        /// <summary>
+        /// Soft delete game by id(IsDeleted = true)
+        /// </summary>
+        /// /// <param name="id">game id</param>
+        /// <response code="200">Soft elete game successfully</response>
+        /// <response code="404">Unable to find game</response>
         [HttpDelete("soft-remove/id/{id}")]
         [Authorize(Roles = RolesConstants.Admin)]
         public async Task<ActionResult> SoftDeleteGameById([BindRequired] Guid id)
@@ -92,6 +115,12 @@ namespace WebApp.Web.Controllers
             return StatusCode((int)result.ServiceResultType);
         }
 
+        /// <summary>
+        /// Delete game by id
+        /// </summary>
+        /// /// <param name="id">game id</param>
+        /// <response code="200">Delete game successfully</response>
+        /// <response code="404">Unable to find game</response>
         [HttpDelete("id/{id}")]
         [Authorize(Roles = RolesConstants.Admin)]
         public async Task<ActionResult> DeleteGameById([BindRequired] Guid id)
@@ -106,11 +135,62 @@ namespace WebApp.Web.Controllers
             return StatusCode((int)result.ServiceResultType);
         }
 
+        /// <summary>
+        /// Update game by id
+        /// </summary>
+        /// /// <param name="gameDTO">game for update</param>
+        /// <response code="200">Update game successfully</response>
+        /// <response code="404">Unable to find game</response>
         [HttpPut]
         [Authorize(Roles = RolesConstants.Admin)]
-        public async Task<ActionResult<GameResponseDTO>> UpdateGameById([BindRequired, FromForm] GameRequestDTO gameDTO)
+        public async Task<ActionResult<GameResponseDTO>> UpdateGame([BindRequired, FromForm] GameRequestDTO gameDTO)
         {
             var result = await _productService.UpdateGameAsync(gameDTO);
+
+            return StatusCode((int)result.ServiceResultType, result.Result);
+        }
+
+        /// <summary>
+        /// Sort and filter games by input parameters
+        /// </summary>
+        /// /// <param name="gameSelectionDTO">model with parameters for sort and filter</param>
+        /// <response code="200">Found games successfully</response>
+        [HttpGet("list")]
+        [ServiceFilter(typeof(ActionFilterForSelectingGames))]
+        public async Task<ActionResult<ProductRatingDTO>> FilterAndSortGames(
+            [BindRequired, FromQuery] GameSelectionDTO gameSelectionDTO,
+            [Range(0, int.MaxValue)] int offset,
+            [Range(0, int.MaxValue)] int limit)
+        {
+            if(!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            var result = await _productService.SortAndFilterGamesAsync(gameSelectionDTO, offset, limit);
+
+            return StatusCode((int)result.ServiceResultType, result.Result);
+        }
+
+        /// <summary>
+        /// Add new ProductRating for Game by User
+        /// </summary>
+        /// /// <param name="productRatingRequestDTO">Product ating model</param>
+        /// /// /// <param name="limit">Maximum number of received items</param>
+        /// /// <param name="offset">Amount of items you may skip</param>
+        /// <response code="200">Add new ProductRating successfully</response>
+        [HttpPost("rating")]
+        [Authorize]
+        public async Task<ActionResult<ProductRatingBaseDTO>> EditRating([BindRequired] ProductRatingBaseDTO productRatingRequestDTO)
+        {
+            var productRating = new ProductRating
+            {
+                UserId = _claimsHelper.GetUserId(User).Result,
+                ProductId = productRatingRequestDTO.ProductId,
+                Rating = productRatingRequestDTO.Rating
+            };
+
+            var result = await _productService.EditGameRatingByUserAsync(productRating);
 
             return StatusCode((int)result.ServiceResultType, result.Result);
         }

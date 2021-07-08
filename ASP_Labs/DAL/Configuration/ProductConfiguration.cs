@@ -53,6 +53,11 @@ namespace WebApp.DAL.Configuration
             builder.Property(b => b.Price).IsRequired();
             builder.Property(b => b.Count).IsRequired();
 
+            builder
+                .HasMany(b => b.Ratings)
+                .WithOne()
+                .HasForeignKey(p => p.ProductId);
+
             builder.HasIndex(b => b.Name);
             builder.HasIndex(b => b.Platform);
             builder.HasIndex(b => b.TotalRating);

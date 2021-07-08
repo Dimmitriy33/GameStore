@@ -13,8 +13,8 @@ namespace WebApp.DAL.Configuration
 
             builder
                 .HasOne<Product>()
-                .WithMany(p => p.Ratings)
-                .HasForeignKey(b => b.ProductId);
+                .WithMany(t => t.Ratings)
+                .HasForeignKey(p => p.ProductId);
 
             builder
                .HasOne<ApplicationUser>()

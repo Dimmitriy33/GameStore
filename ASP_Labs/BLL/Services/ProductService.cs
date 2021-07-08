@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using WebApp.BLL.DTO;
 using WebApp.BLL.Interfaces;
@@ -16,6 +17,7 @@ namespace WebApp.BLL.Services
         #region Repositories
 
         private readonly IProductRepository _productRepository;
+        private readonly IProductRatingRepository _productRatingRepository;
 
         #endregion
 
@@ -23,16 +25,18 @@ namespace WebApp.BLL.Services
 
         private readonly IMapper _mapper;
         private readonly ICloudinaryService _cloudinaryService;
+        private readonly IProductSelectionHelper _productSelectionHelper;
 
         #endregion
 
-        private delegate Task<List<Product>> SortOperation(OrderType orderType);
-
-        public ProductService(IProductRepository productRepository, IMapper mapper, ICloudinaryService cloudinaryService)
+        public ProductService(IProductRepository productRepository, IMapper mapper, ICloudinaryService cloudinaryService,
+            IProductSelectionHelper productSelectionHelper, IProductRatingRepository productRatingRepository)
         {
             _productRepository = productRepository;
             _mapper = mapper;
             _cloudinaryService = cloudinaryService;
+            _productSelectionHelper = productSelectionHelper;
+            _productRatingRepository = productRatingRepository;
         }
 
         public async Task<ServiceResultClass<List<Platforms>>> GetTopPlatformsAsync(int count)
@@ -110,40 +114,36 @@ namespace WebApp.BLL.Services
             return new ServiceResult(ServiceResultType.Success);
         }
 
-        public async Task<ServiceResultClass<List<GameResponceDTO>>> SortDescGamesByRatingAsync() 
-            => await GetSortedGames(_productRepository.SortGamesByRatingAsync, OrderType.Desc);
+        public async Task<ServiceResultClass<List<GameResponseDTO>>> SortAndFilterGamesAsync(GameSelectionDTO gameSelection, int offset, int limit)
+        {
+            var filterExpression = _productSelectionHelper.GetFilterExpression(gameSelection.FilterParameter, gameSelection.FilterParameterValue);
+            var sortExpression = _productSelectionHelper.GetSortExpression(gameSelection.SortField);
+            var orderType = _productSelectionHelper.GetOrderType(gameSelection.OrderType);
 
-        public async Task<ServiceResultClass<List<GameResponceDTO>>> SortGamesByRatingAsync() 
-            => await GetSortedGames(_productRepository.SortGamesByRatingAsync, OrderType.Asc);
+            var games = await _productRepository.SortAndFilterItemsAsync(filterExpression, sortExpression, limit, offset, orderType);
 
-        public async Task<ServiceResultClass<List<GameResponceDTO>>> SortDescGamesByPriceAsync() 
-            => await GetSortedGames(_productRepository.SortGamesByPriceAsync, OrderType.Desc);
+            return new ServiceResultClass<List<GameResponseDTO>>(games.Select(_mapper.Map<GameResponseDTO>).ToList(), ServiceResultType.Success);
+        }
 
-        public async Task<ServiceResultClass<List<GameResponceDTO>>> SortGamesByPriceAsync()
-            => await GetSortedGames(_productRepository.SortGamesByPriceAsync, OrderType.Asc);
+        public async Task<ServiceResultClass<ProductRatingDTO>> EditGameRatingByUserAsync(ProductRating productRating)
+        {
+            var newProductRating = await _productRatingRepository.CreateAsync(productRating);
+
+            await _productRepository.ChangeGameRatingAsync(productRating.ProductId);
+
+            return new ServiceResultClass<ProductRatingDTO>(_mapper.Map<ProductRatingDTO>(newProductRating), ServiceResultType.Success);
+        }
 
         private async Task<GameResponseDTO> GetGameResponceDTOFromGameRequestDTO(GameRequestDTO gameDTO, Func<Product, Task<Product>> operation)
         {
             var product = _mapper.Map<Product>(gameDTO);
 
-        private async Task<GameResponseDTO> GetGameResponceDTOFromGameRequestDTO(GameRequestDTO gameDTO, Func<Product, Task<Product>> operation)
             product.Logo = await _cloudinaryService.UploadImage(gameDTO.Logo);
             product.Background = await _cloudinaryService.UploadImage(gameDTO.Background);
 
             var result = await operation(product);
+
             return _mapper.Map<GameResponseDTO>(result);
-        }
-
-        private async Task<ServiceResultClass<List<GameResponceDTO>>> GetSortedGames(SortOperation sortOperation, OrderType orderType)
-        {
-            var games = await sortOperation(orderType);
-
-            if (games is null)
-            {
-                return new ServiceResultClass<List<GameResponceDTO>>(ServiceResultType.Not_Found);
-            }
-
-            return new ServiceResultClass<List<GameResponceDTO>>(_mapper.Map<List<GameResponceDTO>>(games), ServiceResultType.Success);
         }
     }
 }

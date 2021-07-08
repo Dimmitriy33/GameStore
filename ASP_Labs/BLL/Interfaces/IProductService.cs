@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using WebApp.BLL.DTO;
 using WebApp.BLL.Models;
+using WebApp.DAL.Entities;
 using WebApp.DAL.Enums;
 
 namespace WebApp.BLL.Interfaces
@@ -16,9 +17,7 @@ namespace WebApp.BLL.Interfaces
         Task<ServiceResultClass<GameResponseDTO>> CreateGameAsync(GameRequestDTO gameDTO);
         Task<ServiceResultClass<GameResponseDTO>> GetGameByIdAsync(Guid id);
         Task<ServiceResultClass<GameResponseDTO>> UpdateGameAsync(GameRequestDTO gameDTO);
-        Task<ServiceResultClass<List<GameResponceDTO>>> SortDescGamesByRatingAsync();
-        Task<ServiceResultClass<List<GameResponceDTO>>> SortGamesByRatingAsync();
-        Task<ServiceResultClass<List<GameResponceDTO>>> SortDescGamesByPriceAsync();
-        Task<ServiceResultClass<List<GameResponceDTO>>> SortGamesByPriceAsync();
+        Task<ServiceResultClass<List<GameResponseDTO>>> SortAndFilterGamesAsync(GameSelectionDTO gameSelection, int offset, int limit);
+        Task<ServiceResultClass<ProductRatingDTO>> EditGameRatingByUserAsync(ProductRating productRating);
     }
 }

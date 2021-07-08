@@ -56,18 +56,21 @@ namespace WebApp.DAL.Repository
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task<List<Product>> SortGamesByRatingAsync(OrderType orderType)
+        public async Task ChangeGameRatingAsync(Guid id)
         {
-            var games = await _dbContext.Products.ToListAsync();
+            var game = new Product
+            {
+                Id = id,
+                Ratings = await _dbContext.ProductRating.Where(pR => pR.ProductId == id).ToListAsync(),
+            };
 
-            return await SortItemsAsync(games => games.Rating, orderType); 
+            game.TotalRating = game.Ratings.Average(g => g.Rating);
+
+            _dbContext.Entry(game).Property(i => i.TotalRating).IsModified = true;
+
+            await _dbContext.SaveChangesAsync();
         }
 
-        public async Task<List<Product>> SortGamesByPriceAsync(OrderType orderType)
-        {
-            var games = await _dbContext.Products.ToListAsync();
-
-            return await SortItemsAsync(games => games.Price, orderType);
-        }
+        public async Task<List<Product>> GetAllGamesAsync() => await _dbContext.Products.ToListAsync();
     }
 }
