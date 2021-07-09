@@ -20,12 +20,12 @@ namespace WebApp.Web.Startup.Configuration
             services.AddTransient<IProductService, ProductService>();
             services.AddTransient<IClaimsReader, ClaimsReader>();
             services.AddTransient<ITokenEncodingHelper, TokenEncodingHelper>();
-            services.AddTransient<IGameSelectingHelper, GameSelectingHelper>();
+            services.AddTransient<IGameSelectionHelper, GameSelectionHelper>();
 
             services.AddScoped<ICloudinaryService, CloudinaryService>();
 
             //Action filters
-            services.AddScoped<GamesSelectingFilter>();
+            services.AddScoped<GamesSelectionFilter>();
 
             //Repositories
             services.AddTransient<IUserRepository, UserRepository>();

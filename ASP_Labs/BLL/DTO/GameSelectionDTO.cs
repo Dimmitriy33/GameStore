@@ -1,29 +1,29 @@
 ﻿namespace WebApp.BLL.DTO
 {
-    public class GameSelectingDTO
+    public class GameSelectionDTO
     {
         /// <summary>
-        /// Games genre filter
+        /// Games filter
         /// </summary>
-        /// <example>1</example>
+        /// <example>Genre</example>
         public string FilterParameter { get; set; }
 
         /// <summary>
-        /// Games age filter
+        /// Games filter value
         /// </summary>
-        /// <example>1</example>
+        /// <example>Action</example>
         public string FilterParameterValue { get; set; }
 
         /// <summary>
         /// Game parameter for sorting
         /// </summary>
-        /// <example>1</example>
+        /// <example>Price</example>
         public string SortField { get; set; }
 
         /// <summary>
-        /// Game unique identifier
+        /// Games sorting order type
         /// </summary>
-        /// <example>1</example>
+        /// <example>Asc</example>
         public string OrderType { get; set; } = DAL.Enums.OrderType.Asc.ToString();
     }
 }

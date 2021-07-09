@@ -3,7 +3,7 @@ using System;
 
 namespace WebApp.DAL.Migrations
 {
-    public partial class Addproductswithdefaultdata : Migration
+    public partial class AddProductsWithDefaultData : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

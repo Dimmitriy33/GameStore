@@ -25,17 +25,17 @@ namespace WebApp.BLL.Services
 
         private readonly IMapper _mapper;
         private readonly ICloudinaryService _cloudinaryService;
-        private readonly IGameSelectingHelper _gameSelectingHelper;
+        private readonly IGameSelectionHelper _gameSelectionHelper;
 
         #endregion
 
         public ProductService(IProductRepository productRepository, IMapper mapper, ICloudinaryService cloudinaryService,
-            IGameSelectingHelper gameSelectingHelper, IProductRatingRepository productRatingRepository)
+            IGameSelectionHelper gameSelectionHelper, IProductRatingRepository productRatingRepository)
         {
             _productRepository = productRepository;
             _mapper = mapper;
             _cloudinaryService = cloudinaryService;
-            _gameSelectingHelper = gameSelectingHelper;
+            _gameSelectionHelper = gameSelectionHelper;
             _productRatingRepository = productRatingRepository;
         }
 
@@ -114,10 +114,10 @@ namespace WebApp.BLL.Services
             return new ServiceResult(ServiceResultType.Success);
         }
 
-        public async Task<ServiceResultClass<List<GameResponseDTO>>> SortAndFilterGamesAsync(GameSelectingDTO gameSelection, int offset, int limit)
+        public async Task<ServiceResultClass<List<GameResponseDTO>>> SortAndFilterGamesAsync(GameSelectionDTO gameSelection, int offset, int limit)
         {
-            var filterExpression = _gameSelectingHelper.GetFilterExpression(gameSelection.FilterParameter, gameSelection.FilterParameterValue);
-            var sortExpression = _gameSelectingHelper.GetSortExpression(gameSelection.SortField);
+            var filterExpression = _gameSelectionHelper.GetFilterExpression(gameSelection.FilterParameter, gameSelection.FilterParameterValue);
+            var sortExpression = _gameSelectionHelper.GetSortExpression(gameSelection.SortField);
             var orderType = Enum.Parse(typeof(OrderType),gameSelection.OrderType);
 
             var games = await _productRepository.SortAndFilterItemsAsync(filterExpression, sortExpression, limit, offset, (OrderType)orderType);

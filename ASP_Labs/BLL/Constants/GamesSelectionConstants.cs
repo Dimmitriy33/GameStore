@@ -1,6 +1,6 @@
 ﻿namespace WebApp.BLL.Constants
 {
-    public static class GamesSelectingConstants
+    public static class GamesSelectionConstants
     {
         public const string FilterByGenre = "Genre";
         public const string FilterByAge = "Age";
