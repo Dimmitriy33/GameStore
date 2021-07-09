@@ -2,7 +2,7 @@
 
 namespace WebApp.DAL.Migrations
 {
-    public partial class AddIsDeletedfieldtodboProducts : Migration
+    public partial class AddIsDeletedFieldToProducts : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

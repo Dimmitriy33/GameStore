@@ -1,9 +1,9 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
+using System;
 
 namespace WebApp.DAL.Migrations
 {
-    public partial class updateee : Migration
+    public partial class UpdateRolePlayingName : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

@@ -25,17 +25,17 @@ namespace WebApp.BLL.Services
 
         private readonly IMapper _mapper;
         private readonly ICloudinaryService _cloudinaryService;
-        private readonly IProductSelectionHelper _productSelectionHelper;
+        private readonly IGameSelectingHelper _gameSelectingHelper;
 
         #endregion
 
         public ProductService(IProductRepository productRepository, IMapper mapper, ICloudinaryService cloudinaryService,
-            IProductSelectionHelper productSelectionHelper, IProductRatingRepository productRatingRepository)
+            IGameSelectingHelper gameSelectingHelper, IProductRatingRepository productRatingRepository)
         {
             _productRepository = productRepository;
             _mapper = mapper;
             _cloudinaryService = cloudinaryService;
-            _productSelectionHelper = productSelectionHelper;
+            _gameSelectingHelper = gameSelectingHelper;
             _productRatingRepository = productRatingRepository;
         }
 
@@ -114,13 +114,13 @@ namespace WebApp.BLL.Services
             return new ServiceResult(ServiceResultType.Success);
         }
 
-        public async Task<ServiceResultClass<List<GameResponseDTO>>> SortAndFilterGamesAsync(GameSelectionDTO gameSelection, int offset, int limit)
+        public async Task<ServiceResultClass<List<GameResponseDTO>>> SortAndFilterGamesAsync(GameSelectingDTO gameSelection, int offset, int limit)
         {
-            var filterExpression = _productSelectionHelper.GetFilterExpression(gameSelection.FilterParameter, gameSelection.FilterParameterValue);
-            var sortExpression = _productSelectionHelper.GetSortExpression(gameSelection.SortField);
-            var orderType = _productSelectionHelper.GetOrderType(gameSelection.OrderType);
+            var filterExpression = _gameSelectingHelper.GetFilterExpression(gameSelection.FilterParameter, gameSelection.FilterParameterValue);
+            var sortExpression = _gameSelectingHelper.GetSortExpression(gameSelection.SortField);
+            var orderType = Enum.Parse(typeof(OrderType),gameSelection.OrderType);
 
-            var games = await _productRepository.SortAndFilterItemsAsync(filterExpression, sortExpression, limit, offset, orderType);
+            var games = await _productRepository.SortAndFilterItemsAsync(filterExpression, sortExpression, limit, offset, (OrderType)orderType);
 
             return new ServiceResultClass<List<GameResponseDTO>>(games.Select(_mapper.Map<GameResponseDTO>).ToList(), ServiceResultType.Success);
         }

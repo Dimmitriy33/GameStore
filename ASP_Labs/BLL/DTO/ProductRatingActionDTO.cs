@@ -2,7 +2,7 @@
 
 namespace WebApp.BLL.DTO
 {
-    public class ProductRatingBaseDTO
+    public class ProductRatingActionDTO
     {
         /// <summary>
         /// Games id

@@ -11,7 +11,7 @@ namespace WebApp.DAL.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     [Migration("20210701132440_Add some product fields")]
-    partial class Addsomeproductfields
+    partial class AddSomeProductFields
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

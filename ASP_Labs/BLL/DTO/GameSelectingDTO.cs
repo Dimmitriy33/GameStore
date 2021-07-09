@@ -1,6 +1,6 @@
 ﻿namespace WebApp.BLL.DTO
 {
-    public class GameSelectionDTO
+    public class GameSelectingDTO
     {
         /// <summary>
         /// Games genre filter
@@ -24,6 +24,6 @@
         /// Game unique identifier
         /// </summary>
         /// <example>1</example>
-        public string OrderType {get;set;}
+        public string OrderType { get; set; } = DAL.Enums.OrderType.Asc.ToString();
     }
 }

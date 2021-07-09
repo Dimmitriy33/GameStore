@@ -11,7 +11,7 @@ using WebApp.BLL.DTO;
 using WebApp.BLL.Interfaces;
 using WebApp.BLL.Models;
 using WebApp.DAL.Entities;
-using WebApp.Web.ActionFilters;
+using WebApp.Web.Filters;
 
 namespace WebApp.Web.Controllers
 {
@@ -53,9 +53,9 @@ namespace WebApp.Web.Controllers
         /// <summary>
         /// Search games by input string
         /// </summary>
-        /// /// <param name="term">Search part</param>
-        /// /// <param name="limit">Maximum number of received items</param>
-        /// /// <param name="offset">Amount of items you may skip</param>
+        /// <param name="term">Search part</param>
+        /// <param name="limit">Maximum number of received items</param>
+        /// <param name="offset">Amount of items you may skip</param>
         /// <response code="200">Found games successfully</response>
         /// <response code="404">Unable to find games</response>
         [HttpGet("search")]
@@ -69,7 +69,7 @@ namespace WebApp.Web.Controllers
         /// <summary>
         /// Get game by id
         /// </summary>
-        /// /// <param name="id">Game id</param>
+        /// <param name="id">Game id</param>
         /// <response code="200">Found game successfully</response>
         /// <response code="404">Unable to find games</response>
         [HttpGet("{id}")]
@@ -83,7 +83,7 @@ namespace WebApp.Web.Controllers
         /// <summary>
         /// Create game
         /// </summary>
-        /// /// <param name="gameDTO">New game </param>
+        /// <param name="gameDTO">New game </param>
         /// <response code="201">Game created successfully</response>
         /// <response code="400">Unable to create game</response>
         [HttpPost]
@@ -98,7 +98,7 @@ namespace WebApp.Web.Controllers
         /// <summary>
         /// Soft delete game by id(IsDeleted = true)
         /// </summary>
-        /// /// <param name="id">game id</param>
+        /// <param name="id">game id</param>
         /// <response code="200">Soft elete game successfully</response>
         /// <response code="404">Unable to find game</response>
         [HttpDelete("soft-remove/id/{id}")]
@@ -118,7 +118,7 @@ namespace WebApp.Web.Controllers
         /// <summary>
         /// Delete game by id
         /// </summary>
-        /// /// <param name="id">game id</param>
+        /// <param name="id">game id</param>
         /// <response code="200">Delete game successfully</response>
         /// <response code="404">Unable to find game</response>
         [HttpDelete("id/{id}")]
@@ -138,7 +138,7 @@ namespace WebApp.Web.Controllers
         /// <summary>
         /// Update game by id
         /// </summary>
-        /// /// <param name="gameDTO">game for update</param>
+        /// <param name="gameDTO">game for update</param>
         /// <response code="200">Update game successfully</response>
         /// <response code="404">Unable to find game</response>
         [HttpPut]
@@ -153,21 +153,23 @@ namespace WebApp.Web.Controllers
         /// <summary>
         /// Sort and filter games by input parameters
         /// </summary>
-        /// /// <param name="gameSelectionDTO">model with parameters for sort and filter</param>
+        /// <param name="GameSelectingDTO">model with parameters for sort and filter</param>
+        /// <param name="limit">Maximum number of received items</param>
+        /// <param name="offset">Amount of items you may skip</param>
         /// <response code="200">Found games successfully</response>
         [HttpGet("list")]
-        [ServiceFilter(typeof(ActionFilterForSelectingGames))]
+        [ServiceFilter(typeof(GamesSelectingFilter))]
         public async Task<ActionResult<ProductRatingDTO>> FilterAndSortGames(
-            [BindRequired, FromQuery] GameSelectionDTO gameSelectionDTO,
-            [Range(0, int.MaxValue)] int offset,
-            [Range(0, int.MaxValue)] int limit)
+            [FromQuery] GameSelectingDTO GameSelectingDTO,
+            [Range(0, 1000)] int offset = GamesSelectingConstants.DefaultOffset,
+            [Range(0, 100)] int limit = GamesSelectingConstants.DefaultLimit)
         {
             if(!ModelState.IsValid)
             {
                 return BadRequest();
             }
 
-            var result = await _productService.SortAndFilterGamesAsync(gameSelectionDTO, offset, limit);
+            var result = await _productService.SortAndFilterGamesAsync(GameSelectingDTO, offset, limit);
 
             return StatusCode((int)result.ServiceResultType, result.Result);
         }
@@ -175,13 +177,11 @@ namespace WebApp.Web.Controllers
         /// <summary>
         /// Add new ProductRating for Game by User
         /// </summary>
-        /// /// <param name="productRatingRequestDTO">Product ating model</param>
-        /// /// /// <param name="limit">Maximum number of received items</param>
-        /// /// <param name="offset">Amount of items you may skip</param>
+        /// <param name="productRatingRequestDTO">Product ating model</param>
         /// <response code="200">Add new ProductRating successfully</response>
         [HttpPost("rating")]
         [Authorize]
-        public async Task<ActionResult<ProductRatingBaseDTO>> EditRating([BindRequired] ProductRatingBaseDTO productRatingRequestDTO)
+        public async Task<ActionResult<ProductRatingActionDTO>> EditRating([BindRequired] ProductRatingActionDTO productRatingRequestDTO)
         {
             var productRating = new ProductRating
             {

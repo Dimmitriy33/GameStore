@@ -14,20 +14,15 @@ namespace WebApp.DAL.Configuration
             builder
                 .HasOne<Product>()
                 .WithMany(t => t.Ratings)
-                .HasForeignKey(p => p.ProductId);
+                .HasForeignKey(p => p.ProductId)
+                .IsRequired();
 
             builder
                .HasOne<ApplicationUser>()
                .WithMany(u => u.Ratings)
-               .HasForeignKey(b => b.UserId);
+               .HasForeignKey(b => b.UserId)
+                .IsRequired();
 
-            builder
-                .Property(b => b.ProductId)
-                .IsRequired();
-            
-            builder
-                .Property(b => b.UserId)
-                .IsRequired();
             builder
                 .Property(b => b.Rating)
                 .IsRequired();

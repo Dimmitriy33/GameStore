@@ -10,8 +10,8 @@ using WebApp.DAL;
 namespace WebApp.DAL.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20210707171646_updateee")]
-    partial class updateee
+    [Migration("20210702141738_Add IsDeleted field to dbo.Products")]
+    partial class AddIsDeletedFieldToProducts
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -528,26 +528,6 @@ namespace WebApp.DAL.Migrations
                         });
                 });
 
-            modelBuilder.Entity("WebApp.DAL.Entities.ProductRating", b =>
-                {
-                    b.Property<Guid>("ProductId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<double>("Rating")
-                        .HasColumnType("float");
-
-                    b.HasKey("ProductId", "UserId");
-
-                    b.HasIndex("Rating");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("ProductRating");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
                 {
                     b.HasOne("WebApp.DAL.Entities.ApplicationRole", null)
@@ -597,31 +577,6 @@ namespace WebApp.DAL.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("WebApp.DAL.Entities.ProductRating", b =>
-                {
-                    b.HasOne("WebApp.DAL.Entities.Product", null)
-                        .WithMany("Ratings")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("WebApp.DAL.Entities.ApplicationUser", null)
-                        .WithMany("Ratings")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("WebApp.DAL.Entities.ApplicationUser", b =>
-                {
-                    b.Navigation("Ratings");
-                });
-
-            modelBuilder.Entity("WebApp.DAL.Entities.Product", b =>
-                {
-                    b.Navigation("Ratings");
                 });
 #pragma warning restore 612, 618
         }

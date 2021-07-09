@@ -1,9 +1,9 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
+using System;
 
 namespace WebApp.DAL.Migrations
 {
-    public partial class Addsomeproductfields : Migration
+    public partial class AddSomeProductFields : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
