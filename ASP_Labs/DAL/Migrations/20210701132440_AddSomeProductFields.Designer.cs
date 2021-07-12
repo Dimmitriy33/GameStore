@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebApp.DAL;
 
 namespace WebApp.DAL.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210701132440_Add some product fields")]
+    partial class AddSomeProductFields
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -240,9 +242,6 @@ namespace WebApp.DAL.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
                     b.Property<string>("Logo")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -286,13 +285,12 @@ namespace WebApp.DAL.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("a76d6bde-c48c-4dcb-b80a-7c6edce28c74"),
-                            Background = "https://res.cloudinary.com/dimmitriy33/image/upload/v1625229442/ASP_Labs/v462-n-130-textureidea_1.jpg_ghjewf.jpg",
+                            Id = new Guid("185a0529-c29f-40b5-8e20-134aab3f80be"),
+                            Background = "https://img.rawpixel.com/s3fs-private/rawpixel_images/website_content/v462-n-130-textureidea_1.jpg?w=1300&dpr=1&fit=default&crop=default&q=80&vib=3&con=3&usm=15&bg=F4F4F3&ixlib=js-2.2.1&s=1ba69b5c4ae053e9c312677688c2c4a2",
                             Count = 1090,
                             DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Genre = "Esports",
-                            IsDeleted = false,
-                            Logo = "https://res.cloudinary.com/dimmitriy33/image/upload/v1625229539/ASP_Labs/FIFA_series_logo.svg_geizkx.png",
+                            Logo = "https://ru.wikipedia.org/wiki/FIFA_(%D1%81%D0%B5%D1%80%D0%B8%D1%8F_%D0%B8%D0%B3%D1%80)#/media/%D0%A4%D0%B0%D0%B9%D0%BB:FIFA_series_logo.svg.png",
                             Name = "FIFA 2020",
                             Platform = 1,
                             Price = 10m,
@@ -301,13 +299,12 @@ namespace WebApp.DAL.Migrations
                         },
                         new
                         {
-                            Id = new Guid("7bad0c87-edd2-4a23-aade-aaff2e19f54f"),
-                            Background = "https://res.cloudinary.com/dimmitriy33/image/upload/v1625229442/ASP_Labs/v462-n-130-textureidea_1.jpg_ghjewf.jpg",
+                            Id = new Guid("92671361-3c28-4e43-9175-3a6f31ef1ef1"),
+                            Background = "https://img.rawpixel.com/s3fs-private/rawpixel_images/website_content/v462-n-130-textureidea_1.jpg?w=1300&dpr=1&fit=default&crop=default&q=80&vib=3&con=3&usm=15&bg=F4F4F3&ixlib=js-2.2.1&s=1ba69b5c4ae053e9c312677688c2c4a2",
                             Count = 1080,
                             DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Genre = "Strategy",
-                            IsDeleted = false,
-                            Logo = "https://res.cloudinary.com/dimmitriy33/image/upload/v1625229190/ASP_Labs/D0_9B_D0_BE_D0_B3_D0_BE_D1_82_D0_B8_D0_BF__D0_B8_D0_B3_D1_80_D1_8B_God_of_War_mgno9l.png",
+                            Logo = "https://ru.wikipedia.org/wiki/God_of_War_(%D1%81%D0%B5%D1%80%D0%B8%D1%8F_%D0%B8%D0%B3%D1%80)#/media/%D0%A4%D0%B0%D0%B9%D0%BB:%D0%9B%D0%BE%D0%B3%D0%BE%D1%82%D0%B8%D0%BF_%D0%B8%D0%B3%D1%80%D1%8B_God_of_War.png",
                             Name = "God of War",
                             Platform = 1,
                             Price = 20m,
@@ -316,13 +313,12 @@ namespace WebApp.DAL.Migrations
                         },
                         new
                         {
-                            Id = new Guid("67550e04-f55d-40c6-bd72-3cbffef51317"),
-                            Background = "https://res.cloudinary.com/dimmitriy33/image/upload/v1625229442/ASP_Labs/v462-n-130-textureidea_1.jpg_ghjewf.jpg",
+                            Id = new Guid("a9a3a4db-3947-4a77-a8b6-27571ac1d3a1"),
+                            Background = "https://img.rawpixel.com/s3fs-private/rawpixel_images/website_content/v462-n-130-textureidea_1.jpg?w=1300&dpr=1&fit=default&crop=default&q=80&vib=3&con=3&usm=15&bg=F4F4F3&ixlib=js-2.2.1&s=1ba69b5c4ae053e9c312677688c2c4a2",
                             Count = 1070,
                             DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Genre = "Action",
-                            IsDeleted = false,
-                            Logo = "https://res.cloudinary.com/dimmitriy33/image/upload/v1625229196/ASP_Labs/D0_9E_D0_B1_D0_BB_D0_BE_D0_B6_D0_BA_D0_B0_Bloodborne_zsqu5h.jpg",
+                            Logo = "https://ru.wikipedia.org/wiki/Bloodborne#/media/%D0%A4%D0%B0%D0%B9%D0%BB:%D0%9E%D0%B1%D0%BB%D0%BE%D0%B6%D0%BA%D0%B0_Bloodborne.jpg",
                             Name = "Bloodborne",
                             Platform = 1,
                             Price = 30m,
@@ -331,13 +327,12 @@ namespace WebApp.DAL.Migrations
                         },
                         new
                         {
-                            Id = new Guid("5acb3515-9b43-4b80-9338-1ff4e0dc972b"),
-                            Background = "https://res.cloudinary.com/dimmitriy33/image/upload/v1625229442/ASP_Labs/v462-n-130-textureidea_1.jpg_ghjewf.jpg",
+                            Id = new Guid("4857911c-cf2f-4803-87f0-bd99437eeeb8"),
+                            Background = "https://img.rawpixel.com/s3fs-private/rawpixel_images/website_content/v462-n-130-textureidea_1.jpg?w=1300&dpr=1&fit=default&crop=default&q=80&vib=3&con=3&usm=15&bg=F4F4F3&ixlib=js-2.2.1&s=1ba69b5c4ae053e9c312677688c2c4a2",
                             Count = 1060,
                             DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Genre = "RolePlaying",
-                            IsDeleted = false,
-                            Logo = "https://res.cloudinary.com/dimmitriy33/image/upload/v1625229203/ASP_Labs/Among_Us_y6hnjs.png",
+                            Logo = "https://ru.wikipedia.org/wiki/Among_Us#/media/%D0%A4%D0%B0%D0%B9%D0%BB:Among_Us.png",
                             Name = "Among Us",
                             Platform = 4,
                             Price = 40m,
@@ -346,13 +341,12 @@ namespace WebApp.DAL.Migrations
                         },
                         new
                         {
-                            Id = new Guid("ea803243-ed41-49e9-9670-29619e3e4961"),
-                            Background = "https://res.cloudinary.com/dimmitriy33/image/upload/v1625229442/ASP_Labs/v462-n-130-textureidea_1.jpg_ghjewf.jpg",
+                            Id = new Guid("02811f45-9240-4f3d-a13f-361c0ca693e8"),
+                            Background = "https://img.rawpixel.com/s3fs-private/rawpixel_images/website_content/v462-n-130-textureidea_1.jpg?w=1300&dpr=1&fit=default&crop=default&q=80&vib=3&con=3&usm=15&bg=F4F4F3&ixlib=js-2.2.1&s=1ba69b5c4ae053e9c312677688c2c4a2",
                             Count = 1050,
                             DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Genre = "MMO",
-                            IsDeleted = false,
-                            Logo = "https://res.cloudinary.com/dimmitriy33/image/upload/v1625229211/ASP_Labs/Brawl_Stars_w86qfv.png",
+                            Logo = "https://ru.wikipedia.org/wiki/Brawl_Stars#/media/%D0%A4%D0%B0%D0%B9%D0%BB:Brawl_Stars.png",
                             Name = "Brawl Stars",
                             Platform = 4,
                             Price = 50m,
@@ -361,13 +355,12 @@ namespace WebApp.DAL.Migrations
                         },
                         new
                         {
-                            Id = new Guid("77133fcf-3da2-42d0-9b9d-32ec0dc5f421"),
-                            Background = "https://res.cloudinary.com/dimmitriy33/image/upload/v1625229442/ASP_Labs/v462-n-130-textureidea_1.jpg_ghjewf.jpg",
+                            Id = new Guid("ae9993ac-2baa-4445-85a4-70097a1776cd"),
+                            Background = "https://img.rawpixel.com/s3fs-private/rawpixel_images/website_content/v462-n-130-textureidea_1.jpg?w=1300&dpr=1&fit=default&crop=default&q=80&vib=3&con=3&usm=15&bg=F4F4F3&ixlib=js-2.2.1&s=1ba69b5c4ae053e9c312677688c2c4a2",
                             Count = 1040,
                             DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Genre = "Action",
-                            IsDeleted = false,
-                            Logo = "https://res.cloudinary.com/dimmitriy33/image/upload/v1625229220/ASP_Labs/1920px-FortniteLogo.svg_kcwnbv.png",
+                            Logo = "https://ru.wikipedia.org/wiki/Fortnite#/media/%D0%A4%D0%B0%D0%B9%D0%BB:FortniteLogo.svg",
                             Name = "Fortnite",
                             Platform = 2,
                             Price = 60m,
@@ -376,13 +369,12 @@ namespace WebApp.DAL.Migrations
                         },
                         new
                         {
-                            Id = new Guid("0e70d082-9558-48aa-84a8-5a34ac95af08"),
-                            Background = "https://res.cloudinary.com/dimmitriy33/image/upload/v1625229442/ASP_Labs/v462-n-130-textureidea_1.jpg_ghjewf.jpg",
+                            Id = new Guid("ff8d5672-43f3-47e8-afa6-673e2ba5759e"),
+                            Background = "https://img.rawpixel.com/s3fs-private/rawpixel_images/website_content/v462-n-130-textureidea_1.jpg?w=1300&dpr=1&fit=default&crop=default&q=80&vib=3&con=3&usm=15&bg=F4F4F3&ixlib=js-2.2.1&s=1ba69b5c4ae053e9c312677688c2c4a2",
                             Count = 1030,
                             DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Genre = "Simulation",
-                            IsDeleted = false,
-                            Logo = "https://res.cloudinary.com/dimmitriy33/image/upload/v1625229230/ASP_Labs/1920px-MinecraftLogo.svg_gamutf.png",
+                            Logo = "https://ru.wikipedia.org/wiki/Minecraft#/media/%D0%A4%D0%B0%D0%B9%D0%BB:MinecraftLogo.svg",
                             Name = "Minecraft",
                             Platform = 2,
                             Price = 70m,
@@ -391,13 +383,12 @@ namespace WebApp.DAL.Migrations
                         },
                         new
                         {
-                            Id = new Guid("50973345-c933-4098-9513-3c16d82dcc0a"),
-                            Background = "https://res.cloudinary.com/dimmitriy33/image/upload/v1625229442/ASP_Labs/v462-n-130-textureidea_1.jpg_ghjewf.jpg",
+                            Id = new Guid("1b27708f-f9da-4a83-9d54-041cd2889101"),
+                            Background = "https://img.rawpixel.com/s3fs-private/rawpixel_images/website_content/v462-n-130-textureidea_1.jpg?w=1300&dpr=1&fit=default&crop=default&q=80&vib=3&con=3&usm=15&bg=F4F4F3&ixlib=js-2.2.1&s=1ba69b5c4ae053e9c312677688c2c4a2",
                             Count = 1020,
                             DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Genre = "Action",
-                            IsDeleted = false,
-                            Logo = "https://res.cloudinary.com/dimmitriy33/image/upload/v1625229084/ASP_Labs/Forza_Horizon_4_coverart_qmuz6l.jpg",
+                            Logo = "https://ru.wikipedia.org/wiki/Forza_Horizon_4#/media/%D0%A4%D0%B0%D0%B9%D0%BB:Forza_Horizon_4_coverart.jpg",
                             Name = "Forza Horizon 4",
                             Platform = 2,
                             Price = 80m,
@@ -406,13 +397,12 @@ namespace WebApp.DAL.Migrations
                         },
                         new
                         {
-                            Id = new Guid("cd4e1a11-ef0c-402c-a2ab-b18622ea1eb9"),
-                            Background = "https://res.cloudinary.com/dimmitriy33/image/upload/v1625229442/ASP_Labs/v462-n-130-textureidea_1.jpg_ghjewf.jpg",
+                            Id = new Guid("4d393685-ac1f-4fd4-b6a1-f5b6f8df39de"),
+                            Background = "https://img.rawpixel.com/s3fs-private/rawpixel_images/website_content/v462-n-130-textureidea_1.jpg?w=1300&dpr=1&fit=default&crop=default&q=80&vib=3&con=3&usm=15&bg=F4F4F3&ixlib=js-2.2.1&s=1ba69b5c4ae053e9c312677688c2c4a2",
                             Count = 1010,
                             DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Genre = "Action",
-                            IsDeleted = false,
-                            Logo = "https://res.cloudinary.com/dimmitriy33/image/upload/v1625229253/ASP_Labs/Super_Smash_Bros._Ultimate_yvp3wa.png",
+                            Logo = "https://ru.wikipedia.org/wiki/Super_Smash_Bros._Ultimate#/media/%D0%A4%D0%B0%D0%B9%D0%BB:Super_Smash_Bros._Ultimate.png",
                             Name = "Super Smash Bros. Ultimate",
                             Platform = 5,
                             Price = 90m,
@@ -421,13 +411,12 @@ namespace WebApp.DAL.Migrations
                         },
                         new
                         {
-                            Id = new Guid("82e27206-1bfd-4d62-a6bf-be44ad030b25"),
-                            Background = "https://res.cloudinary.com/dimmitriy33/image/upload/v1625229442/ASP_Labs/v462-n-130-textureidea_1.jpg_ghjewf.jpg",
+                            Id = new Guid("789e46b7-6d01-40dc-9ad6-0469208097ba"),
+                            Background = "https://img.rawpixel.com/s3fs-private/rawpixel_images/website_content/v462-n-130-textureidea_1.jpg?w=1300&dpr=1&fit=default&crop=default&q=80&vib=3&con=3&usm=15&bg=F4F4F3&ixlib=js-2.2.1&s=1ba69b5c4ae053e9c312677688c2c4a2",
                             Count = 100,
                             DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Genre = "Strategy",
-                            IsDeleted = false,
-                            Logo = "https://res.cloudinary.com/dimmitriy33/image/upload/v1625229266/ASP_Labs/Super_Mario_Odyssey_box_ydaxqk.jpg",
+                            Logo = "https://ru.wikipedia.org/wiki/Super_Mario_Odyssey#/media/%D0%A4%D0%B0%D0%B9%D0%BB:Super_Mario_Odyssey_box.jpg",
                             Name = "Super Mario Odyssey",
                             Platform = 5,
                             Price = 100m,
@@ -436,13 +425,12 @@ namespace WebApp.DAL.Migrations
                         },
                         new
                         {
-                            Id = new Guid("a1c40a91-a1a4-4d9e-960d-b0c19b425c8c"),
-                            Background = "https://res.cloudinary.com/dimmitriy33/image/upload/v1625229442/ASP_Labs/v462-n-130-textureidea_1.jpg_ghjewf.jpg",
+                            Id = new Guid("f092c4d6-5e3c-4860-a8cb-c8e14eae5e8d"),
+                            Background = "https://img.rawpixel.com/s3fs-private/rawpixel_images/website_content/v462-n-130-textureidea_1.jpg?w=1300&dpr=1&fit=default&crop=default&q=80&vib=3&con=3&usm=15&bg=F4F4F3&ixlib=js-2.2.1&s=1ba69b5c4ae053e9c312677688c2c4a2",
                             Count = 1600,
                             DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Genre = "Adventure",
-                            IsDeleted = false,
-                            Logo = "https://res.cloudinary.com/dimmitriy33/image/upload/v1625229280/ASP_Labs/Animal_Crossing_Logo_tbw4bw.png",
+                            Logo = "https://ru.wikipedia.org/wiki/Animal_Crossing#/media/%D0%A4%D0%B0%D0%B9%D0%BB:Animal_Crossing_Logo.png",
                             Name = "Animal Crossing",
                             Platform = 5,
                             Price = 110m,
@@ -451,13 +439,12 @@ namespace WebApp.DAL.Migrations
                         },
                         new
                         {
-                            Id = new Guid("1952c825-184a-40e9-8864-80358a9f1da6"),
-                            Background = "https://res.cloudinary.com/dimmitriy33/image/upload/v1625229442/ASP_Labs/v462-n-130-textureidea_1.jpg_ghjewf.jpg",
+                            Id = new Guid("70bd5995-fe29-4b93-8425-5a12e961c68b"),
+                            Background = "https://img.rawpixel.com/s3fs-private/rawpixel_images/website_content/v462-n-130-textureidea_1.jpg?w=1300&dpr=1&fit=default&crop=default&q=80&vib=3&con=3&usm=15&bg=F4F4F3&ixlib=js-2.2.1&s=1ba69b5c4ae053e9c312677688c2c4a2",
                             Count = 1500,
                             DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Genre = "Strategy",
-                            IsDeleted = false,
-                            Logo = "https://res.cloudinary.com/dimmitriy33/image/upload/v1625229295/ASP_Labs/D0_9E_D0_B1_D0_BB_D0_BE_D0_B6_D0_BA_D0_B0_Dota_2_rd8cox.jpg",
+                            Logo = "https://ru.wikipedia.org/wiki/Dota_2#/media/%D0%A4%D0%B0%D0%B9%D0%BB:%D0%9E%D0%B1%D0%BB%D0%BE%D0%B6%D0%BA%D0%B0_Dota_2.jpg",
                             Name = "Dota 2",
                             Platform = 3,
                             Price = 120m,
@@ -466,13 +453,12 @@ namespace WebApp.DAL.Migrations
                         },
                         new
                         {
-                            Id = new Guid("d4b797a8-2f74-446e-ad0c-71dad9e37e59"),
-                            Background = "https://res.cloudinary.com/dimmitriy33/image/upload/v1625229442/ASP_Labs/v462-n-130-textureidea_1.jpg_ghjewf.jpg",
+                            Id = new Guid("52b2bbf2-5e51-4789-9ddf-bc6d39f33b73"),
+                            Background = "https://img.rawpixel.com/s3fs-private/rawpixel_images/website_content/v462-n-130-textureidea_1.jpg?w=1300&dpr=1&fit=default&crop=default&q=80&vib=3&con=3&usm=15&bg=F4F4F3&ixlib=js-2.2.1&s=1ba69b5c4ae053e9c312677688c2c4a2",
                             Count = 1400,
                             DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Genre = "MMO",
-                            IsDeleted = false,
-                            Logo = "https://res.cloudinary.com/dimmitriy33/image/upload/v1625229311/ASP_Labs/1920px-_D0_9B_D0_BE_D0_B3_D0_BE_D1_82_D0_B8_D0_BF_Counter-Strike_Global_Offensive.svg_cg9fcb.png",
+                            Logo = "https://ru.wikipedia.org/wiki/Counter-Strike:_Global_Offensive#/media/%D0%A4%D0%B0%D0%B9%D0%BB:%D0%9B%D0%BE%D0%B3%D0%BE%D1%82%D0%B8%D0%BF_Counter-Strike_Global_Offensive.svg",
                             Name = "CS GO",
                             Platform = 3,
                             Price = 130m,
@@ -481,13 +467,12 @@ namespace WebApp.DAL.Migrations
                         },
                         new
                         {
-                            Id = new Guid("c3279ca3-8fe4-45c9-8606-ae09f8b7f259"),
-                            Background = "https://res.cloudinary.com/dimmitriy33/image/upload/v1625229442/ASP_Labs/v462-n-130-textureidea_1.jpg_ghjewf.jpg",
+                            Id = new Guid("832ff5f9-06c2-406e-8d4c-87e83a6a4aec"),
+                            Background = "https://img.rawpixel.com/s3fs-private/rawpixel_images/website_content/v462-n-130-textureidea_1.jpg?w=1300&dpr=1&fit=default&crop=default&q=80&vib=3&con=3&usm=15&bg=F4F4F3&ixlib=js-2.2.1&s=1ba69b5c4ae053e9c312677688c2c4a2",
                             Count = 1300,
                             DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Genre = "MMO",
-                            IsDeleted = false,
-                            Logo = "https://res.cloudinary.com/dimmitriy33/image/upload/v1625229328/ASP_Labs/Overwatch_cover_art_whuqso.jpg",
+                            Logo = "https://en.wikipedia.org/wiki/Overwatch_(video_game)#/media/File:Overwatch_cover_art.jpg",
                             Name = "Overwatch",
                             Platform = 3,
                             Price = 140m,
@@ -496,13 +481,12 @@ namespace WebApp.DAL.Migrations
                         },
                         new
                         {
-                            Id = new Guid("00189d6e-ed62-482b-a4d9-335dfa68d58e"),
-                            Background = "https://res.cloudinary.com/dimmitriy33/image/upload/v1625229442/ASP_Labs/v462-n-130-textureidea_1.jpg_ghjewf.jpg",
+                            Id = new Guid("dccff4b0-23e8-479e-8091-cd1145a5cd36"),
+                            Background = "https://img.rawpixel.com/s3fs-private/rawpixel_images/website_content/v462-n-130-textureidea_1.jpg?w=1300&dpr=1&fit=default&crop=default&q=80&vib=3&con=3&usm=15&bg=F4F4F3&ixlib=js-2.2.1&s=1ba69b5c4ae053e9c312677688c2c4a2",
                             Count = 1200,
                             DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Genre = "Strategy",
-                            IsDeleted = false,
-                            Logo = "https://res.cloudinary.com/dimmitriy33/image/upload/v1625229345/ASP_Labs/HL2box_lhx2ag.jpg",
+                            Logo = "https://ru.wikipedia.org/wiki/Half-Life_2#/media/%D0%A4%D0%B0%D0%B9%D0%BB:HL2box.jpg",
                             Name = "Half-Life",
                             Platform = 3,
                             Price = 150m,
@@ -511,39 +495,18 @@ namespace WebApp.DAL.Migrations
                         },
                         new
                         {
-                            Id = new Guid("1ad798c4-da8c-4e87-a020-9272e4e71d2b"),
-                            Background = "https://res.cloudinary.com/dimmitriy33/image/upload/v1625229442/ASP_Labs/v462-n-130-textureidea_1.jpg_ghjewf.jpg",
+                            Id = new Guid("3e2bb91e-fb78-467f-a553-447cbd149f36"),
+                            Background = "https://img.rawpixel.com/s3fs-private/rawpixel_images/website_content/v462-n-130-textureidea_1.jpg?w=1300&dpr=1&fit=default&crop=default&q=80&vib=3&con=3&usm=15&bg=F4F4F3&ixlib=js-2.2.1&s=1ba69b5c4ae053e9c312677688c2c4a2",
                             Count = 1100,
                             DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Genre = "Strategy",
-                            IsDeleted = false,
-                            Logo = "https://res.cloudinary.com/dimmitriy33/image/upload/v1625229364/ASP_Labs/Portal_boxcover_ojqdry.jpg",
+                            Logo = "https://ru.wikipedia.org/wiki/Portal#/media/%D0%A4%D0%B0%D0%B9%D0%BB:Portal_boxcover.jpg",
                             Name = "Portal 2",
                             Platform = 3,
                             Price = 160m,
                             Rating = 0,
                             TotalRating = 8.56m
                         });
-                });
-
-            modelBuilder.Entity("WebApp.DAL.Entities.ProductRating", b =>
-                {
-                    b.Property<Guid>("ProductId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<double>("Rating")
-                        .HasColumnType("float");
-
-                    b.HasKey("ProductId", "UserId");
-
-                    b.HasIndex("Rating");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("ProductRating");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -595,31 +558,6 @@ namespace WebApp.DAL.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("WebApp.DAL.Entities.ProductRating", b =>
-                {
-                    b.HasOne("WebApp.DAL.Entities.Product", null)
-                        .WithMany("Ratings")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("WebApp.DAL.Entities.ApplicationUser", null)
-                        .WithMany("Ratings")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("WebApp.DAL.Entities.ApplicationUser", b =>
-                {
-                    b.Navigation("Ratings");
-                });
-
-            modelBuilder.Entity("WebApp.DAL.Entities.Product", b =>
-                {
-                    b.Navigation("Ratings");
                 });
 #pragma warning restore 612, 618
         }

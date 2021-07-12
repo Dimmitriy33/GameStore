@@ -119,7 +119,5 @@ namespace WebApp.Web.Startup
                 CloudinarySettings = cloudinarySettings
             };
         }
-
     }
-
 }

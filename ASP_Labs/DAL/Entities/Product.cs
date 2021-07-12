@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using WebApp.DAL.Enums;
 
 namespace WebApp.DAL.Entities
@@ -17,5 +18,6 @@ namespace WebApp.DAL.Entities
         public decimal Price { get; set; }
         public int Count { get; set; }
         public bool IsDeleted { get; set; }
+        public ICollection<ProductRating> Ratings { get; set; }
     }
 }

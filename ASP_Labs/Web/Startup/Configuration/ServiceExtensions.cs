@@ -4,6 +4,7 @@ using WebApp.BLL.Interfaces;
 using WebApp.BLL.Services;
 using WebApp.DAL.Interfaces.Database;
 using WebApp.DAL.Repository;
+using WebApp.Web.Filters;
 using WebApp.Web.Startup.Settings;
 
 namespace WebApp.Web.Startup.Configuration
@@ -19,11 +20,17 @@ namespace WebApp.Web.Startup.Configuration
             services.AddTransient<IProductService, ProductService>();
             services.AddTransient<IClaimsReader, ClaimsReader>();
             services.AddTransient<ITokenEncodingHelper, TokenEncodingHelper>();
+            services.AddTransient<IGameSelectionHelper, GameSelectionHelper>();
+
             services.AddScoped<ICloudinaryService, CloudinaryService>();
+
+            //Action filters
+            services.AddScoped<GamesSelectionFilter>();
 
             //Repositories
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<IProductRepository, ProductRepository>();
+            services.AddTransient<IProductRatingRepository, ProductRatingRepository>();
 
             //AppSettings
             services.AddSingleton(appSettings);

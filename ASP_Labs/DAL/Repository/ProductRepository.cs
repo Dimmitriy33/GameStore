@@ -55,5 +55,20 @@ namespace WebApp.DAL.Repository
 
             await _dbContext.SaveChangesAsync();
         }
+
+        public async Task ChangeGameRatingAsync(Guid id)
+        {
+            var game = new Product
+            {
+                Id = id,
+                Ratings = await _dbContext.ProductRating.Where(pR => pR.ProductId == id).ToListAsync(),
+            };
+
+            game.TotalRating = game.Ratings.Average(g => g.Rating);
+
+            _dbContext.Entry(game).Property(i => i.TotalRating).IsModified = true;
+
+            await _dbContext.SaveChangesAsync();
+        }
     }
 }

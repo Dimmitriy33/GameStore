@@ -8,8 +8,8 @@ using System;
 namespace WebApp.DAL.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20210629125840_Add products with default data")]
-    partial class Addproductswithdefaultdata
+    [Migration("20210629125840_AddProductsWithDefaultData")]
+    partial class AddProductsWithDefaultData
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

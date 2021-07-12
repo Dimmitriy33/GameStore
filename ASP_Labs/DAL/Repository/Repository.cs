@@ -1,8 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using WebApp.DAL.Enums;
 using WebApp.DAL.Interfaces.Database;
 
 namespace WebApp.DAL.Repository
@@ -77,6 +79,57 @@ namespace WebApp.DAL.Repository
             {
                 Console.WriteLine(e);
                 throw new Exception($"Unable to remove item or items. Error: {e.Message}");
+            }
+        }
+
+        public async Task<List<T>> SortAndFilterItemsAsync<TKey>(
+            Expression<Func<T, bool>> expression,
+            Expression<Func<T, TKey>> sort,
+            int limit,
+            int offset,
+            OrderType orderType = OrderType.Asc)
+        {
+            if (orderType is OrderType.Asc)
+            {
+                if (expression is not null)
+                {
+                    return await _dbSet
+                    .Where(expression)
+                    .OrderBy(sort)
+                    .Skip(offset)
+                    .Take(limit)
+                    .AsNoTracking()
+                    .ToListAsync();
+                }
+                else
+                {
+                    return await _dbSet
+                    .OrderBy(sort)
+                    .Skip(offset)
+                    .Take(limit)
+                    .AsNoTracking()
+                    .ToListAsync();
+                }
+            }
+
+            if(expression is not null)
+            {
+                return await _dbSet
+                    .Where(expression)
+                    .OrderByDescending(sort)
+                    .Skip(offset)
+                    .Take(limit)
+                    .AsNoTracking()
+                    .ToListAsync();
+            }
+            else
+            {
+                return await _dbSet
+                    .OrderByDescending(sort)
+                    .Skip(offset)
+                    .Take(limit)
+                    .AsNoTracking()
+                    .ToListAsync();
             }
         }
     }

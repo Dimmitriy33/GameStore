@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using WebApp.BLL.DTO;
 using WebApp.BLL.Interfaces;
@@ -16,6 +17,7 @@ namespace WebApp.BLL.Services
         #region Repositories
 
         private readonly IProductRepository _productRepository;
+        private readonly IProductRatingRepository _productRatingRepository;
 
         #endregion
 
@@ -23,14 +25,18 @@ namespace WebApp.BLL.Services
 
         private readonly IMapper _mapper;
         private readonly ICloudinaryService _cloudinaryService;
+        private readonly IGameSelectionHelper _gameSelectionHelper;
 
         #endregion
 
-        public ProductService(IProductRepository productRepository, IMapper mapper, ICloudinaryService cloudinaryService)
+        public ProductService(IProductRepository productRepository, IMapper mapper, ICloudinaryService cloudinaryService,
+            IGameSelectionHelper gameSelectionHelper, IProductRatingRepository productRatingRepository)
         {
             _productRepository = productRepository;
             _mapper = mapper;
             _cloudinaryService = cloudinaryService;
+            _gameSelectionHelper = gameSelectionHelper;
+            _productRatingRepository = productRatingRepository;
         }
 
         public async Task<ServiceResultClass<List<Platforms>>> GetTopPlatformsAsync(int count)
@@ -61,7 +67,7 @@ namespace WebApp.BLL.Services
 
         public async Task<ServiceResultClass<GameResponseDTO>> CreateGameAsync(GameRequestDTO gameDTO)
         {
-            var newGame = await GetGameResponceDTOFromGameRequestDTO(gameDTO, _productRepository.CreateAsync);
+            var newGame = await HandleGameDTO(gameDTO, _productRepository.CreateAsync);
 
             return new ServiceResultClass<GameResponseDTO>(newGame, ServiceResultType.Success);
         }
@@ -75,7 +81,7 @@ namespace WebApp.BLL.Services
                 return new ServiceResultClass<GameResponseDTO>(ServiceResultType.Not_Found);
             }
 
-            var updatedGame = await GetGameResponceDTOFromGameRequestDTO(gameDTO, _productRepository.UpdateItemAsync);
+            var updatedGame = await HandleGameDTO(gameDTO, _productRepository.UpdateItemAsync);
 
             return new ServiceResultClass<GameResponseDTO>(updatedGame, ServiceResultType.Success);
         }
@@ -108,7 +114,27 @@ namespace WebApp.BLL.Services
             return new ServiceResult(ServiceResultType.Success);
         }
 
-        private async Task<GameResponseDTO> GetGameResponceDTOFromGameRequestDTO(GameRequestDTO gameDTO, Func<Product, Task<Product>> operation)
+        public async Task<ServiceResultClass<List<GameResponseDTO>>> SortAndFilterGamesAsync(GameSelectionDTO gameSelection, int offset, int limit)
+        {
+            var filterExpression = _gameSelectionHelper.GetFilterExpression(gameSelection.FilterType, gameSelection.FilterValue);
+            var sortExpression = _gameSelectionHelper.GetSortExpression(gameSelection.SortField);
+            var orderType = Enum.Parse(typeof(OrderType),gameSelection.OrderType);
+
+            var games = await _productRepository.SortAndFilterItemsAsync(filterExpression, sortExpression, limit, offset, (OrderType)orderType);
+
+            return new ServiceResultClass<List<GameResponseDTO>>(games.Select(_mapper.Map<GameResponseDTO>).ToList(), ServiceResultType.Success);
+        }
+
+        public async Task<ServiceResultClass<ProductRatingDTO>> EditGameRatingByUserAsync(ProductRating productRating)
+        {
+            var newProductRating = await _productRatingRepository.CreateAsync(productRating);
+
+            await _productRepository.ChangeGameRatingAsync(productRating.ProductId);
+
+            return new ServiceResultClass<ProductRatingDTO>(_mapper.Map<ProductRatingDTO>(newProductRating), ServiceResultType.Success);
+        }
+
+        private async Task<GameResponseDTO> HandleGameDTO(GameRequestDTO gameDTO, Func<Product, Task<Product>> operation)
         {
             var product = _mapper.Map<Product>(gameDTO);
 
@@ -116,6 +142,7 @@ namespace WebApp.BLL.Services
             product.Background = await _cloudinaryService.UploadImage(gameDTO.Background);
 
             var result = await operation(product);
+
             return _mapper.Map<GameResponseDTO>(result);
         }
     }

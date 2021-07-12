@@ -53,6 +53,11 @@ namespace WebApp.DAL.Configuration
             builder.Property(b => b.Price).IsRequired();
             builder.Property(b => b.Count).IsRequired();
 
+            builder
+                .HasMany(b => b.Ratings)
+                .WithOne()
+                .HasForeignKey(p => p.ProductId);
+
             builder.HasIndex(b => b.Name);
             builder.HasIndex(b => b.Platform);
             builder.HasIndex(b => b.TotalRating);
@@ -61,6 +66,8 @@ namespace WebApp.DAL.Configuration
             builder.HasIndex(b => b.Rating);
             builder.HasIndex(b => b.Price);
             builder.HasIndex(b => b.Count);
+
+            builder.HasQueryFilter(e => !e.IsDeleted);
 
             builder.HasData(
                 new Product { Id = Guid.Parse("a76d6bde-c48c-4dcb-b80a-7c6edce28c74"), Name = "FIFA 2020", Platform = Platforms.Playstation, TotalRating = 7.32, Genre = GamesGenres.Esports, Rating = GamesRating.Rating0, Logo= @"https://res.cloudinary.com/dimmitriy33/image/upload/v1625229539/ASP_Labs/FIFA_series_logo.svg_geizkx.png", Background= @"https://res.cloudinary.com/dimmitriy33/image/upload/v1625229442/ASP_Labs/v462-n-130-textureidea_1.jpg_ghjewf.jpg", Price = 10, Count=1090 },

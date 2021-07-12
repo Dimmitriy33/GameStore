@@ -1,9 +1,9 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
+using System;
 
 namespace WebApp.DAL.Migrations
 {
-    public partial class Changelinksfortestimagesofproducts : Migration
+    public partial class ChangeLinksForTestImagesOfProducts : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
