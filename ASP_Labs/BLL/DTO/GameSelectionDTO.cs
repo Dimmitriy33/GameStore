@@ -6,13 +6,13 @@
         /// Games filter
         /// </summary>
         /// <example>Genre</example>
-        public string FilterParameter { get; set; }
+        public string FilterType { get; set; }
 
         /// <summary>
         /// Games filter value
         /// </summary>
         /// <example>Action</example>
-        public string FilterParameterValue { get; set; }
+        public string FilterValue { get; set; }
 
         /// <summary>
         /// Game parameter for sorting

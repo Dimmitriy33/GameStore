@@ -11,8 +11,8 @@
         public const string OrderTypeAsc = "Asc";
         public const string OrderTypeDesc = "Desc";
 
-        public const string FilterParameter = "FilterParameter";
-        public const string FilterParameterValue = "FilterParameterValue";
+        public const string FilterType = "FilterType";
+        public const string FilterValue = "FilterValue";
         public const string SortField = "SortField";
         public const string OrderType = "OrderType";
 

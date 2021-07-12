@@ -153,23 +153,24 @@ namespace WebApp.Web.Controllers
         /// <summary>
         /// Sort and filter games by input parameters
         /// </summary>
-        /// <param name="GameSelectionDTO">model with parameters for sort and filter</param>
+        /// <param name="gameSelectionDTO">model with parameters for sort and filter</param>
         /// <param name="limit">Maximum number of received items</param>
         /// <param name="offset">Amount of items you may skip</param>
         /// <response code="200">Found games successfully</response>
+        /// <response code="400">Invalid parameters</response>
         [HttpGet("list")]
         [ServiceFilter(typeof(GamesSelectionFilter))]
         public async Task<ActionResult<ProductRatingDTO>> FilterAndSortGames(
-            [FromQuery] GameSelectionDTO GameSelectionDTO,
+            [FromQuery] GameSelectionDTO gameSelectionDTO,
             [Range(0, 1000)] int offset = GamesSelectionConstants.DefaultOffset,
             [Range(0, 100)] int limit = GamesSelectionConstants.DefaultLimit)
         {
             if(!ModelState.IsValid)
             {
-                return BadRequest();
+                return BadRequest("Models contains one or more invalid parameters");
             }
 
-            var result = await _productService.SortAndFilterGamesAsync(GameSelectionDTO, offset, limit);
+            var result = await _productService.SortAndFilterGamesAsync(gameSelectionDTO, offset, limit);
 
             return StatusCode((int)result.ServiceResultType, result.Result);
         }

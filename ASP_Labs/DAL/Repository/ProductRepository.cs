@@ -70,7 +70,5 @@ namespace WebApp.DAL.Repository
 
             await _dbContext.SaveChangesAsync();
         }
-
-        public async Task<List<Product>> GetAllGamesAsync() => await _dbContext.Products.ToListAsync();
     }
 }

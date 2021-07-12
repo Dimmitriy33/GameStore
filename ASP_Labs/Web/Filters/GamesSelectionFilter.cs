@@ -11,7 +11,7 @@ namespace WebApp.Web.Filters
     {
         public void OnActionExecuting(ActionExecutingContext context)
         {
-            var tryGetGame = context.ActionArguments.TryGetValue(nameof(GameSelectionDTO), out var gameSelectiongDTO);
+            var tryGetGame = context.ActionArguments.TryGetValue(nameof(GameSelectionDTO), out var gameSelectionDTO);
 
             if (!tryGetGame)
             {
@@ -19,26 +19,26 @@ namespace WebApp.Web.Filters
                 return;
             }
 
-            var game = (GameSelectionDTO)gameSelectiongDTO;
+            var game = (GameSelectionDTO)gameSelectionDTO;
 
-            if(game.FilterParameter is not GamesSelectionConstants.FilterByGenre &&
-               game.FilterParameter is not GamesSelectionConstants.FilterByAge &&
-               !string.IsNullOrEmpty(game.FilterParameter))
+            if(!string.IsNullOrEmpty(game.FilterType) &&
+               game.FilterType is not GamesSelectionConstants.FilterByGenre &&
+               game.FilterType is not GamesSelectionConstants.FilterByAge)
             {
-                SendBadRequest(context, GamesSelectionConstants.FilterParameter);
+                SendBadRequest(context, GamesSelectionConstants.FilterType);
                 return;
             }
 
-            var filterParameterValueCastResult = game.FilterParameter switch
+            var filterValueCastResult = game.FilterType switch
             {
-                GamesSelectionConstants.FilterByGenre => Enum.TryParse<GamesGenres>(game.FilterParameterValue, out var gamesGenre),
-                GamesSelectionConstants.FilterByAge => Enum.TryParse<GamesRating>(game.FilterParameterValue, out var gamesRating),
+                GamesSelectionConstants.FilterByGenre => Enum.TryParse<GamesGenres>(game.FilterValue, out _),
+                GamesSelectionConstants.FilterByAge => Enum.TryParse<GamesRating>(game.FilterValue, out _),
                 _ => true
             };
 
-            if (!filterParameterValueCastResult)
+            if (!filterValueCastResult)
             {
-                SendBadRequest(context, GamesSelectionConstants.FilterParameterValue);
+                SendBadRequest(context, GamesSelectionConstants.FilterValue);
                 return;
             }
 
@@ -55,7 +55,6 @@ namespace WebApp.Web.Filters
                 game.OrderType is not GamesSelectionConstants.OrderTypeDesc)
             {
                 SendBadRequest(context, GamesSelectionConstants.OrderType);
-                return;
             }
         }
 

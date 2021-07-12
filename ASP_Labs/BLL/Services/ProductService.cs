@@ -67,7 +67,7 @@ namespace WebApp.BLL.Services
 
         public async Task<ServiceResultClass<GameResponseDTO>> CreateGameAsync(GameRequestDTO gameDTO)
         {
-            var newGame = await GetGameResponceDTOFromGameRequestDTO(gameDTO, _productRepository.CreateAsync);
+            var newGame = await HandleGameDTO(gameDTO, _productRepository.CreateAsync);
 
             return new ServiceResultClass<GameResponseDTO>(newGame, ServiceResultType.Success);
         }
@@ -81,7 +81,7 @@ namespace WebApp.BLL.Services
                 return new ServiceResultClass<GameResponseDTO>(ServiceResultType.Not_Found);
             }
 
-            var updatedGame = await GetGameResponceDTOFromGameRequestDTO(gameDTO, _productRepository.UpdateItemAsync);
+            var updatedGame = await HandleGameDTO(gameDTO, _productRepository.UpdateItemAsync);
 
             return new ServiceResultClass<GameResponseDTO>(updatedGame, ServiceResultType.Success);
         }
@@ -116,7 +116,7 @@ namespace WebApp.BLL.Services
 
         public async Task<ServiceResultClass<List<GameResponseDTO>>> SortAndFilterGamesAsync(GameSelectionDTO gameSelection, int offset, int limit)
         {
-            var filterExpression = _gameSelectionHelper.GetFilterExpression(gameSelection.FilterParameter, gameSelection.FilterParameterValue);
+            var filterExpression = _gameSelectionHelper.GetFilterExpression(gameSelection.FilterType, gameSelection.FilterValue);
             var sortExpression = _gameSelectionHelper.GetSortExpression(gameSelection.SortField);
             var orderType = Enum.Parse(typeof(OrderType),gameSelection.OrderType);
 
@@ -134,7 +134,7 @@ namespace WebApp.BLL.Services
             return new ServiceResultClass<ProductRatingDTO>(_mapper.Map<ProductRatingDTO>(newProductRating), ServiceResultType.Success);
         }
 
-        private async Task<GameResponseDTO> GetGameResponceDTOFromGameRequestDTO(GameRequestDTO gameDTO, Func<Product, Task<Product>> operation)
+        private async Task<GameResponseDTO> HandleGameDTO(GameRequestDTO gameDTO, Func<Product, Task<Product>> operation)
         {
             var product = _mapper.Map<Product>(gameDTO);
 
