@@ -1,4 +1,3 @@
-
 echo "Please, enter runtime identifier:"
 read rid
 
