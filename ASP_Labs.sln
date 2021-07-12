@@ -5,6 +5,11 @@ VisualStudioVersion = 16.0.31321.278
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApp", "ASP_Labs\WebApp.csproj", "{574B127C-F28E-4ED5-A9C0-58F05EE05763}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{78282069-1A1C-44B7-845A-F9955D049B68}"
+	ProjectSection(SolutionItems) = preProject
+		CreateMigrationAndUpdateDB.sh = CreateMigrationAndUpdateDB.sh
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
