@@ -18,6 +18,7 @@ namespace WebApp.Web.Startup.Configuration
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<IEmailService, EmailService>(); 
             services.AddTransient<IProductService, ProductService>();
+            services.AddTransient<IOrderService, OrderService>();
             services.AddTransient<IClaimsReader, ClaimsReader>();
             services.AddTransient<ITokenEncodingHelper, TokenEncodingHelper>();
             services.AddTransient<IGameSelectionHelper, GameSelectionHelper>();
@@ -31,6 +32,7 @@ namespace WebApp.Web.Startup.Configuration
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<IProductRepository, ProductRepository>();
             services.AddTransient<IProductRatingRepository, ProductRatingRepository>();
+            services.AddTransient<IOrderRepository, OrderRepository>();
 
             //AppSettings
             services.AddSingleton(appSettings);

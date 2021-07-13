@@ -10,6 +10,7 @@ namespace WebApp.DAL
     {
         public DbSet<Product> Products { get; set; }
         public DbSet<ProductRating> ProductRating { get; set; }
+        public DbSet<Order> Orders { get; set; }
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
             Database.EnsureCreated();
@@ -19,6 +20,7 @@ namespace WebApp.DAL
         {
             modelBuilder.ApplyConfiguration(new ProductConfiguration());
             modelBuilder.ApplyConfiguration(new ProductRatingConfiguration());
+            modelBuilder.ApplyConfiguration(new OrderConfiguration());
             base.OnModelCreating(modelBuilder);
         }
     }

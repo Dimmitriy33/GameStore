@@ -8,6 +8,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{78282069-1A1C-44B7-845A-F9955D049B68}"
 	ProjectSection(SolutionItems) = preProject
 		CreateMigrationAndUpdateDB.sh = CreateMigrationAndUpdateDB.sh
+		GenerateSqlScript.sh = GenerateSqlScript.sh
+		PublishApp.sh = PublishApp.sh
 	EndProjectSection
 EndProject
 Global

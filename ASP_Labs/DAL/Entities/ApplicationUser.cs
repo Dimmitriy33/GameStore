@@ -8,6 +8,7 @@ namespace WebApp.DAL.Entities
     {
         public string AddressDelivery { get; set; }
         public ICollection<ProductRating> Ratings { get; set; }
+        public ICollection<Order> OrdersList { get; set; }
 
     }
 }

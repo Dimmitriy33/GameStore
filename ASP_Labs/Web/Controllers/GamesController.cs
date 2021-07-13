@@ -59,9 +59,9 @@ namespace WebApp.Web.Controllers
         /// <response code="200">Found games successfully</response>
         /// <response code="404">Unable to find games</response>
         [HttpGet("search")]
-        public async Task<ActionResult<List<GameResponseDTO>>> SearchGamesByName([BindRequired, FromQuery]string term, [BindRequired, FromQuery] int limit, [BindRequired, FromQuery] int offset)
+        public async Task<ActionResult<List<GameResponseDTO>>> SearchGamesByName([BindRequired, FromQuery] string term, [BindRequired, FromQuery] int limit, [BindRequired, FromQuery] int offset)
         {
-            var games = await _productService.SearchGamesByNameAsync(term, limit,offset);
+            var games = await _productService.SearchGamesByNameAsync(term, limit, offset);
 
             return StatusCode((int)games.ServiceResultType, games.Result);
         }
@@ -107,7 +107,7 @@ namespace WebApp.Web.Controllers
         {
             var result = await _productService.SoftDeleteGameAsync(id);
 
-            if(result.ServiceResultType is ServiceResultType.Success)
+            if (result.ServiceResultType is ServiceResultType.Success)
             {
                 return NoContent();
             }
@@ -165,7 +165,7 @@ namespace WebApp.Web.Controllers
             [Range(0, 1000)] int offset = GamesSelectionConstants.DefaultOffset,
             [Range(0, 100)] int limit = GamesSelectionConstants.DefaultLimit)
         {
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return BadRequest("Models contains one or more invalid parameters");
             }

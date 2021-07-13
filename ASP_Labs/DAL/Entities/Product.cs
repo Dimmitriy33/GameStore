@@ -19,5 +19,6 @@ namespace WebApp.DAL.Entities
         public int Count { get; set; }
         public bool IsDeleted { get; set; }
         public ICollection<ProductRating> Ratings { get; set; }
+        public ICollection<Order> OrdersList { get; set; }
     }
 }

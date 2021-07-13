@@ -4,6 +4,7 @@
     {
         public ServiceResultType ServiceResultType { get; set; }
         public string Message { get; set; }
+        public ServiceResult() { }
         public ServiceResult(ServiceResultType serviceResultType)
         {
             ServiceResultType = serviceResultType;

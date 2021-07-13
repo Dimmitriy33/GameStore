@@ -18,5 +18,6 @@ namespace WebApp.DAL.Interfaces.Database
             int limit,
             int offset,
             OrderType orderType = OrderType.Asc);
+        Task<List<T>> AddRangeAsync(IEnumerable<T> items);
     }
 }

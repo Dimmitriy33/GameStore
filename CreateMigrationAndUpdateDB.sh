@@ -1,5 +1,4 @@
-cd ./WebApp
-
+cd ./ASP_Labs
 echo "Please, enter migration name:"
 read migrationName
 

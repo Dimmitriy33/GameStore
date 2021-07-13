@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Filters;
+﻿using Microsoft.AspNetCore.Mvc.Filters;
 using System;
 using WebApp.BLL.Constants;
 using WebApp.BLL.DTO;
+using WebApp.BLL.Helpers;
 using WebApp.DAL.Enums;
 
 namespace WebApp.Web.Filters
@@ -15,7 +15,7 @@ namespace WebApp.Web.Filters
 
             if (!tryGetGame)
             {
-                SendBadRequest(context, nameof(GameSelectionDTO));
+                FiltersHelper.SendBadRequest(context, nameof(GameSelectionDTO));
                 return;
             }
 
@@ -25,7 +25,7 @@ namespace WebApp.Web.Filters
                game.FilterType is not GamesSelectionConstants.FilterByGenre &&
                game.FilterType is not GamesSelectionConstants.FilterByAge)
             {
-                SendBadRequest(context, GamesSelectionConstants.FilterType);
+                FiltersHelper.SendBadRequest(context, GamesSelectionConstants.FilterType);
                 return;
             }
 
@@ -38,7 +38,7 @@ namespace WebApp.Web.Filters
 
             if (!filterValueCastResult)
             {
-                SendBadRequest(context, GamesSelectionConstants.FilterValue);
+                FiltersHelper.SendBadRequest(context, GamesSelectionConstants.FilterValue);
                 return;
             }
 
@@ -46,7 +46,7 @@ namespace WebApp.Web.Filters
                 game.SortField is not GamesSelectionConstants.SortByRating &&
                 game.SortField is not GamesSelectionConstants.SortByPrice)
             {
-                SendBadRequest(context, GamesSelectionConstants.SortField);
+                FiltersHelper.SendBadRequest(context, GamesSelectionConstants.SortField);
                 return;
             }
 
@@ -54,16 +54,10 @@ namespace WebApp.Web.Filters
                 game.OrderType is not GamesSelectionConstants.OrderTypeAsc &&
                 game.OrderType is not GamesSelectionConstants.OrderTypeDesc)
             {
-                SendBadRequest(context, GamesSelectionConstants.OrderType);
+                FiltersHelper.SendBadRequest(context, GamesSelectionConstants.OrderType);
             }
         }
 
         public void OnActionExecuted(ActionExecutedContext context) { }
-
-        private static void SendBadRequest(ActionExecutingContext context, string message)
-            => context.Result = new BadRequestObjectResult(GetErrorMessage(message));
-
-        private static string GetErrorMessage(string parameter)
-            => $"Invalid value of {parameter}";
     }
 }

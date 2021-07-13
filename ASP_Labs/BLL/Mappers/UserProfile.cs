@@ -13,6 +13,7 @@ namespace WebApp.BLL.Mappers
             CreateMap<GameRequestDTO, Product>().ForMember(dest => dest.IsDeleted, opt => opt.MapFrom(src => false));
             CreateMap<Product, GameResponseDTO>();
             CreateMap<ProductRating, ProductRatingDTO>().ReverseMap();
+            CreateMap<OrderItemDTO, Order>().ReverseMap();
         }
     }
 }
