@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using WebApp.BLL.DTO;
 using WebApp.BLL.Interfaces;
@@ -34,7 +35,7 @@ namespace WebApp.Web.Controllers
         /// <response code="201">Add some products to order successfully</response>
         /// <response code="400">Unable to create an order</response>
         [HttpPost]
-        public async Task<ActionResult<string>> AddProductsToOrder([BindRequired] List<OrderGameDTO> orderGamesDTO)
+        public async Task<ActionResult<string>> AddProductsToOrder([BindRequired] ICollection<OrderGameDTO> orderGamesDTO)
         {
             var userId = _claimsHelper.GetUserId(User).Result;
 
@@ -51,10 +52,10 @@ namespace WebApp.Web.Controllers
 
             if (result.ServiceResultType is ServiceResultType.Success)
             {
-                return StatusCode(201);
+                return StatusCode((int)HttpStatusCode.Created);
             }
 
-            return StatusCode((int)result.ServiceResultType, result.Message);
+            return StatusCode((int)result.ServiceResultType);
         }
 
         /// <summary>
@@ -63,7 +64,7 @@ namespace WebApp.Web.Controllers
         /// <param name="orderList">List of orders unique identifier</param>
         /// <response code="200">Found order list successfully</response>
         [HttpGet]
-        public async Task<ActionResult<List<GameResponseDTO>>> GetOrderList([FromQuery] List<Guid> orderList)
+        public async Task<ActionResult<List<GameResponseDTO>>> GetOrderList([FromQuery] ICollection<Guid> orderList)
         {
             var userId = _claimsHelper.GetUserId(User).Result;
 
@@ -77,11 +78,11 @@ namespace WebApp.Web.Controllers
         /// <summary>
         /// Remove selected items
         /// </summary>
-        /// <param name="orderList">collection of orderId</param>
+        /// <param name="orderList">Collection of orderId</param>
         /// <response code="204">Successful remove items attempt</response>
-        /// <response code="400">Inbalid remove items attempt</response>
+        /// <response code="400">Invalid remove items attempt</response>
         [HttpDelete]
-        public async Task<ActionResult<string>> RemoveItems([FromQuery, BindRequired] List<Guid> orderList)
+        public async Task<ActionResult<string>> RemoveItems([FromQuery, BindRequired] ICollection<Guid> orderList)
         {
             var result = await _orderService.RemoveSelectedItemsAsync(orderList);
 
@@ -98,9 +99,9 @@ namespace WebApp.Web.Controllers
         /// </summary>
         /// <param name="orderList">collection of orderId</param>
         /// <response code="204">Successful soft remove items attempt</response>
-        /// <response code="400">Inbalid soft remove items attempt</response>
+        /// <response code="400">Invalid soft remove items attempt</response>
         [HttpDelete("soft")]
-        public async Task<ActionResult<string>> SoftRemoveItems([FromQuery, BindRequired] List<Guid> orderList)
+        public async Task<ActionResult<string>> SoftRemoveItems([FromQuery, BindRequired] ICollection<Guid> orderList)
         {
             var result = await _orderService.SoftRemoveSelectedItemsAsync(orderList);
 
@@ -119,7 +120,7 @@ namespace WebApp.Web.Controllers
         /// <response code="204">Successful buy attempt</response>
         /// <response code="400">Invalid buy attempt</response>
         [HttpPost("buy")]
-        public async Task<ActionResult<string>> BuySelectedItems([FromQuery, BindRequired] List<Guid> orderList)
+        public async Task<ActionResult<string>> BuySelectedItems([FromQuery, BindRequired] ICollection<Guid> orderList)
         {
             var result = await _orderService.BuySelectedItemsAsync(orderList);
 

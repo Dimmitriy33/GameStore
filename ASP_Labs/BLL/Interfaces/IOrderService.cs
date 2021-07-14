@@ -8,11 +8,11 @@ namespace WebApp.BLL.Interfaces
 {
     public interface IOrderService
     {
-        Task<ServiceResult> AddProductsToOrderAsync(List<OrderItemDTO> orderItemsDTO);
-        Task<ServiceResult> BuySelectedItemsAsync(List<Guid> orderList);
-        Task<ServiceResult> RemoveSelectedItemsAsync(List<Guid> orderList);
-        Task<ServiceResultClass<List<GameResponseDTO>>> SearchForOrderListByOrdersIdAsync(List<Guid> orderList);
+        Task<ServiceResult> AddProductsToOrderAsync(ICollection<OrderItemDTO> orderItemsDTO);
+        Task<ServiceResult> BuySelectedItemsAsync(ICollection<Guid> orderList);
+        Task<ServiceResult> RemoveSelectedItemsAsync(ICollection<Guid> orderList);
+        Task<ServiceResultClass<List<GameResponseDTO>>> SearchForOrderListByOrdersIdAsync(ICollection<Guid> orderList);
         Task<ServiceResultClass<List<GameResponseDTO>>> SearchForOrderListByUserIdAsync(Guid userId);
-        Task<ServiceResult> SoftRemoveSelectedItemsAsync(List<Guid> orderList);
+        Task<ServiceResult> SoftRemoveSelectedItemsAsync(ICollection<Guid> orderList);
     }
 }

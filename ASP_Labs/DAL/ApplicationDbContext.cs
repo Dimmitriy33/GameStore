@@ -18,10 +18,10 @@ namespace WebApp.DAL
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
             modelBuilder.ApplyConfiguration(new ProductConfiguration());
             modelBuilder.ApplyConfiguration(new ProductRatingConfiguration());
             modelBuilder.ApplyConfiguration(new OrderConfiguration());
-            base.OnModelCreating(modelBuilder);
         }
     }
 }

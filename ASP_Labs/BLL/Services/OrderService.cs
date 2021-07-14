@@ -34,13 +34,13 @@ namespace WebApp.BLL.Services
             _mapper = mapper;
         }
 
-        public async Task<ServiceResult> AddProductsToOrderAsync(List<OrderItemDTO> orderItemsDTO)
+        public async Task<ServiceResult> AddProductsToOrderAsync(ICollection<OrderItemDTO> orderItemsDTO)
         {
             foreach (var orderItem in orderItemsDTO)
             {
                 if (await _productRepository.GetGameByIdAsync(orderItem.ProductId) is null)
                 {
-                    return new ServiceResult("Unable to add one of products to order", ServiceResultType.Bad_Request);
+                    return new ServiceResult(ServiceResultType.Bad_Request);
                 }
             }
 
@@ -56,29 +56,21 @@ namespace WebApp.BLL.Services
             return new ServiceResultClass<List<GameResponseDTO>>(result.Select(_mapper.Map<GameResponseDTO>).ToList(), ServiceResultType.Success);
         }
 
-        public async Task<ServiceResultClass<List<GameResponseDTO>>> SearchForOrderListByOrdersIdAsync(List<Guid> orderList)
+        public async Task<ServiceResultClass<List<GameResponseDTO>>> SearchForOrderListByOrdersIdAsync(ICollection<Guid> orderList)
         {
-            var games = new List<Product>();
-
-            foreach (var orderId in orderList)
-            {
-                games.AddRange(await _orderRepository.GetGamesByOrderIdAsync(orderId));
-            }
+            var games = await _orderRepository.GetGamesByOrderId(orderList);
 
             return new ServiceResultClass<List<GameResponseDTO>>(games.Select(_mapper.Map<GameResponseDTO>).ToList(), ServiceResultType.Success);
         }
 
-        public async Task<ServiceResult> BuySelectedItemsAsync(List<Guid> orderList)
+        public async Task<ServiceResult> BuySelectedItemsAsync(ICollection<Guid> orderList)
         {
-            foreach (var orderId in orderList)
-            {
-                await _orderRepository.ChangeOrderStatusAsync(orderId, OrderStatus.Paid);
-            }
+            await _orderRepository.ChangeOrderStatusAsync(orderList, OrderStatus.Paid);
 
             return new ServiceResult(ServiceResultType.Success);
         }
 
-        public async Task<ServiceResult> RemoveSelectedItemsAsync(List<Guid> orderList)
+        public async Task<ServiceResult> RemoveSelectedItemsAsync(ICollection<Guid> orderList)
         {
             foreach (var orderId in orderList)
             {
@@ -88,12 +80,9 @@ namespace WebApp.BLL.Services
             return new ServiceResult(ServiceResultType.Success);
         }
 
-        public async Task<ServiceResult> SoftRemoveSelectedItemsAsync(List<Guid> orderList)
+        public async Task<ServiceResult> SoftRemoveSelectedItemsAsync(ICollection<Guid> orderList)
         {
-            foreach (var orderId in orderList)
-            {
-                await _orderRepository.ChangeOrderStatusAsync(orderId, OrderStatus.Rejected);
-            }
+            await _orderRepository.ChangeOrderStatusAsync(orderList, OrderStatus.Rejected);
 
             return new ServiceResult(ServiceResultType.Success);
         }

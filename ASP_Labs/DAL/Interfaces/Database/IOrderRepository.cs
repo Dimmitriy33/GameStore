@@ -8,7 +8,8 @@ namespace WebApp.DAL.Interfaces.Database
 {
     public interface IOrderRepository : IRepository<Order>
     {
-        Task ChangeOrderStatusAsync(Guid orderId, OrderStatus orderStatus);
+        Task ChangeOrderStatusAsync(ICollection<Guid> orderList, OrderStatus orderStatus);
+        Task<List<Product>> GetGamesByOrderId(ICollection<Guid> orderList);
         Task<List<Product>> GetGamesByOrderIdAsync(Guid orderId);
         Task<List<Product>> GetGamesByUserId(Guid userId);
         void RemoveOrderRange(List<Order> orders);

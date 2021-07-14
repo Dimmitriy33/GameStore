@@ -34,20 +34,22 @@ namespace WebApp.DAL.Repository
             return result;
         }
 
-        public void RemoveOrderRange(List<Order> orders)
-            => _dbContext.Orders.RemoveRange(orders);
+        public void RemoveOrderRange(List<Order> orders) => _dbContext.Orders.RemoveRange(orders);
 
-        public async Task ChangeOrderStatusAsync(Guid orderId, OrderStatus orderStatus)
+        public async Task ChangeOrderStatusAsync(ICollection<Guid> orderList, OrderStatus orderStatus)
         {
-            var order = new Order
-            {
-                OrderId = orderId,
-                Status = orderStatus
-            };
+            var orders = await _dbContext.Orders.AsNoTracking().Where(x => orderList.Contains(x.OrderId)).ToListAsync();
 
-            _dbContext.Entry(order).Property(i => i.Status).IsModified = true;
+            foreach (var order in orders)
+            {
+                order.Status = orderStatus;
+                _dbContext.Entry(order).Property(i => i.Status).IsModified = true;
+            }
 
             await _dbContext.SaveChangesAsync();
         }
+
+        public async Task<List<Product>> GetGamesByOrderId(ICollection<Guid> orderList)
+            => await _dbContext.Orders.AsNoTracking().Where(x => orderList.Contains(x.OrderId)).Select(t => t.Product).ToListAsync();
     }
 }
