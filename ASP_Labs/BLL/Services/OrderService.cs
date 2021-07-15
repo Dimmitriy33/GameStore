@@ -36,12 +36,10 @@ namespace WebApp.BLL.Services
 
         public async Task<ServiceResult> AddProductsToOrderAsync(ICollection<OrderItemDTO> orderItemsDTO)
         {
-            foreach (var orderItem in orderItemsDTO)
+            var productIdList = orderItemsDTO.Select(x => x.ProductId).ToList();
+            if (!_productRepository.CheckProductsExistence(productIdList))
             {
-                if (await _productRepository.GetGameByIdAsync(orderItem.ProductId) is null)
-                {
-                    return new ServiceResult(ServiceResultType.Bad_Request);
-                }
+                return new ServiceResult(ServiceResultType.Bad_Request);
             }
 
             await _orderRepository.AddRangeAsync(orderItemsDTO.Select(_mapper.Map<Order>).ToList());

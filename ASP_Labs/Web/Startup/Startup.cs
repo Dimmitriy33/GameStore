@@ -73,10 +73,13 @@ namespace WebApp.Web.Startup
                 #endregion
             }
 
-            app.UseCors(builder => 
+            app.UseCors(builder =>
                 builder.AllowAnyOrigin()
                     .AllowAnyHeader()
                     .AllowAnyMethod());
+
+            app.UseDefaultFiles();
+            app.UseStaticFiles();
 
             app.UseMiddleware<LoggingExtensions>();
 

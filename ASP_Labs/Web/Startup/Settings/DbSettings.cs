@@ -12,10 +12,7 @@ namespace WebApp.Web.Startup.Settings
         public string Username { get; set; }
         [Required]
         public string Password { get; set; }
-        public string ConnectionString => $"Server={Host};Database={Instance};User={Username};Password={Password};integrated security=True;Trusted_Connection=True;MultipleActiveResultSets=true";
-        public void Validate()
-        {
-            Validator.ValidateObject(this, new ValidationContext(this), true);
-        }
+        public string ConnectionString => $"Server={Host};Database={Instance};User={Username};Password={Password};";
+        public void Validate() => Validator.ValidateObject(this, new ValidationContext(this), true);
     }
 }
