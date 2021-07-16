@@ -71,15 +71,11 @@ namespace WebApp.DAL.Repository
             await _dbContext.SaveChangesAsync();
         }
 
-        public bool CheckProductsExistence(ICollection<Guid> products)
+        public async Task<bool> CheckProductsExistence(ICollection<Guid> products)
         {
-            var countOfNotExistentProducts = _dbContext.Products.AsNoTracking().Where(x => products.Contains(x.Id)).Distinct().Count();
-            if (products.Count == countOfNotExistentProducts)
-            {
-                return true;
-            }
+            var countOfNotExistentProducts = await _dbContext.Products.AsNoTracking().Where(x => products.Contains(x.Id)).CountAsync();
 
-            return false;
+            return products.Count == countOfNotExistentProducts;
         }
     }
 }
