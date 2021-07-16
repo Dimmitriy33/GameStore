@@ -24,6 +24,7 @@ namespace WebApp.Web.Controllers
         private const int CountOfTopPlatforms = 3;
 
         #endregion
+
         #region Services
 
         private readonly IClaimsReader _claimsHelper;

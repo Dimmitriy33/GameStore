@@ -22,6 +22,7 @@ namespace WebApp.BLL.Services
         private const string NotFoundEmail = "Email not found";
         private const string NotConfirmedEmail = "Email not confirmed";
         private const string NotFoundUser = "User not found";
+        private const int DefaultRedisCacheExpireSec = 1200;
 
         #endregion
 
@@ -36,7 +37,7 @@ namespace WebApp.BLL.Services
 
         #endregion
 
-        #region Infrastructure
+        #region DAL
 
         private readonly IRedisContext _redisContext;
         private readonly IUserRepository _userRepository;
@@ -106,7 +107,7 @@ namespace WebApp.BLL.Services
             {
                 var jwtToken = _jwtGenerator.CreateToken(user.Id, user.UserName, _userManager.GetRolesAsync(user).Result[0]);
 
-                await _redisContext.Set(CreateRedisKeyForUser(user.Id), user, TimeSpan.FromSeconds(1200));
+                await _redisContext.Set(CreateRedisKeyForUser(user.Id), user, TimeSpan.FromSeconds(DefaultRedisCacheExpireSec));
 
                 return new ServiceResultClass<string>(jwtToken, ServiceResultType.Success);
             }
