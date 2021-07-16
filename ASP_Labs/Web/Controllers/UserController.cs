@@ -17,14 +17,14 @@ namespace WebApp.Web.Controllers
         #region Services
 
         private readonly IUserService _userService;
-        private readonly IClaimsReader _claimsHelper;
+        private readonly IClaimsReader _claimsReader;
 
         #endregion
 
-        public UserController(IUserService userService, IClaimsReader claimsHelper)
+        public UserController(IUserService userService, IClaimsReader claimsReader)
         {
             _userService = userService;
-            _claimsHelper = claimsHelper;
+            _claimsReader = claimsReader;
         }
 
         /// <summary>
@@ -65,7 +65,8 @@ namespace WebApp.Web.Controllers
         [HttpGet]
         public async Task<ActionResult<UserDTO>> GetUser()
         {
-            var result = _claimsHelper.GetUserId(User);
+            var result = _claimsReader.GetUserId(User);
+
             if (result.ServiceResultType is not ServiceResultType.Success)
             {
                 return StatusCode((int)result.ServiceResultType);
