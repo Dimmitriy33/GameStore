@@ -13,6 +13,6 @@ namespace WebApp.DAL.Interfaces.Database
         Task<Product> GetGameByIdAsync(Guid id);
         Task SoftDeleteAsync(Guid id);
         Task ChangeGameRatingAsync(Guid id);
-        bool CheckProductsExistence(ICollection<Guid> products);
+        Task<bool> CheckProductsExistence(ICollection<Guid> products);
     }
 }

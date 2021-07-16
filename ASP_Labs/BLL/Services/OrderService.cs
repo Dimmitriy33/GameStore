@@ -36,8 +36,8 @@ namespace WebApp.BLL.Services
 
         public async Task<ServiceResult> AddProductsToOrderAsync(ICollection<OrderItemDTO> orderItemsDTO)
         {
-            var productIdList = orderItemsDTO.Select(x => x.ProductId).ToList();
-            if (!_productRepository.CheckProductsExistence(productIdList))
+            var productIdList = orderItemsDTO.Select(x => x.ProductId).Distinct().ToList();
+            if (!await _productRepository.CheckProductsExistence(productIdList))
             {
                 return new ServiceResult(ServiceResultType.Bad_Request);
             }
