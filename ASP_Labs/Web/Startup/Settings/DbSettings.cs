@@ -13,6 +13,7 @@ namespace WebApp.Web.Startup.Settings
         [Required]
         public string Password { get; set; }
         public string ConnectionString => $"Server={Host};Database={Instance};User={Username};Password={Password};";
-        public void Validate() => Validator.ValidateObject(this, new ValidationContext(this), true);
+        public void Validate()
+            => Validator.ValidateObject(this, new ValidationContext(this), true);
     }
 }

@@ -9,6 +9,7 @@ namespace WebApp.Web.Startup.Settings
         public EmailSettings EmailSettings { get; set; }
         public JwtSettings JwtSettings { get; set; }
         public CloudinarySettings CloudinarySettings { get; set; }
+        public RedisSettings RedisSettings { get; set; }
 
         public void Validate()
         {
@@ -17,6 +18,7 @@ namespace WebApp.Web.Startup.Settings
             IdentitySettings.Validate();
             JwtSettings.Validate();
             CloudinarySettings.Validate();
+            RedisSettings.Validate();
         }
     }
 }

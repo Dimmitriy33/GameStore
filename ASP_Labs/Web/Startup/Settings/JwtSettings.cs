@@ -18,9 +18,6 @@ namespace WebApp.Web.Startup.Settings
         public bool ValidateIssuerSigningKey { get; set; }
 
         public void Validate()
-        {
-            Validator.ValidateObject(this, new ValidationContext(this), true);
-
-        }
+            => Validator.ValidateObject(this, new ValidationContext(this), true);
     }
 }

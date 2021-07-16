@@ -3,6 +3,8 @@ using WebApp.BLL.Helpers;
 using WebApp.BLL.Interfaces;
 using WebApp.BLL.Services;
 using WebApp.DAL.Interfaces.Database;
+using WebApp.DAL.Interfaces.Redis;
+using WebApp.DAL.Redis;
 using WebApp.DAL.Repository;
 using WebApp.Web.Filters;
 using WebApp.Web.Startup.Settings;
@@ -16,7 +18,7 @@ namespace WebApp.Web.Startup.Configuration
             //Services
             services.AddTransient<IJwtGenerator, JwtGenerator>();
             services.AddTransient<IUserService, UserService>();
-            services.AddTransient<IEmailService, EmailService>(); 
+            services.AddTransient<IEmailService, EmailService>();
             services.AddTransient<IProductService, ProductService>();
             services.AddTransient<IOrderService, OrderService>();
             services.AddTransient<IClaimsReader, ClaimsReader>();
@@ -28,11 +30,13 @@ namespace WebApp.Web.Startup.Configuration
             //Action filters
             services.AddScoped<GamesSelectionFilter>();
 
-            //Repositories
+            //Infrastructure
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<IProductRepository, ProductRepository>();
             services.AddTransient<IProductRatingRepository, ProductRatingRepository>();
             services.AddTransient<IOrderRepository, OrderRepository>();
+
+            services.AddTransient<IRedisContext, RedisContext>();
 
             //AppSettings
             services.AddSingleton(appSettings);

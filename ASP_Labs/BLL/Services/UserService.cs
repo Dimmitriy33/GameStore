@@ -8,6 +8,7 @@ using WebApp.BLL.Interfaces;
 using WebApp.BLL.Models;
 using WebApp.DAL.Entities;
 using WebApp.DAL.Interfaces.Database;
+using WebApp.DAL.Interfaces.Redis;
 
 namespace WebApp.BLL.Services
 {
@@ -19,7 +20,7 @@ namespace WebApp.BLL.Services
         private const string InvalidLoginMessage = "Invalid Login Attempt";
         private const string MissingRole = "Missing role";
         private const string NotFoundEmail = "Email not found";
-        private const string NotConfirmedEmail = "Email not confirmed"; 
+        private const string NotConfirmedEmail = "Email not confirmed";
         private const string NotFoundUser = "User not found";
 
         #endregion
@@ -35,14 +36,22 @@ namespace WebApp.BLL.Services
 
         #endregion
 
-        #region Repositories
+        #region Infrastructure
 
+        private readonly IRedisContext _redisContext;
         private readonly IUserRepository _userRepository;
 
         #endregion
 
-        public UserService(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IJwtGenerator jwtGenerator,
-            RoleManager<ApplicationRole> roleManager, IUserRepository userRepository, IMapper mapper, ITokenEncodingHelper tokenEncodingHelper)
+        public UserService(
+            UserManager<ApplicationUser> userManager,
+            SignInManager<ApplicationUser> signInManager,
+            RoleManager<ApplicationRole> roleManager,
+            IJwtGenerator jwtGenerator,
+            IUserRepository userRepository,
+            IMapper mapper,
+            ITokenEncodingHelper tokenEncodingHelper,
+            IRedisContext redisContext)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -51,6 +60,7 @@ namespace WebApp.BLL.Services
             _userRepository = userRepository;
             _mapper = mapper;
             _tokenEncodingHelper = tokenEncodingHelper;
+            _redisContext = redisContext;
         }
 
         public async Task<ServiceResultClass<string>> TryRegisterAsync(SignUpUserDTO userDTO)
@@ -96,6 +106,8 @@ namespace WebApp.BLL.Services
             {
                 var jwtToken = _jwtGenerator.CreateToken(user.Id, user.UserName, _userManager.GetRolesAsync(user).Result[0]);
 
+                await _redisContext.Set(CreateRedisKeyForUser(user.Id), user);
+
                 return new ServiceResultClass<string>(jwtToken, ServiceResultType.Success);
             }
 
@@ -126,17 +138,24 @@ namespace WebApp.BLL.Services
             await _userRepository.UpdateUserInfoAsync(user);
             var updatedUser = await _userManager.FindByIdAsync(user.Id.ToString());
 
-            if(updatedUser is null)
+            if (updatedUser is null)
             {
                 return new ServiceResultClass<UserDTO>(ServiceResultType.Bad_Request);
             }
+
+            await _redisContext.Remove<ApplicationUser>(CreateRedisKeyForUser(user.Id));
 
             return new ServiceResultClass<UserDTO>(_mapper.Map<UserDTO>(updatedUser), ServiceResultType.Success);
         }
 
         public async Task<ServiceResult> ChangePasswordAsync(ResetPasswordUserDTO user)
         {
-            var userForUpdate = await _userManager.FindByIdAsync(user.Id.ToString());
+            var userForUpdate = await _redisContext.Get<ApplicationUser>(CreateRedisKeyForUser(user.Id));
+
+            if (userForUpdate is null)
+            {
+                userForUpdate = await _userManager.FindByIdAsync(user.Id.ToString());
+            }
 
             if (userForUpdate is null)
             {
@@ -151,6 +170,13 @@ namespace WebApp.BLL.Services
 
         public async Task<ServiceResultClass<UserDTO>> FindUserByIdAsync(Guid id)
         {
+            var foundUserByRedis = await _redisContext.Get<ApplicationUser>(CreateRedisKeyForUser(id));
+
+            if (foundUserByRedis is not null)
+            {
+                return new ServiceResultClass<UserDTO>(_mapper.Map<UserDTO>(foundUserByRedis), ServiceResultType.Success);
+            }
+
             var foundUser = await _userRepository.GetUserByIdAsync(id);
 
             if (foundUser is null)
@@ -158,7 +184,9 @@ namespace WebApp.BLL.Services
                 return new ServiceResultClass<UserDTO>(ServiceResultType.Not_Found);
             }
 
-            return new ServiceResultClass<UserDTO>(foundUser, ServiceResultType.Success );
+            return new ServiceResultClass<UserDTO>(foundUser, ServiceResultType.Success);
         }
+
+        private static string CreateRedisKeyForUser(Guid userId) => $"u_{userId}";
     }
 }
