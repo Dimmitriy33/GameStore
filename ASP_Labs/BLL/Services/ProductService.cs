@@ -14,7 +14,7 @@ namespace WebApp.BLL.Services
 {
     public class ProductService : IProductService
     {
-        #region Repositories
+        #region DAL
 
         private readonly IProductRepository _productRepository;
         private readonly IProductRatingRepository _productRatingRepository;
@@ -57,7 +57,7 @@ namespace WebApp.BLL.Services
         {
             var game = await _productRepository.GetGameByIdAsync(id);
 
-            if(game is null)
+            if (game is null)
             {
                 return new ServiceResultClass<GameResponseDTO>(ServiceResultType.Not_Found);
             }
@@ -90,7 +90,7 @@ namespace WebApp.BLL.Services
         {
             var game = await _productRepository.GetGameByIdAsync(id);
 
-            if(game is null)
+            if (game is null)
             {
                 return new ServiceResult(ServiceResultType.Not_Found);
             }
@@ -104,7 +104,7 @@ namespace WebApp.BLL.Services
         {
             var game = await _productRepository.GetGameByIdAsync(id);
 
-            if(game is null)
+            if (game is null)
             {
                 return new ServiceResult(ServiceResultType.Not_Found);
             }
@@ -118,7 +118,7 @@ namespace WebApp.BLL.Services
         {
             var filterExpression = _gameSelectionHelper.GetFilterExpression(gameSelection.FilterType, gameSelection.FilterValue);
             var sortExpression = _gameSelectionHelper.GetSortExpression(gameSelection.SortField);
-            var orderType = Enum.Parse(typeof(OrderType),gameSelection.OrderType);
+            var orderType = Enum.Parse(typeof(OrderType), gameSelection.OrderType);
 
             var games = await _productRepository.SortAndFilterItemsAsync(filterExpression, sortExpression, limit, offset, (OrderType)orderType);
 

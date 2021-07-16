@@ -7,8 +7,11 @@ namespace WebApp.BLL.Helpers
 {
     public class TokenEncodingHelper : ITokenEncodingHelper
     {
-        //constants
+        #region Constants
+
         private const string InvalidTokenMessage = "Invalid token";
+
+        #endregion
 
         public string Encode(string token)
         {

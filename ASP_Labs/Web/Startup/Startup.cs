@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -30,6 +31,12 @@ namespace WebApp.Web.Startup
         {
             var appSettings = ReadAppSettings(Configuration);
 
+            services.AddResponseCompression(options =>
+            {
+                options.EnableForHttps = true;
+                options.Providers.Add<GzipCompressionProvider>();
+            });
+
             services.AddLogging(loggingBuilder =>
              loggingBuilder.AddSerilog(dispose: true));
 
@@ -43,6 +50,7 @@ namespace WebApp.Web.Startup
 
             services.ValidateSettingParameters(Configuration);
             services.RegisterDatabase(appSettings.DbSettings, LoggerFactory);
+            services.RegisterRedis(appSettings.RedisSettings);
             services.RegisterServices(appSettings);
 
             services.RegisterIdentity(appSettings);
@@ -51,8 +59,7 @@ namespace WebApp.Web.Startup
             services.AddCors();
 
             services.Configure<PasswordHasherOptions>(options =>
-                options.CompatibilityMode = PasswordHasherCompatibilityMode.IdentityV2
-);
+                options.CompatibilityMode = PasswordHasherCompatibilityMode.IdentityV2);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -60,6 +67,8 @@ namespace WebApp.Web.Startup
         {
 
             var appSettings = ReadAppSettings(Configuration);
+
+            app.UseResponseCompression();
 
             LoggerFactory.AddSerilog();
 
@@ -112,6 +121,7 @@ namespace WebApp.Web.Startup
             var emailSettings = configuration.GetSection(nameof(AppSettings.EmailSettings)).Get<EmailSettings>();
             var jwtSettings = configuration.GetSection(nameof(AppSettings.JwtSettings)).Get<JwtSettings>();
             var cloudinarySettings = configuration.GetSection(nameof(AppSettings.CloudinarySettings)).Get<CloudinarySettings>();
+            var redisSettings = configuration.GetSection(nameof(AppSettings.RedisSettings)).Get<RedisSettings>();
 
             return new AppSettings
             {
@@ -119,7 +129,8 @@ namespace WebApp.Web.Startup
                 IdentitySettings = identitySettings,
                 EmailSettings = emailSettings,
                 JwtSettings = jwtSettings,
-                CloudinarySettings = cloudinarySettings
+                CloudinarySettings = cloudinarySettings,
+                RedisSettings = redisSettings
             };
         }
     }

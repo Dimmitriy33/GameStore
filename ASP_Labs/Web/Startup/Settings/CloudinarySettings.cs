@@ -17,8 +17,6 @@ namespace WebApp.Web.Startup.Settings
         public string DefaultCloudinaryFolder { get; set; }
 
         public void Validate()
-        {
-            Validator.ValidateObject(this, new ValidationContext(this), true);
-        }
+            => Validator.ValidateObject(this, new ValidationContext(this), true);
     }
 }

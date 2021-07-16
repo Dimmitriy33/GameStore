@@ -14,7 +14,7 @@ namespace WebApp.BLL.Services
 {
     public class OrderService : IOrderService
     {
-        #region Repositories
+        #region DAL
 
         private readonly IOrderRepository _orderRepository;
         private readonly IProductRepository _productRepository;

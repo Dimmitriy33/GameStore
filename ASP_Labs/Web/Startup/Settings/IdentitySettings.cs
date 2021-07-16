@@ -13,8 +13,6 @@ namespace WebApp.Web.Startup.Settings
         public bool PasswordRequireUppercase { get; set; }
         public bool PasswordRequireLowercase { get; set; }
         public void Validate()
-        {
-            Validator.ValidateObject(this, new ValidationContext(this), true);
-        }
+            => Validator.ValidateObject(this, new ValidationContext(this), true);
     }
 }
