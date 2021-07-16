@@ -9,7 +9,6 @@ namespace WebApp.Web.Startup.Settings
         public EmailSettings EmailSettings { get; set; }
         public JwtSettings JwtSettings { get; set; }
         public CloudinarySettings CloudinarySettings { get; set; }
-        
 
         public void Validate()
         {

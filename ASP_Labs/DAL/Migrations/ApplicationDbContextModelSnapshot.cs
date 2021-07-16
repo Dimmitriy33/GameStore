@@ -217,6 +217,44 @@ namespace WebApp.DAL.Migrations
                     b.ToTable("AspNetUsers");
                 });
 
+            modelBuilder.Entity("WebApp.DAL.Entities.Order", b =>
+                {
+                    b.Property<Guid>("OrderId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Amount")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreationDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("getdate()");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Status")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(1);
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("OrderId");
+
+                    b.HasIndex("OrderId");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("Status");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Orders");
+                });
+
             modelBuilder.Entity("WebApp.DAL.Entities.Product", b =>
                 {
                     b.Property<Guid>("Id")
@@ -597,28 +635,55 @@ namespace WebApp.DAL.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("WebApp.DAL.Entities.Order", b =>
+                {
+                    b.HasOne("WebApp.DAL.Entities.Product", "Product")
+                        .WithMany("OrdersList")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WebApp.DAL.Entities.ApplicationUser", "User")
+                        .WithMany("OrdersList")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("WebApp.DAL.Entities.ProductRating", b =>
                 {
-                    b.HasOne("WebApp.DAL.Entities.Product", null)
+                    b.HasOne("WebApp.DAL.Entities.Product", "Product")
                         .WithMany("Ratings")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("WebApp.DAL.Entities.ApplicationUser", null)
+                    b.HasOne("WebApp.DAL.Entities.ApplicationUser", "User")
                         .WithMany("Ratings")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Product");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("WebApp.DAL.Entities.ApplicationUser", b =>
                 {
+                    b.Navigation("OrdersList");
+
                     b.Navigation("Ratings");
                 });
 
             modelBuilder.Entity("WebApp.DAL.Entities.Product", b =>
                 {
+                    b.Navigation("OrdersList");
+
                     b.Navigation("Ratings");
                 });
 #pragma warning restore 612, 618

@@ -9,5 +9,9 @@ namespace WebApp.DAL.Entities
         public Guid UserId { get; set; }
 
         public double Rating { get; set; }
+
+        public Product Product { get; set; }
+
+        public ApplicationUser User { get; set; }
     }
 }

@@ -12,13 +12,13 @@ namespace WebApp.DAL.Configuration
             builder.HasKey(b => new { b.ProductId, b.UserId });
 
             builder
-                .HasOne<Product>()
+                .HasOne(t => t.Product)
                 .WithMany(t => t.Ratings)
                 .HasForeignKey(p => p.ProductId)
                 .IsRequired();
 
             builder
-               .HasOne<ApplicationUser>()
+               .HasOne(t => t.User)
                .WithMany(u => u.Ratings)
                .HasForeignKey(b => b.UserId)
                 .IsRequired();

@@ -12,7 +12,7 @@ namespace WebApp.DAL.Repository
 {
     public class ProductRepository : Repository<ApplicationDbContext, Product>, IProductRepository
     {
-        public ProductRepository(ApplicationDbContext dbContext) : base(dbContext) {}
+        public ProductRepository(ApplicationDbContext dbContext) : base(dbContext) { }
 
         public async Task<List<Platforms>> GetTopPopularPlatformsAsync(int count)
         {
@@ -21,7 +21,7 @@ namespace WebApp.DAL.Repository
                 .OrderByDescending(t => t.DateCreated)
                 .GroupBy(t => t.Platform)
                 .OrderByDescending(t => t.Count())
-                .Select(t=>t.Key)
+                .Select(t => t.Key)
                 .Take(count)
                 .ToListAsync();
 
@@ -45,13 +45,13 @@ namespace WebApp.DAL.Repository
 
         public async Task SoftDeleteAsync(Guid id)
         {
-            var item = new Product 
-            { 
+            var item = new Product
+            {
                 Id = id,
-                IsDeleted = true 
-            }; 
+                IsDeleted = true
+            };
 
-            _dbContext.Entry(item).Property(i=>i.IsDeleted).IsModified = true;
+            _dbContext.Entry(item).Property(i => i.IsDeleted).IsModified = true;
 
             await _dbContext.SaveChangesAsync();
         }
@@ -69,6 +69,13 @@ namespace WebApp.DAL.Repository
             _dbContext.Entry(game).Property(i => i.TotalRating).IsModified = true;
 
             await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task<bool> CheckProductsExistence(ICollection<Guid> products)
+        {
+            var countOfNotExistentProducts = await _dbContext.Products.AsNoTracking().Where(x => products.Contains(x.Id)).CountAsync();
+
+            return products.Count == countOfNotExistentProducts;
         }
     }
 }

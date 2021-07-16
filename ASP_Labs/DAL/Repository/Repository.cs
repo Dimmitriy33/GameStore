@@ -40,6 +40,25 @@ namespace WebApp.DAL.Repository
             return item;
         }
 
+        public async Task<List<T>> AddRangeAsync(IEnumerable<T> items)
+        {
+            var entitiesList = items.ToList();
+
+            try
+            {
+                await _dbSet.AddRangeAsync(entitiesList);
+
+                await _dbContext.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw new Exception($"Could not create items in database. Error: {e.Message}");
+            }
+
+            return entitiesList;
+        }
+
         public async Task<int> CountAsync(Expression<Func<T, bool>> expression)
         {
             var count = expression == null
@@ -112,7 +131,7 @@ namespace WebApp.DAL.Repository
                 }
             }
 
-            if(expression is not null)
+            if (expression is not null)
             {
                 return await _dbSet
                     .Where(expression)
