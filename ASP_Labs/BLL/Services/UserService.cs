@@ -106,7 +106,7 @@ namespace WebApp.BLL.Services
             {
                 var jwtToken = _jwtGenerator.CreateToken(user.Id, user.UserName, _userManager.GetRolesAsync(user).Result[0]);
 
-                await _redisContext.Set(CreateRedisKeyForUser(user.Id), user);
+                await _redisContext.Set(CreateRedisKeyForUser(user.Id), user, TimeSpan.FromSeconds(1200));
 
                 return new ServiceResultClass<string>(jwtToken, ServiceResultType.Success);
             }

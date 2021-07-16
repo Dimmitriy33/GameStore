@@ -30,7 +30,7 @@ namespace WebApp.Web.Startup.Configuration
             //Action filters
             services.AddScoped<GamesSelectionFilter>();
 
-            //Infrastructure
+            //DAL
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<IProductRepository, ProductRepository>();
             services.AddTransient<IProductRatingRepository, ProductRatingRepository>();

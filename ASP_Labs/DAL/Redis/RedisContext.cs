@@ -47,13 +47,16 @@ namespace WebApp.DAL.Redis
 
                 var result = transaction.HashSetAsync(
                     key,
-                    new HashEntry[]
+                    new[]
                     {
                         new HashEntry(key, new RedisValue(JsonConvert.SerializeObject(value).ToString()))
                     }
                 );
 
-                transaction.KeyExpireAsync(key, TimeSpan.FromSeconds(1200));
+                if (expiry is not null)
+                {
+                    transaction.KeyExpireAsync(key, expiry);
+                }
 
                 await transaction.ExecuteAsync();
             }
