@@ -70,10 +70,7 @@ namespace WebApp.BLL.Services
 
         public async Task<ServiceResult> RemoveSelectedItemsAsync(ICollection<Guid> orderList)
         {
-            foreach (var orderId in orderList)
-            {
-                await _orderRepository.DeleteAsync(t => t.OrderId == orderId);
-            }
+            await _orderRepository.RemoveOrderRangeByOrdersId(orderList);
 
             return new ServiceResult(ServiceResultType.Success);
         }

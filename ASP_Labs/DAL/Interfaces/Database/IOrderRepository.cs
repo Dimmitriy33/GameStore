@@ -13,5 +13,6 @@ namespace WebApp.DAL.Interfaces.Database
         Task<List<Product>> GetGamesByOrderIdAsync(Guid orderId);
         Task<List<Product>> GetGamesByUserId(Guid userId);
         void RemoveOrderRange(List<Order> orders);
+        Task RemoveOrderRangeByOrdersId(ICollection<Guid> orderList);
     }
 }

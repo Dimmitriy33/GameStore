@@ -90,7 +90,7 @@ namespace WebApp.BLL.Services
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             var codeEncoded = _tokenEncodingHelper.Encode(token);
 
-            return new ServiceResultClass<string>(codeEncoded, ServiceResultType.Success);
+            return new ServiceResultClass<string>(result: codeEncoded, ServiceResultType.Success);
         }
 
         public async Task<ServiceResultClass<string>> TryLoginAsync(SignInUserDTO userDTO)
@@ -109,7 +109,7 @@ namespace WebApp.BLL.Services
 
                 await _redisContext.Set(CreateRedisKeyForUser(user.Id), user, TimeSpan.FromSeconds(DefaultRedisCacheExpireSec));
 
-                return new ServiceResultClass<string>(jwtToken, ServiceResultType.Success);
+                return new ServiceResultClass<string>(result: jwtToken, ServiceResultType.Success);
             }
 
             return new ServiceResultClass<string>(InvalidLoginMessage, ServiceResultType.Unauthorized);

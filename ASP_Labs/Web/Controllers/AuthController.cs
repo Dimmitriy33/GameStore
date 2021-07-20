@@ -21,8 +21,8 @@ namespace WebApp.Web.Controllers
 
         #region Constants
 
-        private static string InvalidRegisterMessage = "Invalid Register Attempt";
-        private static string InvalidConfirmEmailMessage = "Invalid Confirm Email Attempt";
+        private static readonly string InvalidRegisterMessage = "Invalid Register Attempt";
+        private static readonly string InvalidConfirmEmailMessage = "Invalid Confirm Email Attempt";
 
         #endregion
 
@@ -90,7 +90,7 @@ namespace WebApp.Web.Controllers
 
             var loginResult = await _userService.TryLoginAsync(user);
 
-            return StatusCode((int)loginResult.ServiceResultType, loginResult.Message);
+            return StatusCode((int)loginResult.ServiceResultType, loginResult.Result);
         }
     }
 }
