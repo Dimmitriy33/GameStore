@@ -19,7 +19,7 @@ namespace UnitTests.Constants
         public const string TestPassword1 = "Skolko1000minus7";
         public const string TestPassword2 = "SkolkoTisyachaMinus7";
 
-        public const string TestToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6ImRmYzg4OWFjLWYyYWMtNDhjMC0xYTBmLTA4ZDkzZDcxNGJmMiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvbmFtZSI6InN0cmluZ0BnbWFpbC5jb20iLCJuYmYiOjE2MjU4MzM1NDMsImV4cCI6MTYyNTgzNzE0MywiaXNzIjoid2ViQXBwIiwiYXVkIjoid2ViQXBwLWF1ZGllbmNlIn0.h_4YvSy-ACw8aJNlRKRViBTTPFfxDSKZgZC7e52NvpU";
+        public const string TestToken = "GTQWQYTWGTQWQYTWGTQWQYTWGTQWQYTWGTQWQYTWGTQWQYTWGTQWQYTWGTQWQYTWGTQWQYTWGTQWQYTWGTQWQYTWGTQWQYTWGTQWQYTWGTQWQYTWGTQWQYTWGTQWQYTWGTQWQYTWGTQWQYTWGTQWQYTWGTQWQYTWGTQWQYTWGTQWQYTW";
 
         public static readonly Guid TestGuid1 = Guid.Parse("a76d6bde-c48c-4dcb-b80a-7c6edce28c74");
         public static readonly Guid TestGuid2 = Guid.Parse("37b73959-85cd-41e8-4251-08d945d5ba96");
@@ -33,5 +33,7 @@ namespace UnitTests.Constants
         public static readonly GameSelectionDTO TestGameSelectionDTO = new GameSelectionDTO { FilterType = GamesSelectionConstants.FilterByGenre, FilterValue = GamesGenres.Action.ToString(), SortField = GamesSelectionConstants.SortByRating, OrderType = OrderType.Asc.ToString() };
 
         public static readonly ApplicationUser TestUser = new() { Id = TestGuid1, UserName = TestUsername, AddressDelivery = TestAddressDelivery, PhoneNumber = TestPhoneNumber, ConcurrencyStamp = TestConcurrencyStamp };
+        public static readonly UserDTO TestUserDTO = new() { Id = TestGuid1, UserName = TestUsername, AddressDelivery = TestAddressDelivery, PhoneNumber = TestPhoneNumber, ConcurrencyStamp = TestConcurrencyStamp };
+        public static readonly ResetPasswordUserDTO TestRsetPasswordUserDTO = new() { Id = TestGuid1, NewPassword = TestPassword1, OldPassword = TestPassword2 };
     }
 }

@@ -290,5 +290,375 @@ namespace UnitTests.Services
             A.CallTo(() => signInManager.CheckPasswordSignInAsync(A<ApplicationUser>._, signInUser.Password, false)).MustHaveHappenedOnceExactly();
             A.CallTo(() => redisContext.Set(A<string>._, A<ApplicationUser>._, A<TimeSpan>._)).MustNotHaveHappened();
         }
+
+        [Fact]
+        public async Task ShouldConfirmEmail_ReturnServiceResult()
+        {
+            //Arrange
+            var store = A.Fake<IUserStore<ApplicationUser>>();
+
+            var userManager = A.Fake<UserManager<ApplicationUser>>();
+            var signInManager = A.Fake<SignInManager<ApplicationUser>>();
+            var roleManager = A.Fake<RoleManager<ApplicationRole>>();
+            var jwtGenerator = new JwtGenerator(appSettings);
+            var userRepository = A.Fake<IUserRepository>();
+            var mapper = new MapperConfiguration(cfg => cfg.AddProfile<UserProfile>()).CreateMapper();
+            var tokenEncodingHelper = new TokenEncodingHelper();
+            var redisContext = A.Fake<IRedisContext>();
+
+            var user = TestValues.TestUser;
+            var token = TestValues.TestToken;
+            var confirmEmailResult = IdentityResult.Success;
+
+            var decodedToken = tokenEncodingHelper.Decode(token);
+
+            A.CallTo(() => userManager.FindByEmailAsync(user.Email)).Returns(user);
+            A.CallTo(() => userManager.ConfirmEmailAsync(A<ApplicationUser>._, decodedToken)).Returns(confirmEmailResult);
+
+            var userService = new UserService(userManager, signInManager, roleManager, jwtGenerator, userRepository, mapper, tokenEncodingHelper, redisContext);
+
+            //Act
+            var result = await userService.ConfirmEmailAsync(user.Email, token);
+
+            //Assert
+            Assert.Equal(ServiceResultType.Success, result.ServiceResultType);
+        }
+
+        [Fact]
+        public async Task ShouldNotConfirmEmailNotFoundUser_ReturnServiceResult()
+        {
+            //Arrange
+            var store = A.Fake<IUserStore<ApplicationUser>>();
+
+            var userManager = A.Fake<UserManager<ApplicationUser>>();
+            var signInManager = A.Fake<SignInManager<ApplicationUser>>();
+            var roleManager = A.Fake<RoleManager<ApplicationRole>>();
+            var jwtGenerator = new JwtGenerator(appSettings);
+            var userRepository = A.Fake<IUserRepository>();
+            var mapper = new MapperConfiguration(cfg => cfg.AddProfile<UserProfile>()).CreateMapper();
+            var tokenEncodingHelper = new TokenEncodingHelper();
+            var redisContext = A.Fake<IRedisContext>();
+
+            var user = TestValues.TestUser;
+            var token = TestValues.TestToken;
+
+            A.CallTo(() => userManager.FindByEmailAsync(user.Email)).Returns((ApplicationUser)null);
+
+            var userService = new UserService(userManager, signInManager, roleManager, jwtGenerator, userRepository, mapper, tokenEncodingHelper, redisContext);
+
+            //Act
+            var result = await userService.ConfirmEmailAsync(user.Email, token);
+
+            //Assert
+            Assert.Equal(ServiceResultType.Invalid_Data, result.ServiceResultType);
+
+            A.CallTo(() => userManager.ConfirmEmailAsync(A<ApplicationUser>._, A<string>._)).MustNotHaveHappened();
+        }
+
+        [Fact]
+        public async Task ShouldNotConfirmEmailInvalidToken_ReturnServiceResult()
+        {
+            //Arrange
+            var store = A.Fake<IUserStore<ApplicationUser>>();
+
+            var userManager = A.Fake<UserManager<ApplicationUser>>();
+            var signInManager = A.Fake<SignInManager<ApplicationUser>>();
+            var roleManager = A.Fake<RoleManager<ApplicationRole>>();
+            var jwtGenerator = new JwtGenerator(appSettings);
+            var userRepository = A.Fake<IUserRepository>();
+            var mapper = new MapperConfiguration(cfg => cfg.AddProfile<UserProfile>()).CreateMapper();
+            var tokenEncodingHelper = new TokenEncodingHelper();
+            var redisContext = A.Fake<IRedisContext>();
+
+            var user = TestValues.TestUser;
+            var token = TestValues.TestToken;
+            var confirmEmailResult = IdentityResult.Failed();
+
+            var decodedToken = tokenEncodingHelper.Decode(token);
+
+            A.CallTo(() => userManager.FindByEmailAsync(user.Email)).Returns(user);
+            A.CallTo(() => userManager.ConfirmEmailAsync(A<ApplicationUser>._, decodedToken)).Returns(confirmEmailResult);
+
+            var userService = new UserService(userManager, signInManager, roleManager, jwtGenerator, userRepository, mapper, tokenEncodingHelper, redisContext);
+
+            //Act
+            var result = await userService.ConfirmEmailAsync(user.Email, token);
+
+            //Assert
+            Assert.Equal(ServiceResultType.Bad_Request, result.ServiceResultType);
+
+            A.CallTo(() => userManager.ConfirmEmailAsync(A<ApplicationUser>._, A<string>._)).MustHaveHappenedOnceExactly();
+        }
+
+        [Fact]
+        public async Task ShouldUpdateUserInfo_ReturnServiceResultClassWithUserDTO()
+        {
+            //Arrange
+            var store = A.Fake<IUserStore<ApplicationUser>>();
+
+            var userManager = A.Fake<UserManager<ApplicationUser>>();
+            var signInManager = A.Fake<SignInManager<ApplicationUser>>();
+            var roleManager = A.Fake<RoleManager<ApplicationRole>>();
+            var jwtGenerator = new JwtGenerator(appSettings);
+            var userRepository = A.Fake<IUserRepository>();
+            var mapper = new MapperConfiguration(cfg => cfg.AddProfile<UserProfile>()).CreateMapper();
+            var tokenEncodingHelper = new TokenEncodingHelper();
+            var redisContext = A.Fake<IRedisContext>();
+
+            var user = TestValues.TestUser;
+            var userDTO = mapper.Map<UserDTO>(user);
+
+            A.CallTo(() => userRepository.UpdateUserInfoAsync(A<UserDTO>._)).DoesNothing();
+            A.CallTo(() => userManager.FindByIdAsync(user.Id.ToString())).Returns(user);
+            A.CallTo(() => redisContext.Remove<ApplicationUser>(A<string>._, A<TimeSpan>._)).DoesNothing();
+
+            var userService = new UserService(userManager, signInManager, roleManager, jwtGenerator, userRepository, mapper, tokenEncodingHelper, redisContext);
+
+            //Act
+            var result = await userService.UpdateUserInfoAsync(userDTO);
+
+            //Assert
+            Assert.Equal(ServiceResultType.Success, result.ServiceResultType);
+            Assert.NotNull(result.Result);
+            Assert.Equal(userDTO.Id, result.Result.Id);
+            Assert.Equal(userDTO.UserName, result.Result.UserName);
+            Assert.Equal(userDTO.PhoneNumber, result.Result.PhoneNumber);
+            Assert.Equal(userDTO.AddressDelivery, result.Result.AddressDelivery);
+            Assert.Equal(userDTO.ConcurrencyStamp, result.Result.ConcurrencyStamp);
+        }
+
+        [Fact]
+        public async Task ShouldNotUpdateUserInfoNotFoundUser_ReturnServiceResultClassWithUserDTO()
+        {
+            //Arrange
+            var store = A.Fake<IUserStore<ApplicationUser>>();
+
+            var userManager = A.Fake<UserManager<ApplicationUser>>();
+            var signInManager = A.Fake<SignInManager<ApplicationUser>>();
+            var roleManager = A.Fake<RoleManager<ApplicationRole>>();
+            var jwtGenerator = new JwtGenerator(appSettings);
+            var userRepository = A.Fake<IUserRepository>();
+            var mapper = new MapperConfiguration(cfg => cfg.AddProfile<UserProfile>()).CreateMapper();
+            var tokenEncodingHelper = new TokenEncodingHelper();
+            var redisContext = A.Fake<IRedisContext>();
+
+            var user = TestValues.TestUser;
+            var userDTO = mapper.Map<UserDTO>(user);
+
+            A.CallTo(() => userRepository.UpdateUserInfoAsync(A<UserDTO>._)).DoesNothing();
+            A.CallTo(() => userManager.FindByIdAsync(user.Id.ToString())).Returns((ApplicationUser)null);
+
+            var userService = new UserService(userManager, signInManager, roleManager, jwtGenerator, userRepository, mapper, tokenEncodingHelper, redisContext);
+
+            //Act
+            var result = await userService.UpdateUserInfoAsync(userDTO);
+
+            //Assert
+            Assert.Equal(ServiceResultType.Bad_Request, result.ServiceResultType);
+            Assert.Null(result.Result);
+
+            A.CallTo(() => redisContext.Remove<ApplicationUser>(A<string>._, A<TimeSpan>._)).MustNotHaveHappened();
+        }
+
+        [Fact]
+        public async Task ShouldChangePasswordByResetPasswordUserDTOWithRedis_ReturnServiceResult()
+        {
+            //Arrange
+            var store = A.Fake<IUserStore<ApplicationUser>>();
+
+            var userManager = A.Fake<UserManager<ApplicationUser>>();
+            var signInManager = A.Fake<SignInManager<ApplicationUser>>();
+            var roleManager = A.Fake<RoleManager<ApplicationRole>>();
+            var jwtGenerator = new JwtGenerator(appSettings);
+            var userRepository = A.Fake<IUserRepository>();
+            var mapper = new MapperConfiguration(cfg => cfg.AddProfile<UserProfile>()).CreateMapper();
+            var tokenEncodingHelper = new TokenEncodingHelper();
+            var redisContext = A.Fake<IRedisContext>();
+
+            var user = TestValues.TestUser;
+            var resetPasswordDTO = TestValues.TestRsetPasswordUserDTO;
+
+            A.CallTo(() => redisContext.Get<ApplicationUser>(A<string>._)).Returns(user);
+            A.CallTo(() => userRepository.UpdatePasswordAsync(resetPasswordDTO.Id, resetPasswordDTO.OldPassword, resetPasswordDTO.NewPassword)).DoesNothing();
+
+            var userService = new UserService(userManager, signInManager, roleManager, jwtGenerator, userRepository, mapper, tokenEncodingHelper, redisContext);
+
+            //Act
+            var result = await userService.ChangePasswordAsync(resetPasswordDTO);
+
+            //Assert
+            Assert.Equal(ServiceResultType.Success, result.ServiceResultType);
+
+            A.CallTo(() => userManager.FindByIdAsync(TestValues.TestId)).MustNotHaveHappened();
+            A.CallTo(() => userRepository.UpdatePasswordAsync(resetPasswordDTO.Id, resetPasswordDTO.OldPassword, resetPasswordDTO.NewPassword)).MustHaveHappenedOnceExactly();
+        }
+
+        [Fact]
+        public async Task ShouldChangePasswordByResetPasswordUserDTOWithUserManager_ReturnServiceResult()
+        {
+            //Arrange
+            var store = A.Fake<IUserStore<ApplicationUser>>();
+
+            var userManager = A.Fake<UserManager<ApplicationUser>>();
+            var signInManager = A.Fake<SignInManager<ApplicationUser>>();
+            var roleManager = A.Fake<RoleManager<ApplicationRole>>();
+            var jwtGenerator = new JwtGenerator(appSettings);
+            var userRepository = A.Fake<IUserRepository>();
+            var mapper = new MapperConfiguration(cfg => cfg.AddProfile<UserProfile>()).CreateMapper();
+            var tokenEncodingHelper = new TokenEncodingHelper();
+            var redisContext = A.Fake<IRedisContext>();
+
+            var user = TestValues.TestUser;
+            var resetPasswordDTO = TestValues.TestRsetPasswordUserDTO;
+
+            A.CallTo(() => redisContext.Get<ApplicationUser>(A<string>._)).Returns((ApplicationUser)null);
+            A.CallTo(() => userManager.FindByIdAsync(TestValues.TestId)).Returns(user);
+            A.CallTo(() => userRepository.UpdatePasswordAsync(resetPasswordDTO.Id, resetPasswordDTO.OldPassword, resetPasswordDTO.NewPassword)).DoesNothing();
+
+            var userService = new UserService(userManager, signInManager, roleManager, jwtGenerator, userRepository, mapper, tokenEncodingHelper, redisContext);
+
+            //Act
+            var result = await userService.ChangePasswordAsync(resetPasswordDTO);
+
+            //Assert
+            Assert.Equal(ServiceResultType.Success, result.ServiceResultType);
+
+            A.CallTo(() => userRepository.UpdatePasswordAsync(resetPasswordDTO.Id, resetPasswordDTO.OldPassword, resetPasswordDTO.NewPassword)).MustHaveHappenedOnceExactly();
+        }
+
+        [Fact]
+        public async Task ShouldNotChangePasswordByResetPasswordUserDTOWithUserManager_ReturnServiceResult()
+        {
+            //Arrange
+            var store = A.Fake<IUserStore<ApplicationUser>>();
+
+            var userManager = A.Fake<UserManager<ApplicationUser>>();
+            var signInManager = A.Fake<SignInManager<ApplicationUser>>();
+            var roleManager = A.Fake<RoleManager<ApplicationRole>>();
+            var jwtGenerator = new JwtGenerator(appSettings);
+            var userRepository = A.Fake<IUserRepository>();
+            var mapper = new MapperConfiguration(cfg => cfg.AddProfile<UserProfile>()).CreateMapper();
+            var tokenEncodingHelper = new TokenEncodingHelper();
+            var redisContext = A.Fake<IRedisContext>();
+
+            var resetPasswordDTO = TestValues.TestRsetPasswordUserDTO;
+
+            A.CallTo(() => redisContext.Get<ApplicationUser>(A<string>._)).Returns((ApplicationUser)null);
+            A.CallTo(() => userManager.FindByIdAsync(A<string>._)).Returns((ApplicationUser)null);
+
+            var userService = new UserService(userManager, signInManager, roleManager, jwtGenerator, userRepository, mapper, tokenEncodingHelper, redisContext);
+
+            //Act
+            var result = await userService.ChangePasswordAsync(resetPasswordDTO);
+
+            //Assert
+            Assert.Equal(ServiceResultType.Bad_Request, result.ServiceResultType);
+
+            A.CallTo(() => userRepository.UpdatePasswordAsync(resetPasswordDTO.Id, resetPasswordDTO.OldPassword, resetPasswordDTO.NewPassword)).MustNotHaveHappened();
+        }
+
+        [Fact]
+        public async Task ShouldFindUserByIdWithRedis_ReturnServiceResultClassWithUserDTO()
+        {
+            //Arrange
+            var store = A.Fake<IUserStore<ApplicationUser>>();
+
+            var userManager = A.Fake<UserManager<ApplicationUser>>();
+            var signInManager = A.Fake<SignInManager<ApplicationUser>>();
+            var roleManager = A.Fake<RoleManager<ApplicationRole>>();
+            var jwtGenerator = new JwtGenerator(appSettings);
+            var userRepository = A.Fake<IUserRepository>();
+            var mapper = new MapperConfiguration(cfg => cfg.AddProfile<UserProfile>()).CreateMapper();
+            var tokenEncodingHelper = new TokenEncodingHelper();
+            var redisContext = A.Fake<IRedisContext>();
+
+            var user = TestValues.TestUser;
+            var userDTO = mapper.Map<UserDTO>(user);
+
+            A.CallTo(() => redisContext.Get<ApplicationUser>(A<string>._)).Returns(user);
+
+            var userService = new UserService(userManager, signInManager, roleManager, jwtGenerator, userRepository, mapper, tokenEncodingHelper, redisContext);
+
+            //Act
+            var result = await userService.FindUserByIdAsync(user.Id);
+
+            //Assert
+            Assert.Equal(ServiceResultType.Success, result.ServiceResultType);
+            Assert.NotNull(result.Result);
+            Assert.Equal(userDTO.Id, result.Result.Id);
+            Assert.Equal(userDTO.UserName, result.Result.UserName);
+            Assert.Equal(userDTO.PhoneNumber, result.Result.PhoneNumber);
+            Assert.Equal(userDTO.AddressDelivery, result.Result.AddressDelivery);
+            Assert.Equal(userDTO.ConcurrencyStamp, result.Result.ConcurrencyStamp);
+
+            A.CallTo(() => userRepository.GetUserByIdAsync(user.Id)).MustNotHaveHappened();
+        }
+
+        [Fact]
+        public async Task ShouldFindUserByIdWithUserManager_ReturnServiceResultClassWithUserDTO()
+        {
+            //Arrange
+            var store = A.Fake<IUserStore<ApplicationUser>>();
+
+            var userManager = A.Fake<UserManager<ApplicationUser>>();
+            var signInManager = A.Fake<SignInManager<ApplicationUser>>();
+            var roleManager = A.Fake<RoleManager<ApplicationRole>>();
+            var jwtGenerator = new JwtGenerator(appSettings);
+            var userRepository = A.Fake<IUserRepository>();
+            var mapper = new MapperConfiguration(cfg => cfg.AddProfile<UserProfile>()).CreateMapper();
+            var tokenEncodingHelper = new TokenEncodingHelper();
+            var redisContext = A.Fake<IRedisContext>();
+
+            var user = TestValues.TestUser;
+            var userDTO = mapper.Map<UserDTO>(user);
+
+            A.CallTo(() => redisContext.Get<ApplicationUser>(A<string>._)).Returns((ApplicationUser)null);
+            A.CallTo(() => userRepository.GetUserByIdAsync(user.Id)).Returns(userDTO);
+
+            var userService = new UserService(userManager, signInManager, roleManager, jwtGenerator, userRepository, mapper, tokenEncodingHelper, redisContext);
+
+            //Act
+            var result = await userService.FindUserByIdAsync(user.Id);
+
+            //Assert
+            Assert.Equal(ServiceResultType.Success, result.ServiceResultType);
+            Assert.NotNull(result.Result);
+            Assert.Equal(userDTO.Id, result.Result.Id);
+            Assert.Equal(userDTO.UserName, result.Result.UserName);
+            Assert.Equal(userDTO.PhoneNumber, result.Result.PhoneNumber);
+            Assert.Equal(userDTO.AddressDelivery, result.Result.AddressDelivery);
+            Assert.Equal(userDTO.ConcurrencyStamp, result.Result.ConcurrencyStamp);
+        }
+
+        [Fact]
+        public async Task ShouldNotFindUserByIdr_ReturnServiceResultClassWithUserDTO()
+        {
+            //Arrange
+            var store = A.Fake<IUserStore<ApplicationUser>>();
+
+            var userManager = A.Fake<UserManager<ApplicationUser>>();
+            var signInManager = A.Fake<SignInManager<ApplicationUser>>();
+            var roleManager = A.Fake<RoleManager<ApplicationRole>>();
+            var jwtGenerator = new JwtGenerator(appSettings);
+            var userRepository = A.Fake<IUserRepository>();
+            var mapper = new MapperConfiguration(cfg => cfg.AddProfile<UserProfile>()).CreateMapper();
+            var tokenEncodingHelper = new TokenEncodingHelper();
+            var redisContext = A.Fake<IRedisContext>();
+
+            var user = TestValues.TestUser;
+            var userDTO = mapper.Map<UserDTO>(user);
+
+            A.CallTo(() => redisContext.Get<ApplicationUser>(A<string>._)).Returns((ApplicationUser)null);
+            A.CallTo(() => userRepository.GetUserByIdAsync(user.Id)).Returns((UserDTO)null);
+
+            var userService = new UserService(userManager, signInManager, roleManager, jwtGenerator, userRepository, mapper, tokenEncodingHelper, redisContext);
+
+            //Act
+            var result = await userService.FindUserByIdAsync(user.Id);
+
+            //Assert
+            Assert.Equal(ServiceResultType.Not_Found, result.ServiceResultType);
+            Assert.Null(result.Result);
+        }
     }
 }
