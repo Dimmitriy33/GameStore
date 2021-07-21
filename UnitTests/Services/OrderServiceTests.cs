@@ -24,7 +24,7 @@ namespace UnitTests.Services
             //Arrange
             var productRepository = A.Fake<IProductRepository>();
             var orderRepository = A.Fake<IOrderRepository>();
-            var mapper = new MapperConfiguration(cfg => cfg.AddProfile<UserProfile>()).CreateMapper();
+            var mapper = new MapperConfiguration(cfg => cfg.AddProfile<OrderProfile>()).CreateMapper();
             var checkResult = true;
 
             var orderService = new OrderService(orderRepository, productRepository, mapper);
@@ -52,7 +52,7 @@ namespace UnitTests.Services
             //Arrange
             var productRepository = A.Fake<IProductRepository>();
             var orderRepository = A.Fake<IOrderRepository>();
-            var mapper = new MapperConfiguration(cfg => cfg.AddProfile<UserProfile>()).CreateMapper();
+            var mapper = new MapperConfiguration(cfg => cfg.AddProfile<OrderProfile>()).CreateMapper();
             var checkResult = true;
 
             var orderService = new OrderService(orderRepository, productRepository, mapper);
@@ -76,7 +76,7 @@ namespace UnitTests.Services
             //Arrange
             var productRepository = A.Fake<IProductRepository>();
             var orderRepository = A.Fake<IOrderRepository>();
-            var mapper = new MapperConfiguration(cfg => cfg.AddProfile<UserProfile>()).CreateMapper();
+            var mapper = new MapperConfiguration(cfg => cfg.AddProfile<ProductProfile>()).CreateMapper();
 
             var orderService = new OrderService(orderRepository, productRepository, mapper);
 
@@ -102,7 +102,7 @@ namespace UnitTests.Services
             //Arrange
             var productRepository = A.Fake<IProductRepository>();
             var orderRepository = A.Fake<IOrderRepository>();
-            var mapper = new MapperConfiguration(cfg => cfg.AddProfile<UserProfile>()).CreateMapper();
+            var mapper = new MapperConfiguration(cfg => cfg.AddProfile<ProductProfile>()).CreateMapper();
 
             var orderService = new OrderService(orderRepository, productRepository, mapper);
 
@@ -134,7 +134,7 @@ namespace UnitTests.Services
             //Arrange
             var productRepository = A.Fake<IProductRepository>();
             var orderRepository = A.Fake<IOrderRepository>();
-            var mapper = new MapperConfiguration(cfg => cfg.AddProfile<UserProfile>()).CreateMapper();
+            var mapper = new MapperConfiguration(cfg => cfg.AddProfile<OrderProfile>()).CreateMapper();
 
             var orderService = new OrderService(orderRepository, productRepository, mapper);
 
@@ -159,7 +159,7 @@ namespace UnitTests.Services
             //Arrange
             var productRepository = A.Fake<IProductRepository>();
             var orderRepository = A.Fake<IOrderRepository>();
-            var mapper = new MapperConfiguration(cfg => cfg.AddProfile<UserProfile>()).CreateMapper();
+            var mapper = new MapperConfiguration(cfg => cfg.AddProfile<OrderProfile>()).CreateMapper();
 
             var orderService = new OrderService(orderRepository, productRepository, mapper);
 
@@ -184,7 +184,7 @@ namespace UnitTests.Services
             //Arrange
             var productRepository = A.Fake<IProductRepository>();
             var orderRepository = A.Fake<IOrderRepository>();
-            var mapper = new MapperConfiguration(cfg => cfg.AddProfile<UserProfile>()).CreateMapper();
+            var mapper = new MapperConfiguration(cfg => cfg.AddProfile<OrderProfile>()).CreateMapper();
 
             var orderService = new OrderService(orderRepository, productRepository, mapper);
 
@@ -201,7 +201,7 @@ namespace UnitTests.Services
             //Arrange
             var productRepository = A.Fake<IProductRepository>();
             var orderRepository = A.Fake<IOrderRepository>();
-            var mapper = new MapperConfiguration(cfg => cfg.AddProfile<UserProfile>()).CreateMapper();
+            var mapper = new MapperConfiguration(cfg => cfg.AddProfile<OrderProfile>()).CreateMapper();
 
             var orderService = new OrderService(orderRepository, productRepository, mapper);
 

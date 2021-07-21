@@ -26,7 +26,8 @@ namespace UnitTests.Services
             var productRepository = A.Fake<IProductRepository>();
             var productRatingRepository = A.Fake<IProductRatingRepository>();
             var cloudinaryService = A.Fake<ICloudinaryService>();
-            var mapper = new MapperConfiguration(cfg => cfg.AddProfile<UserProfile>()).CreateMapper();
+            var mapper = new MapperConfiguration(cfg => cfg.AddProfile<ProductProfile>()).CreateMapper();
+
             var gameSelectionHelper = new GameSelectionHelper();
             var count = 3;
 
@@ -61,7 +62,7 @@ namespace UnitTests.Services
             var productRepository = A.Fake<IProductRepository>();
             var productRatingRepository = A.Fake<IProductRatingRepository>();
             var cloudinaryService = A.Fake<ICloudinaryService>();
-            var mapper = new MapperConfiguration(cfg => cfg.AddProfile<UserProfile>()).CreateMapper();
+            var mapper = new MapperConfiguration(cfg => cfg.AddProfile<ProductProfile>()).CreateMapper();
             var gameSelectionHelper = new GameSelectionHelper();
 
             var gamesList = new List<Product>
@@ -92,7 +93,7 @@ namespace UnitTests.Services
             var productRepository = A.Fake<IProductRepository>();
             var productRatingRepository = A.Fake<IProductRatingRepository>();
             var cloudinaryService = A.Fake<ICloudinaryService>();
-            var mapper = new MapperConfiguration(cfg => cfg.AddProfile<UserProfile>()).CreateMapper();
+            var mapper = new MapperConfiguration(cfg => cfg.AddProfile<ProductProfile>()).CreateMapper();
             var gameSelectionHelper = new GameSelectionHelper();
 
             var productService = new ProductService(productRepository, mapper, cloudinaryService, gameSelectionHelper, productRatingRepository);
@@ -130,7 +131,7 @@ namespace UnitTests.Services
             var productRepository = A.Fake<IProductRepository>();
             var productRatingRepository = A.Fake<IProductRatingRepository>();
             var cloudinaryService = A.Fake<ICloudinaryService>();
-            var mapper = new MapperConfiguration(cfg => cfg.AddProfile<UserProfile>()).CreateMapper();
+            var mapper = new MapperConfiguration(cfg => cfg.AddProfile<ProductProfile>()).CreateMapper();
             var gameSelectionHelper = new GameSelectionHelper();
 
             var productService = new ProductService(productRepository, mapper, cloudinaryService, gameSelectionHelper, productRatingRepository);
@@ -156,7 +157,7 @@ namespace UnitTests.Services
             var productRepository = A.Fake<IProductRepository>();
             var productRatingRepository = A.Fake<IProductRatingRepository>();
             var cloudinaryService = A.Fake<ICloudinaryService>();
-            var mapper = new MapperConfiguration(cfg => cfg.AddProfile<UserProfile>()).CreateMapper();
+            var mapper = new MapperConfiguration(cfg => cfg.AddProfile<ProductProfile>()).CreateMapper();
             var gameSelectionHelper = new GameSelectionHelper();
 
             var productService = new ProductService(productRepository, mapper, cloudinaryService, gameSelectionHelper, productRatingRepository);
@@ -177,7 +178,7 @@ namespace UnitTests.Services
             var productRepository = A.Fake<IProductRepository>();
             var productRatingRepository = A.Fake<IProductRatingRepository>();
             var cloudinaryService = A.Fake<ICloudinaryService>();
-            var mapper = new MapperConfiguration(cfg => cfg.AddProfile<UserProfile>()).CreateMapper();
+            var mapper = new MapperConfiguration(cfg => cfg.AddProfile<ProductProfile>()).CreateMapper();
             var gameSelectionHelper = new GameSelectionHelper();
 
             var productService = new ProductService(productRepository, mapper, cloudinaryService, gameSelectionHelper, productRatingRepository);
@@ -193,7 +194,7 @@ namespace UnitTests.Services
             var productRepository = A.Fake<IProductRepository>();
             var productRatingRepository = A.Fake<IProductRatingRepository>();
             var cloudinaryService = A.Fake<ICloudinaryService>();
-            var mapper = new MapperConfiguration(cfg => cfg.AddProfile<UserProfile>()).CreateMapper();
+            var mapper = new MapperConfiguration(cfg => cfg.AddProfile<ProductProfile>()).CreateMapper();
             var gameSelectionHelper = new GameSelectionHelper();
 
             var productService = new ProductService(productRepository, mapper, cloudinaryService, gameSelectionHelper, productRatingRepository);
@@ -215,7 +216,7 @@ namespace UnitTests.Services
             var productRepository = A.Fake<IProductRepository>();
             var productRatingRepository = A.Fake<IProductRatingRepository>();
             var cloudinaryService = A.Fake<ICloudinaryService>();
-            var mapper = new MapperConfiguration(cfg => cfg.AddProfile<UserProfile>()).CreateMapper();
+            var mapper = new MapperConfiguration(cfg => cfg.AddProfile<ProductProfile>()).CreateMapper();
             var gameSelectionHelper = new GameSelectionHelper();
 
             var productService = new ProductService(productRepository, mapper, cloudinaryService, gameSelectionHelper, productRatingRepository);
@@ -231,7 +232,7 @@ namespace UnitTests.Services
             var productRepository = A.Fake<IProductRepository>();
             var productRatingRepository = A.Fake<IProductRatingRepository>();
             var cloudinaryService = A.Fake<ICloudinaryService>();
-            var mapper = new MapperConfiguration(cfg => cfg.AddProfile<UserProfile>()).CreateMapper();
+            var mapper = new MapperConfiguration(cfg => cfg.AddProfile<ProductProfile>()).CreateMapper();
             var gameSelectionHelper = new GameSelectionHelper();
 
             var gameId = TestValues.TestGuid1;
@@ -259,7 +260,7 @@ namespace UnitTests.Services
             var productRepository = A.Fake<IProductRepository>();
             var productRatingRepository = A.Fake<IProductRatingRepository>();
             var cloudinaryService = A.Fake<ICloudinaryService>();
-            var mapper = new MapperConfiguration(cfg => cfg.AddProfile<UserProfile>()).CreateMapper();
+            var mapper = new MapperConfiguration(cfg => cfg.AddProfile<ProductProfile>()).CreateMapper();
             var gameSelectionHelper = new GameSelectionHelper();
 
             var gameId = TestValues.TestGuid1;
@@ -284,7 +285,7 @@ namespace UnitTests.Services
             var productRepository = A.Fake<IProductRepository>();
             var productRatingRepository = A.Fake<IProductRatingRepository>();
             var cloudinaryService = A.Fake<ICloudinaryService>();
-            var mapper = new MapperConfiguration(cfg => cfg.AddProfile<UserProfile>()).CreateMapper();
+            var mapper = new MapperConfiguration(cfg => cfg.AddProfile<ProductProfile>()).CreateMapper();
             var gameSelectionHelper = new GameSelectionHelper();
 
             var gameId = TestValues.TestGuid1;
@@ -312,7 +313,7 @@ namespace UnitTests.Services
             var productRepository = A.Fake<IProductRepository>();
             var productRatingRepository = A.Fake<IProductRatingRepository>();
             var cloudinaryService = A.Fake<ICloudinaryService>();
-            var mapper = new MapperConfiguration(cfg => cfg.AddProfile<UserProfile>()).CreateMapper();
+            var mapper = new MapperConfiguration(cfg => cfg.AddProfile<ProductProfile>()).CreateMapper();
             var gameSelectionHelper = new GameSelectionHelper();
 
             var gameId = TestValues.TestGuid1;
@@ -337,7 +338,7 @@ namespace UnitTests.Services
             var productRepository = A.Fake<IProductRepository>();
             var productRatingRepository = A.Fake<IProductRatingRepository>();
             var cloudinaryService = A.Fake<ICloudinaryService>();
-            var mapper = new MapperConfiguration(cfg => cfg.AddProfile<UserProfile>()).CreateMapper();
+            var mapper = new MapperConfiguration(cfg => cfg.AddProfile<ProductProfile>()).CreateMapper();
             var gameSelectionHelper = new GameSelectionHelper();
             var limit = 2;
             var offset = 0;
@@ -366,7 +367,7 @@ namespace UnitTests.Services
             var productRepository = A.Fake<IProductRepository>();
             var productRatingRepository = A.Fake<IProductRatingRepository>();
             var cloudinaryService = A.Fake<ICloudinaryService>();
-            var mapper = new MapperConfiguration(cfg => cfg.AddProfile<UserProfile>()).CreateMapper();
+            var mapper = new MapperConfiguration(cfg => cfg.AddProfile<ProductRatingProfile>()).CreateMapper();
             var gameSelectionHelper = new GameSelectionHelper();
 
             var productRating = new ProductRating
