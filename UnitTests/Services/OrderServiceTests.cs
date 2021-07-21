@@ -37,6 +37,7 @@ namespace UnitTests.Services
 
             A.CallTo(() => productRepository.CheckProductsExistence(A<List<Guid>>._)).Returns(checkResult);
             A.CallTo(() => orderRepository.AddRangeAsync(A<IEnumerable<Order>>._));
+
             //Act
             var result = await orderService.AddProductsToOrderAsync(orderItems);
 
@@ -44,6 +45,7 @@ namespace UnitTests.Services
             Assert.Equal(ServiceResultType.Success, result.ServiceResultType);
 
             A.CallTo(() => orderRepository.AddRangeAsync(A<IEnumerable<Order>>._)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => productRepository.CheckProductsExistence(A<List<Guid>>._)).MustHaveHappenedOnceExactly();
         }
 
         [Fact]
@@ -59,7 +61,7 @@ namespace UnitTests.Services
 
             var orderItems = new List<OrderItemDTO>();
 
-            A.CallTo(() => productRepository.CheckProductsExistence(new List<Guid>())).Returns(checkResult);
+            A.CallTo(() => productRepository.CheckProductsExistence(null)).Returns(checkResult);
 
             //Act
             var result = await orderService.AddProductsToOrderAsync(orderItems);
@@ -68,10 +70,11 @@ namespace UnitTests.Services
             Assert.Equal(ServiceResultType.BadRequest, result.ServiceResultType);
 
             A.CallTo(() => orderRepository.AddRangeAsync(A<IEnumerable<Order>>._)).MustNotHaveHappened();
+            A.CallTo(() => productRepository.CheckProductsExistence(A<List<Guid>>._)).MustHaveHappenedOnceExactly();
         }
 
         [Fact]
-        public async Task Search_OrderListByUserIdPositive_ReturnServiceResultClassWithListOfGameResponseDTO()
+        public async Task Search_OrderListByUserIdPositive_ReturnServiceResultWithListOfGameResponseDTO()
         {
             //Arrange
             var productRepository = A.Fake<IProductRepository>();
@@ -94,10 +97,12 @@ namespace UnitTests.Services
             //Assert
             Assert.Equal(ServiceResultType.Success, result.ServiceResultType);
             Assert.Equal(productsList.Count, result.Result.Count);
+
+            A.CallTo(() => orderRepository.GetGamesByUserId(UserConstants.TestGuid1)).MustHaveHappenedOnceExactly();
         }
 
         [Fact]
-        public async Task Search_OrderListByOrdersIdPositive_ReturnServiceResultClassWithListOfGameResponseDTO()
+        public async Task Search_OrderListByOrdersIdPositive_ReturnServiceResultWithListOfGameResponseDTO()
         {
             //Arrange
             var productRepository = A.Fake<IProductRepository>();
@@ -117,6 +122,8 @@ namespace UnitTests.Services
             //Assert
             Assert.Equal(ServiceResultType.Success, result.ServiceResultType);
             Assert.Equal(productsList.Count, result.Result.Count);
+
+            A.CallTo(() => orderRepository.GetGamesByOrderId(ordersIdList)).MustHaveHappenedOnceExactly();
         }
 
         [Fact]
@@ -137,6 +144,8 @@ namespace UnitTests.Services
 
             //Assert
             Assert.Equal(ServiceResultType.Success, result.ServiceResultType);
+
+            A.CallTo(() => orderRepository.ChangeOrderStatusAsync(ordersIdList, OrderStatus.Paid)).MustHaveHappenedOnceExactly();
         }
 
         [Fact]
@@ -157,6 +166,8 @@ namespace UnitTests.Services
 
             //Assert
             Assert.Equal(ServiceResultType.Success, result.ServiceResultType);
+
+            A.CallTo(() => orderRepository.RemoveOrderRangeByOrdersId(ordersIdList)).MustHaveHappenedOnceExactly();
         }
 
         [Fact]
@@ -167,12 +178,12 @@ namespace UnitTests.Services
             var orderRepository = A.Fake<IOrderRepository>();
             var mapper = new MapperConfiguration(cfg => cfg.AddProfile<OrderProfile>()).CreateMapper();
 
-            var orderService = new OrderService(orderRepository, productRepository, mapper);
-
             A.CallTo(() => orderRepository.RemoveOrderRangeByOrdersId(null)).Throws<ArgumentNullException>();
 
             //Act && Assert
             await Assert.ThrowsAsync<ArgumentNullException>(() => orderRepository.RemoveOrderRangeByOrdersId(null));
+
+            A.CallTo(() => orderRepository.RemoveOrderRangeByOrdersId(null)).MustHaveHappenedOnceExactly();
         }
 
         [Fact]
@@ -193,6 +204,8 @@ namespace UnitTests.Services
 
             //Assert
             Assert.Equal(ServiceResultType.Success, result.ServiceResultType);
+
+            A.CallTo(() => orderRepository.ChangeOrderStatusAsync(ordersIdList, OrderStatus.Rejected)).MustHaveHappenedOnceExactly();
         }
     }
 }

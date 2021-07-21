@@ -10,14 +10,14 @@ namespace WebApp.BLL.Interfaces
 {
     public interface IProductService
     {
-        Task<ServiceResultClass<List<Platforms>>> GetTopPlatformsAsync(int count);
-        Task<ServiceResultClass<List<GameResponseDTO>>> SearchGamesByNameAsync(string term, int limit, int offset);
+        Task<ServiceResult<List<Platforms>>> GetTopPlatformsAsync(int count);
+        Task<ServiceResult<List<GameResponseDTO>>> SearchGamesByNameAsync(string term, int limit, int offset);
         Task<ServiceResult> DeleteGameAsync(Guid id);
         Task<ServiceResult> SoftDeleteGameAsync(Guid id);
-        Task<ServiceResultClass<GameResponseDTO>> CreateGameAsync(GameRequestDTO gameDTO);
-        Task<ServiceResultClass<GameResponseDTO>> GetGameByIdAsync(Guid id);
-        Task<ServiceResultClass<GameResponseDTO>> UpdateGameAsync(GameRequestDTO gameDTO);
-        Task<ServiceResultClass<List<GameResponseDTO>>> SortAndFilterGamesAsync(GameSelectionDTO gameSelection, int offset, int limit);
-        Task<ServiceResultClass<ProductRatingDTO>> EditGameRatingByUserAsync(ProductRating productRating);
+        Task<ServiceResult<GameResponseDTO>> CreateGameAsync(GameRequestDTO gameDTO);
+        Task<ServiceResult<GameResponseDTO>> GetGameByIdAsync(Guid id);
+        Task<ServiceResult<GameResponseDTO>> UpdateGameAsync(GameRequestDTO gameDTO);
+        Task<ServiceResult<List<GameResponseDTO>>> SortAndFilterGamesAsync(GameSelectionDTO gameSelection, int offset, int limit);
+        Task<ServiceResult<ProductRatingDTO>> EditGameRatingByUserAsync(ProductRating productRating);
     }
 }

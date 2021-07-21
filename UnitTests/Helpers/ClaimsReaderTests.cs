@@ -9,7 +9,7 @@ namespace UnitTests.Helpers
     public class ClaimsReaderTests
     {
         [Fact]
-        public void Get_UserIdPositive_ReturnServiceResultStructObject()
+        public void Get_UserIdPositive_ReturnServiceResultObject()
         {
             //Arrange
             var user = UserControllerDataConstants.GetUserIdentity();
@@ -25,7 +25,7 @@ namespace UnitTests.Helpers
         }
 
         [Fact]
-        public void Get_UserIdNegative_ReturnServiceResultStructObject()
+        public void Get_UserIdNegative_ReturnServiceResultObject()
         {
             //Arrange
             var user = UserControllerDataConstants.GetUserIdentity(string.Empty);

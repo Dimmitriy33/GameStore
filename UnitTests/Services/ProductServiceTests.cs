@@ -20,7 +20,7 @@ namespace UnitTests.Services
     public class ProductServiceTests
     {
         [Fact]
-        public async Task Get_TopPlatforms_ReturnServiceResultClassWithListOfPlatforms()
+        public async Task Get_TopPlatforms_ReturnServiceResultWithListOfPlatforms()
         {
             //Arrange
             var productRepository = A.Fake<IProductRepository>();
@@ -55,7 +55,7 @@ namespace UnitTests.Services
         [InlineData("Br", 2, 0)]
         [InlineData("", 2, 0)]
         [InlineData("Brawl", 10, 10)]
-        public async Task Search_GamesByName_ReturnServiceResultClassWithListOfGameResponseDTO(string term, int limit, int offset)
+        public async Task Search_GamesByName_ReturnServiceResultWithListOfGameResponseDTO(string term, int limit, int offset)
         {
             //Arrange
             var productRepository = A.Fake<IProductRepository>();
@@ -75,14 +75,14 @@ namespace UnitTests.Services
 
             //Assert
             Assert.Equal(ServiceResultType.Success, result.ServiceResultType);
-            Assert.InRange(result.Result.Count, 0, limit);
+            Assert.InRange(result.Result.Count, default, limit);
             Assert.Equal(gamesList.Count, result.Result.Count);
 
             A.CallTo(() => productRepository.GetProductByNameAsync(term, limit, offset)).MustHaveHappenedOnceExactly();
         }
 
         [Fact]
-        public async Task Get_GameByIdPositive_ReturnServiceResultClassWithGameResponseDTO()
+        public async Task Get_GameByIdPositive_ReturnServiceResultWithGameResponseDTO()
         {
             //Arrange
             var productRepository = A.Fake<IProductRepository>();
@@ -118,7 +118,7 @@ namespace UnitTests.Services
         }
 
         [Fact]
-        public async Task Get_GameByIdNegative_ReturnServiceResultClassWithGameResponseDTO()
+        public async Task Get_GameByIdNegative_ReturnServiceResultWithGameResponseDTO()
         {
             //Arrange
             var productRepository = A.Fake<IProductRepository>();
@@ -137,14 +137,13 @@ namespace UnitTests.Services
             var result = await productService.GetGameByIdAsync(gameId);
 
             //Assert
-
             Assert.Equal(ServiceResultType.NotFound, result.ServiceResultType);
 
             A.CallTo(() => productRepository.GetGameByIdAsync(gameId)).MustHaveHappenedOnceExactly();
         }
 
         [Fact]
-        public async Task Create_GameByGameRequestDTOPositive_ReturnServiceResultClassWithGameResponseDTO()
+        public async Task Create_GameByGameRequestDTOPositive_ReturnServiceResultWithGameResponseDTO()
         {
             //Arrange
             var productRepository = A.Fake<IProductRepository>();
@@ -165,7 +164,7 @@ namespace UnitTests.Services
         }
 
         [Fact]
-        public async Task Create_GameByGameRequestDTONegative_ReturnServiceResultClassWithGameResponseDTO()
+        public async Task Create_GameByGameRequestDTONegative_ReturnServiceResultWithGameResponseDTO()
         {
             //Arrange
             var productRepository = A.Fake<IProductRepository>();
@@ -181,7 +180,7 @@ namespace UnitTests.Services
         }
 
         [Fact]
-        public async Task Update_GameByGameRequestDTOPositive_ReturnServiceResultClassWithGameResponseDTO()
+        public async Task Update_GameByGameRequestDTOPositive_ReturnServiceResultWithGameResponseDTO()
         {
             //Arrange
             var productRepository = A.Fake<IProductRepository>();
@@ -203,7 +202,7 @@ namespace UnitTests.Services
         }
 
         [Fact]
-        public async Task Update_GameByGameRequestDTONegative_ReturnServiceResultClassWithGameResponseDTO()
+        public async Task Update_GameByGameRequestDTONegative_ReturnServiceResultWithGameResponseDTO()
         {
             //Arrange
             var productRepository = A.Fake<IProductRepository>();
@@ -242,6 +241,7 @@ namespace UnitTests.Services
             //Assert
             Assert.Equal(ServiceResultType.Success, result.ServiceResultType);
 
+            A.CallTo(() => productRepository.GetGameByIdAsync(gameId)).MustHaveHappenedOnceExactly();
             A.CallTo(() => productRepository.DeleteAsync(A<Expression<Func<Product, bool>>>._)).MustHaveHappenedOnceExactly();
         }
 
@@ -267,6 +267,7 @@ namespace UnitTests.Services
             //Assert
             Assert.Equal(ServiceResultType.NotFound, result.ServiceResultType);
 
+            A.CallTo(() => productRepository.GetGameByIdAsync(gameId)).Returns((Product)null);
             A.CallTo(() => productRepository.DeleteAsync(A<Expression<Func<Product, bool>>>._)).MustNotHaveHappened();
         }
 
@@ -295,6 +296,7 @@ namespace UnitTests.Services
             //Assert
             Assert.Equal(ServiceResultType.Success, result.ServiceResultType);
 
+            A.CallTo(() => productRepository.GetGameByIdAsync(gameId)).MustHaveHappenedOnceExactly();
             A.CallTo(() => productRepository.SoftDeleteAsync(gameId)).MustHaveHappenedOnceExactly();
         }
 
@@ -320,6 +322,7 @@ namespace UnitTests.Services
             //Assert
             Assert.Equal(ServiceResultType.NotFound, result.ServiceResultType);
 
+            A.CallTo(() => productRepository.GetGameByIdAsync(gameId)).MustHaveHappenedOnceExactly();
             A.CallTo(() => productRepository.SoftDeleteAsync(gameId)).MustNotHaveHappened();
         }
 
@@ -345,11 +348,12 @@ namespace UnitTests.Services
 
             //Assert
             Assert.Equal(ServiceResultType.Success, result.ServiceResultType);
+
             A.CallTo(() => productRepository.SortAndFilterItemsAsync(A<Expression<Func<Product, bool>>>._, A<Expression<Func<Product, object>>>._, limit, offset, A<OrderType>._)).MustHaveHappenedOnceExactly();
         }
 
         [Fact]
-        public async Task Update_GameRatingByProductRating_ReturnServiceResultClassWithProductRatingDTO()
+        public async Task Update_GameRatingByProductRating_ReturnServiceResultWithProductRatingDTO()
         {
             //Arrange
             var productRepository = A.Fake<IProductRepository>();
@@ -375,6 +379,7 @@ namespace UnitTests.Services
             Assert.Equal(productRating.UserId, result.Result.UserId);
             Assert.Equal(productRating.Rating, result.Result.Rating);
 
+            A.CallTo(() => productRatingRepository.CreateAsync(productRating)).MustHaveHappenedOnceExactly();
             A.CallTo(() => productRepository.ChangeGameRatingAsync(productRating.ProductId)).MustHaveHappenedOnceExactly();
         }
     }

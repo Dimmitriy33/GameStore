@@ -20,7 +20,7 @@ namespace UnitTests.Services
 {
     public class UserServiceTests
     {
-        private readonly AppSettings appSettings = new AppSettings
+        private readonly AppSettings appSettings = new()
         {
             JwtSettings = new JwtSettings
             {
@@ -35,11 +35,9 @@ namespace UnitTests.Services
         };
 
         [Fact]
-        public async Task ShouldRegister_ReturnServiceResultClassWithToken()
+        public async Task ShouldRegisterUser_ReturnServiceResultWithToken()
         {
             //Arrange
-            var store = A.Fake<IUserStore<ApplicationUser>>();
-
             var userManager = A.Fake<UserManager<ApplicationUser>>();
             var signInManager = A.Fake<SignInManager<ApplicationUser>>();
             var roleManager = A.Fake<RoleManager<ApplicationRole>>();
@@ -70,14 +68,15 @@ namespace UnitTests.Services
             Assert.Equal(tokenEncoded, result.Result);
 
             A.CallTo(() => userManager.AddToRoleAsync(A<ApplicationUser>._, RolesConstants.User)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => userManager.CreateAsync(A<ApplicationUser>._, signUpUser.Password)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => roleManager.RoleExistsAsync(RolesConstants.User)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => userManager.GenerateEmailConfirmationTokenAsync(A<ApplicationUser>._)).MustHaveHappenedOnceExactly();
         }
 
         [Fact]
-        public async Task ShouldNotRegister_ReturnServiceResultClassWithErrorMessage()
+        public async Task ShouldNotRegister_ReturnServiceResultWithErrorMessage()
         {
             //Arrange
-            var store = A.Fake<IUserStore<ApplicationUser>>();
-
             var userManager = A.Fake<UserManager<ApplicationUser>>();
             var signInManager = A.Fake<SignInManager<ApplicationUser>>();
             var roleManager = A.Fake<RoleManager<ApplicationRole>>();
@@ -101,17 +100,16 @@ namespace UnitTests.Services
             //Assert
             Assert.Equal(ServiceResultType.BadRequest, result.ServiceResultType);
 
+            A.CallTo(() => userManager.CreateAsync(A<ApplicationUser>._, signUpUser.Password)).MustHaveHappenedOnceExactly();
             A.CallTo(() => userManager.GenerateEmailConfirmationTokenAsync(A<ApplicationUser>._)).MustNotHaveHappened();
             A.CallTo(() => roleManager.RoleExistsAsync(RolesConstants.User)).MustNotHaveHappened();
             A.CallTo(() => userManager.AddToRoleAsync(A<ApplicationUser>._, RolesConstants.User)).MustNotHaveHappened();
         }
 
         [Fact]
-        public async Task ShouldNotRegisterWithoutRoles_ReturnServiceResultClassWithErrorMessage()
+        public async Task ShouldNotRegisterWithoutRoles_ReturnServiceResultWithErrorMessage()
         {
             //Arrange
-            var store = A.Fake<IUserStore<ApplicationUser>>();
-
             var userManager = A.Fake<UserManager<ApplicationUser>>();
             var signInManager = A.Fake<SignInManager<ApplicationUser>>();
             var roleManager = A.Fake<RoleManager<ApplicationRole>>();
@@ -137,17 +135,16 @@ namespace UnitTests.Services
             //Assert
             Assert.Equal(ServiceResultType.BadRequest, result.ServiceResultType);
 
+            A.CallTo(() => userManager.CreateAsync(A<ApplicationUser>._, signUpUser.Password)).MustHaveHappenedOnceExactly();
             A.CallTo(() => userManager.GenerateEmailConfirmationTokenAsync(A<ApplicationUser>._)).MustNotHaveHappened();
             A.CallTo(() => roleManager.RoleExistsAsync(RolesConstants.User)).MustHaveHappenedOnceExactly();
             A.CallTo(() => userManager.AddToRoleAsync(A<ApplicationUser>._, RolesConstants.User)).MustNotHaveHappened();
         }
 
         [Fact]
-        public async Task ShouldLogin_ReturnServiceResultClassWithToken()
+        public async Task ShouldLogin_ReturnServiceResultWithToken()
         {
             //Arrange
-            var store = A.Fake<IUserStore<ApplicationUser>>();
-
             var userManager = A.Fake<UserManager<ApplicationUser>>();
             var signInManager = A.Fake<SignInManager<ApplicationUser>>();
             var roleManager = A.Fake<RoleManager<ApplicationRole>>();
@@ -175,15 +172,15 @@ namespace UnitTests.Services
             Assert.Equal(ServiceResultType.Success, result.ServiceResultType);
             Assert.NotNull(result.Result);
 
+            A.CallTo(() => userManager.FindByEmailAsync(A<string>._)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => signInManager.CheckPasswordSignInAsync(A<ApplicationUser>._, signInUser.Password, false)).MustHaveHappenedOnceExactly();
             A.CallTo(() => redisContext.Set(A<string>._, A<ApplicationUser>._, A<TimeSpan>._)).MustHaveHappenedOnceExactly();
         }
 
         [Fact]
-        public async Task ShouldNotLoginInvalidPassword_ReturnServiceResultClassWithErrorMessage()
+        public async Task ShouldNotLoginInvalidPassword_ReturnServiceResultWithErrorMessage()
         {
             //Arrange
-            var store = A.Fake<IUserStore<ApplicationUser>>();
-
             var userManager = A.Fake<UserManager<ApplicationUser>>();
             var signInManager = A.Fake<SignInManager<ApplicationUser>>();
             var roleManager = A.Fake<RoleManager<ApplicationRole>>();
@@ -208,16 +205,15 @@ namespace UnitTests.Services
             Assert.Equal(ServiceResultType.BadRequest, result.ServiceResultType);
             Assert.Null(result.Result);
 
+            A.CallTo(() => userManager.FindByEmailAsync(A<string>._)).MustHaveHappenedOnceExactly();
             A.CallTo(() => signInManager.CheckPasswordSignInAsync(A<ApplicationUser>._, signInUser.Password, false)).MustNotHaveHappened();
             A.CallTo(() => redisContext.Set(A<string>._, A<ApplicationUser>._, A<TimeSpan>._)).MustNotHaveHappened();
         }
 
         [Fact]
-        public async Task ShouldNotLoginNotFoundUser_ReturnServiceResultClassWithErrorMessage()
+        public async Task ShouldNotLoginNotFoundUser_ReturnServiceResultWithErrorMessage()
         {
             //Arrange
-            var store = A.Fake<IUserStore<ApplicationUser>>();
-
             var userManager = A.Fake<UserManager<ApplicationUser>>();
             var signInManager = A.Fake<SignInManager<ApplicationUser>>();
             var roleManager = A.Fake<RoleManager<ApplicationRole>>();
@@ -243,6 +239,7 @@ namespace UnitTests.Services
             Assert.Equal(ServiceResultType.Unauthorized, result.ServiceResultType);
             Assert.Null(result.Result);
 
+            A.CallTo(() => userManager.FindByEmailAsync(A<string>._)).MustHaveHappenedOnceExactly();
             A.CallTo(() => signInManager.CheckPasswordSignInAsync(A<ApplicationUser>._, signInUser.Password, false)).MustHaveHappenedOnceExactly();
             A.CallTo(() => redisContext.Set(A<string>._, A<ApplicationUser>._, A<TimeSpan>._)).MustNotHaveHappened();
         }
@@ -251,8 +248,6 @@ namespace UnitTests.Services
         public async Task ShouldConfirmEmail_ReturnServiceResult()
         {
             //Arrange
-            var store = A.Fake<IUserStore<ApplicationUser>>();
-
             var userManager = A.Fake<UserManager<ApplicationUser>>();
             var signInManager = A.Fake<SignInManager<ApplicationUser>>();
             var roleManager = A.Fake<RoleManager<ApplicationRole>>();
@@ -278,14 +273,15 @@ namespace UnitTests.Services
 
             //Assert
             Assert.Equal(ServiceResultType.Success, result.ServiceResultType);
+
+            A.CallTo(() => userManager.FindByEmailAsync(A<string>._)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => userManager.ConfirmEmailAsync(A<ApplicationUser>._, decodedToken)).MustHaveHappenedOnceExactly();
         }
 
         [Fact]
         public async Task ShouldNotConfirmEmailNotFoundUser_ReturnServiceResult()
         {
             //Arrange
-            var store = A.Fake<IUserStore<ApplicationUser>>();
-
             var userManager = A.Fake<UserManager<ApplicationUser>>();
             var signInManager = A.Fake<SignInManager<ApplicationUser>>();
             var roleManager = A.Fake<RoleManager<ApplicationRole>>();
@@ -308,6 +304,7 @@ namespace UnitTests.Services
             //Assert
             Assert.Equal(ServiceResultType.InvalidData, result.ServiceResultType);
 
+            A.CallTo(() => userManager.FindByEmailAsync(A<string>._)).MustHaveHappenedOnceExactly();
             A.CallTo(() => userManager.ConfirmEmailAsync(A<ApplicationUser>._, A<string>._)).MustNotHaveHappened();
         }
 
@@ -315,8 +312,6 @@ namespace UnitTests.Services
         public async Task ShouldNotConfirmEmailInvalidToken_ReturnServiceResult()
         {
             //Arrange
-            var store = A.Fake<IUserStore<ApplicationUser>>();
-
             var userManager = A.Fake<UserManager<ApplicationUser>>();
             var signInManager = A.Fake<SignInManager<ApplicationUser>>();
             var roleManager = A.Fake<RoleManager<ApplicationRole>>();
@@ -343,15 +338,14 @@ namespace UnitTests.Services
             //Assert
             Assert.Equal(ServiceResultType.BadRequest, result.ServiceResultType);
 
+            A.CallTo(() => userManager.FindByEmailAsync(A<string>._)).MustHaveHappenedOnceExactly();
             A.CallTo(() => userManager.ConfirmEmailAsync(A<ApplicationUser>._, A<string>._)).MustHaveHappenedOnceExactly();
         }
 
         [Fact]
-        public async Task ShouldUpdateUserInfo_ReturnServiceResultClassWithUserDTO()
+        public async Task ShouldUpdateUserInfo_ReturnServiceResultWithUserDTO()
         {
             //Arrange
-            var store = A.Fake<IUserStore<ApplicationUser>>();
-
             var userManager = A.Fake<UserManager<ApplicationUser>>();
             var signInManager = A.Fake<SignInManager<ApplicationUser>>();
             var roleManager = A.Fake<RoleManager<ApplicationRole>>();
@@ -377,11 +371,14 @@ namespace UnitTests.Services
             Assert.Equal(ServiceResultType.Success, result.ServiceResultType);
             Assert.NotNull(result.Result);
 
-            AssertUsertDTOProperties(userDTO, result.Result);
+            AssertUserDTOProperties(userDTO, result.Result);
+
+            A.CallTo(() => userRepository.UpdateUserInfoAsync(A<UserDTO>._)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => userManager.FindByIdAsync(A<string>._)).MustHaveHappenedOnceExactly();
         }
 
         [Fact]
-        public async Task ShouldNotUpdateUserInfoNotFoundUser_ReturnServiceResultClassWithUserDTO()
+        public async Task ShouldNotUpdateUserInfoNotFoundUser_ReturnServiceResultWithUserDTO()
         {
             //Arrange
             var userManager = A.Fake<UserManager<ApplicationUser>>();
@@ -408,6 +405,8 @@ namespace UnitTests.Services
             Assert.Equal(ServiceResultType.BadRequest, result.ServiceResultType);
             Assert.Null(result.Result);
 
+            A.CallTo(() => userRepository.UpdateUserInfoAsync(A<UserDTO>._)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => userManager.FindByIdAsync(user.Id.ToString())).MustHaveHappenedOnceExactly();
             A.CallTo(() => redisContext.Remove<ApplicationUser>(A<string>._, A<TimeSpan>._)).MustNotHaveHappened();
         }
 
@@ -438,6 +437,7 @@ namespace UnitTests.Services
             //Assert
             Assert.Equal(ServiceResultType.Success, result.ServiceResultType);
 
+            A.CallTo(() => redisContext.Get<ApplicationUser>(A<string>._)).MustHaveHappenedOnceExactly();
             A.CallTo(() => userManager.FindByIdAsync(UserConstants.TestId)).MustNotHaveHappened();
             A.CallTo(() => userRepository.UpdatePasswordAsync(resetPasswordDTO.Id, resetPasswordDTO.OldPassword, resetPasswordDTO.NewPassword)).MustHaveHappenedOnceExactly();
         }
@@ -470,6 +470,8 @@ namespace UnitTests.Services
             //Assert
             Assert.Equal(ServiceResultType.Success, result.ServiceResultType);
 
+            A.CallTo(() => redisContext.Get<ApplicationUser>(A<string>._)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => userManager.FindByIdAsync(A<string>._)).MustHaveHappenedOnceExactly();
             A.CallTo(() => userRepository.UpdatePasswordAsync(resetPasswordDTO.Id, resetPasswordDTO.OldPassword, resetPasswordDTO.NewPassword)).MustHaveHappenedOnceExactly();
         }
 
@@ -499,11 +501,13 @@ namespace UnitTests.Services
             //Assert
             Assert.Equal(ServiceResultType.BadRequest, result.ServiceResultType);
 
+            A.CallTo(() => redisContext.Get<ApplicationUser>(A<string>._)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => userManager.FindByIdAsync(A<string>._)).MustHaveHappenedOnceExactly();
             A.CallTo(() => userRepository.UpdatePasswordAsync(resetPasswordDTO.Id, resetPasswordDTO.OldPassword, resetPasswordDTO.NewPassword)).MustNotHaveHappened();
         }
 
         [Fact]
-        public async Task ShouldFindUserByIdWithRedis_ReturnServiceResultClassWithUserDTO()
+        public async Task ShouldFindUserByIdWithRedis_ReturnServiceResultWithUserDTO()
         {
             //Arrange
             var userManager = A.Fake<UserManager<ApplicationUser>>();
@@ -529,13 +533,14 @@ namespace UnitTests.Services
             Assert.Equal(ServiceResultType.Success, result.ServiceResultType);
             Assert.NotNull(result.Result);
 
-            AssertUsertDTOProperties(userDTO, result.Result);
+            AssertUserDTOProperties(userDTO, result.Result);
 
+            A.CallTo(() => redisContext.Get<ApplicationUser>(A<string>._)).Returns((ApplicationUser)null);
             A.CallTo(() => userRepository.GetUserByIdAsync(user.Id)).MustNotHaveHappened();
         }
 
         [Fact]
-        public async Task ShouldFindUserByIdWithUserManager_ReturnServiceResultClassWithUserDTO()
+        public async Task ShouldFindUserByIdWithUserManager_ReturnServiceResultWithUserDTO()
         {
             //Arrange
             var userManager = A.Fake<UserManager<ApplicationUser>>();
@@ -562,11 +567,14 @@ namespace UnitTests.Services
             Assert.Equal(ServiceResultType.Success, result.ServiceResultType);
             Assert.NotNull(result.Result);
 
-            AssertUsertDTOProperties(userDTO, result.Result);
+            AssertUserDTOProperties(userDTO, result.Result);
+
+            A.CallTo(() => redisContext.Get<ApplicationUser>(A<string>._)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => userRepository.GetUserByIdAsync(user.Id)).MustHaveHappenedOnceExactly();
         }
 
         [Fact]
-        public async Task ShouldNotFindUserByIdr_ReturnServiceResultClassWithUserDTO()
+        public async Task ShouldNotFindUserByIdr_ReturnServiceResultWithUserDTO()
         {
             //Arrange
             var userManager = A.Fake<UserManager<ApplicationUser>>();
@@ -592,9 +600,12 @@ namespace UnitTests.Services
             //Assert
             Assert.Equal(ServiceResultType.NotFound, result.ServiceResultType);
             Assert.Null(result.Result);
+
+            A.CallTo(() => redisContext.Get<ApplicationUser>(A<string>._)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => userRepository.GetUserByIdAsync(user.Id)).MustHaveHappenedOnceExactly();
         }
 
-        private static void AssertUsertDTOProperties(UserDTO expectedUserDTO, UserDTO actualUserDTO)
+        private static void AssertUserDTOProperties(UserDTO expectedUserDTO, UserDTO actualUserDTO)
         {
             Assert.Equal(expectedUserDTO.Id.ToString(), actualUserDTO.Id.ToString());
             Assert.Equal(expectedUserDTO.UserName, actualUserDTO.UserName);

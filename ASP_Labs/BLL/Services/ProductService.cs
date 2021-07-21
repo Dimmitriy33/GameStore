@@ -39,51 +39,51 @@ namespace WebApp.BLL.Services
             _productRatingRepository = productRatingRepository;
         }
 
-        public async Task<ServiceResultClass<List<Platforms>>> GetTopPlatformsAsync(int count)
+        public async Task<ServiceResult<List<Platforms>>> GetTopPlatformsAsync(int count)
         {
             var platforms = await _productRepository.GetTopPopularPlatformsAsync(count);
 
-            return new ServiceResultClass<List<Platforms>>(platforms, ServiceResultType.Success);
+            return new ServiceResult<List<Platforms>>(platforms, ServiceResultType.Success);
         }
 
-        public async Task<ServiceResultClass<List<GameResponseDTO>>> SearchGamesByNameAsync(string term, int limit, int offset)
+        public async Task<ServiceResult<List<GameResponseDTO>>> SearchGamesByNameAsync(string term, int limit, int offset)
         {
             var games = await _productRepository.GetProductByNameAsync(term, limit, offset);
 
-            return new ServiceResultClass<List<GameResponseDTO>>(_mapper.Map<List<GameResponseDTO>>(games), ServiceResultType.Success);
+            return new ServiceResult<List<GameResponseDTO>>(_mapper.Map<List<GameResponseDTO>>(games), ServiceResultType.Success);
         }
 
-        public async Task<ServiceResultClass<GameResponseDTO>> GetGameByIdAsync(Guid id)
+        public async Task<ServiceResult<GameResponseDTO>> GetGameByIdAsync(Guid id)
         {
             var game = await _productRepository.GetGameByIdAsync(id);
 
             if (game is null)
             {
-                return new ServiceResultClass<GameResponseDTO>(ServiceResultType.NotFound);
+                return new ServiceResult<GameResponseDTO>(ServiceResultType.NotFound);
             }
 
-            return new ServiceResultClass<GameResponseDTO>(_mapper.Map<GameResponseDTO>(game), ServiceResultType.Success);
+            return new ServiceResult<GameResponseDTO>(_mapper.Map<GameResponseDTO>(game), ServiceResultType.Success);
         }
 
-        public async Task<ServiceResultClass<GameResponseDTO>> CreateGameAsync(GameRequestDTO gameDTO)
+        public async Task<ServiceResult<GameResponseDTO>> CreateGameAsync(GameRequestDTO gameDTO)
         {
             var newGame = await HandleGameDTO(gameDTO, _productRepository.CreateAsync);
 
-            return new ServiceResultClass<GameResponseDTO>(newGame, ServiceResultType.Success);
+            return new ServiceResult<GameResponseDTO>(newGame, ServiceResultType.Success);
         }
 
-        public async Task<ServiceResultClass<GameResponseDTO>> UpdateGameAsync(GameRequestDTO gameDTO)
+        public async Task<ServiceResult<GameResponseDTO>> UpdateGameAsync(GameRequestDTO gameDTO)
         {
             var game = await _productRepository.GetGameByIdAsync(gameDTO.Id);
 
             if (game is null)
             {
-                return new ServiceResultClass<GameResponseDTO>(ServiceResultType.NotFound);
+                return new ServiceResult<GameResponseDTO>(ServiceResultType.NotFound);
             }
 
             var updatedGame = await HandleGameDTO(gameDTO, _productRepository.UpdateItemAsync);
 
-            return new ServiceResultClass<GameResponseDTO>(updatedGame, ServiceResultType.Success);
+            return new ServiceResult<GameResponseDTO>(updatedGame, ServiceResultType.Success);
         }
 
         public async Task<ServiceResult> DeleteGameAsync(Guid id)
@@ -114,7 +114,7 @@ namespace WebApp.BLL.Services
             return new ServiceResult(ServiceResultType.Success);
         }
 
-        public async Task<ServiceResultClass<List<GameResponseDTO>>> SortAndFilterGamesAsync(GameSelectionDTO gameSelection, int offset, int limit)
+        public async Task<ServiceResult<List<GameResponseDTO>>> SortAndFilterGamesAsync(GameSelectionDTO gameSelection, int offset, int limit)
         {
             var filterExpression = _gameSelectionHelper.GetFilterExpression(gameSelection.FilterType, gameSelection.FilterValue);
             var sortExpression = _gameSelectionHelper.GetSortExpression(gameSelection.SortField);
@@ -122,16 +122,16 @@ namespace WebApp.BLL.Services
 
             var games = await _productRepository.SortAndFilterItemsAsync(filterExpression, sortExpression, limit, offset, (OrderType)orderType);
 
-            return new ServiceResultClass<List<GameResponseDTO>>(games.Select(_mapper.Map<GameResponseDTO>).ToList(), ServiceResultType.Success);
+            return new ServiceResult<List<GameResponseDTO>>(games.Select(_mapper.Map<GameResponseDTO>).ToList(), ServiceResultType.Success);
         }
 
-        public async Task<ServiceResultClass<ProductRatingDTO>> EditGameRatingByUserAsync(ProductRating productRating)
+        public async Task<ServiceResult<ProductRatingDTO>> EditGameRatingByUserAsync(ProductRating productRating)
         {
             var newProductRating = await _productRatingRepository.CreateAsync(productRating);
 
             await _productRepository.ChangeGameRatingAsync(productRating.ProductId);
 
-            return new ServiceResultClass<ProductRatingDTO>(_mapper.Map<ProductRatingDTO>(newProductRating), ServiceResultType.Success);
+            return new ServiceResult<ProductRatingDTO>(_mapper.Map<ProductRatingDTO>(newProductRating), ServiceResultType.Success);
         }
 
         private async Task<GameResponseDTO> HandleGameDTO(GameRequestDTO gameDTO, Func<Product, Task<Product>> operation)

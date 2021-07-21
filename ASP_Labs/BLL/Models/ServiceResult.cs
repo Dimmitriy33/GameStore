@@ -15,4 +15,21 @@
             Message = message;
         }
     }
+    public class ServiceResult<T> : ServiceResult
+    {
+        public T Result { get; set; }
+
+        public ServiceResult() { }
+        public ServiceResult(ServiceResultType serviceResultType) : base(serviceResultType) { }
+        public ServiceResult(string message, ServiceResultType serviceResultType) : base(message, serviceResultType) { }
+        public ServiceResult(T result, ServiceResultType serviceResultType) : base(serviceResultType)
+        {
+            Result = result;
+        }
+        public ServiceResult(T result, string message, ServiceResultType serviceResultType) : base(message, serviceResultType)
+        {
+            Result = result;
+        }
+
+    }
 }

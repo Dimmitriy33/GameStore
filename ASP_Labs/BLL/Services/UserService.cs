@@ -64,7 +64,7 @@ namespace WebApp.BLL.Services
             _redisContext = redisContext;
         }
 
-        public async Task<ServiceResultClass<string>> TryRegisterAsync(SignUpUserDTO userDTO)
+        public async Task<ServiceResult<string>> TryRegisterAsync(SignUpUserDTO userDTO)
         {
             var user = new ApplicationUser
             {
@@ -78,27 +78,27 @@ namespace WebApp.BLL.Services
 
             if (!tryRegister.Succeeded)
             {
-                return new ServiceResultClass<string>(InvalidRegisterMessage, ServiceResultType.BadRequest);
+                return new ServiceResult<string>(InvalidRegisterMessage, ServiceResultType.BadRequest);
             }
 
             if (!await _roleManager.RoleExistsAsync(RolesConstants.User))
             {
-                return new ServiceResultClass<string>(MissingRole, ServiceResultType.BadRequest);
+                return new ServiceResult<string>(MissingRole, ServiceResultType.BadRequest);
             }
 
             await _userManager.AddToRoleAsync(user, RolesConstants.User);
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             var codeEncoded = _tokenEncodingHelper.Encode(token);
 
-            return new ServiceResultClass<string>(result: codeEncoded, ServiceResultType.Success);
+            return new ServiceResult<string>(result: codeEncoded, ServiceResultType.Success);
         }
 
-        public async Task<ServiceResultClass<string>> TryLoginAsync(SignInUserDTO userDTO)
+        public async Task<ServiceResult<string>> TryLoginAsync(SignInUserDTO userDTO)
         {
             var user = await _userManager.FindByEmailAsync(userDTO.Email);
             if (user is null)
             {
-                return new ServiceResultClass<string>(InvalidLoginMessage, ServiceResultType.BadRequest);
+                return new ServiceResult<string>(InvalidLoginMessage, ServiceResultType.BadRequest);
             }
 
             var tryLogin = await _signInManager.CheckPasswordSignInAsync(user, userDTO.Password, false);
@@ -109,10 +109,10 @@ namespace WebApp.BLL.Services
 
                 await _redisContext.Set(CreateRedisKeyForUser(user.Id), user, TimeSpan.FromSeconds(DefaultRedisCacheExpireSec));
 
-                return new ServiceResultClass<string>(result: jwtToken, ServiceResultType.Success);
+                return new ServiceResult<string>(result: jwtToken, ServiceResultType.Success);
             }
 
-            return new ServiceResultClass<string>(InvalidLoginMessage, ServiceResultType.Unauthorized);
+            return new ServiceResult<string>(InvalidLoginMessage, ServiceResultType.Unauthorized);
         }
 
         public async Task<ServiceResult> ConfirmEmailAsync(string email, string token)
@@ -134,19 +134,19 @@ namespace WebApp.BLL.Services
             return new ServiceResult(NotConfirmedEmail, ServiceResultType.BadRequest);
         }
 
-        public async Task<ServiceResultClass<UserDTO>> UpdateUserInfoAsync(UserDTO user)
+        public async Task<ServiceResult<UserDTO>> UpdateUserInfoAsync(UserDTO user)
         {
             await _userRepository.UpdateUserInfoAsync(user);
             var updatedUser = await _userManager.FindByIdAsync(user.Id.ToString());
 
             if (updatedUser is null)
             {
-                return new ServiceResultClass<UserDTO>(ServiceResultType.BadRequest);
+                return new ServiceResult<UserDTO>(ServiceResultType.BadRequest);
             }
 
             await _redisContext.Remove<ApplicationUser>(CreateRedisKeyForUser(user.Id));
 
-            return new ServiceResultClass<UserDTO>(_mapper.Map<UserDTO>(updatedUser), ServiceResultType.Success);
+            return new ServiceResult<UserDTO>(_mapper.Map<UserDTO>(updatedUser), ServiceResultType.Success);
         }
 
         public async Task<ServiceResult> ChangePasswordAsync(ResetPasswordUserDTO user)
@@ -169,23 +169,23 @@ namespace WebApp.BLL.Services
 
         }
 
-        public async Task<ServiceResultClass<UserDTO>> FindUserByIdAsync(Guid id)
+        public async Task<ServiceResult<UserDTO>> FindUserByIdAsync(Guid id)
         {
             var foundUserByRedis = await _redisContext.Get<ApplicationUser>(CreateRedisKeyForUser(id));
 
             if (foundUserByRedis is not null)
             {
-                return new ServiceResultClass<UserDTO>(_mapper.Map<UserDTO>(foundUserByRedis), ServiceResultType.Success);
+                return new ServiceResult<UserDTO>(_mapper.Map<UserDTO>(foundUserByRedis), ServiceResultType.Success);
             }
 
             var foundUser = await _userRepository.GetUserByIdAsync(id);
 
             if (foundUser is null)
             {
-                return new ServiceResultClass<UserDTO>(ServiceResultType.NotFound);
+                return new ServiceResult<UserDTO>(ServiceResultType.NotFound);
             }
 
-            return new ServiceResultClass<UserDTO>(foundUser, ServiceResultType.Success);
+            return new ServiceResult<UserDTO>(foundUser, ServiceResultType.Success);
         }
 
         private static string CreateRedisKeyForUser(Guid userId) => $"u_{userId}";

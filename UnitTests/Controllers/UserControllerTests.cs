@@ -23,19 +23,13 @@ namespace UnitTests.Controllers
             var claimsReader = new ClaimsReader();
             var userService = A.Fake<IUserService>();
 
-            var serviceResultClassUserDTO = new ServiceResultClass<UserDTO>
-            {
-                Result = UserConstants.TestUserDTO,
-                ServiceResultType = ServiceResultType.Success
-            };
-
-            var user = UserControllerDataConstants.GetUserIdentity();
+            var ServiceResultUserDTO = new ServiceResult<UserDTO>(UserConstants.TestUserDTO, ServiceResultType.Success);
 
             var httpContextAccessor = new HttpContextAccessor
             {
                 HttpContext = new DefaultHttpContext
                 {
-                    User = user
+                    User = UserControllerDataConstants.GetUserIdentity()
                 }
             };
 
@@ -47,7 +41,7 @@ namespace UnitTests.Controllers
                 }
             };
 
-            A.CallTo(() => userService.FindUserByIdAsync(A<Guid>._)).Returns(serviceResultClassUserDTO);
+            A.CallTo(() => userService.FindUserByIdAsync(A<Guid>._)).Returns(ServiceResultUserDTO);
 
             //Act
             var result = await userController.GetUser();
@@ -59,7 +53,9 @@ namespace UnitTests.Controllers
             Assert.Equal(actionResult.StatusCode, (int)HttpStatusCode.OK);
             Assert.NotNull(actionResult.Value);
 
-            AssertUsertDTOProperties(serviceResultClassUserDTO.Result, (UserDTO)actionResult.Value);
+            AssertUsertDTOProperties(ServiceResultUserDTO.Result, (UserDTO)actionResult.Value);
+
+            A.CallTo(() => userService.FindUserByIdAsync(A<Guid>._)).MustHaveHappenedOnceExactly();
         }
 
         [Fact]
@@ -69,19 +65,13 @@ namespace UnitTests.Controllers
             var claimsReader = new ClaimsReader();
             var userService = A.Fake<IUserService>();
 
-            var ServiceResultClassUserDTO = new ServiceResultClass<UserDTO>
-            {
-                Result = UserConstants.TestUserDTO,
-                ServiceResultType = ServiceResultType.BadRequest
-            };
-
-            var user = UserControllerDataConstants.GetUserIdentity();
+            var ServiceResultUserDTO = new ServiceResult<UserDTO>(UserConstants.TestUserDTO, ServiceResultType.BadRequest);
 
             var httpContextAccessor = new HttpContextAccessor
             {
                 HttpContext = new DefaultHttpContext
                 {
-                    User = user
+                    User = UserControllerDataConstants.GetUserIdentity()
                 }
             };
 
@@ -93,7 +83,7 @@ namespace UnitTests.Controllers
                 }
             };
 
-            A.CallTo(() => userService.FindUserByIdAsync(A<Guid>._)).Returns(ServiceResultClassUserDTO);
+            A.CallTo(() => userService.FindUserByIdAsync(A<Guid>._)).Returns(ServiceResultUserDTO);
 
             //Act
             var result = await userController.GetUser();
@@ -103,6 +93,8 @@ namespace UnitTests.Controllers
 
             Assert.True(actionResult.StatusCode.HasValue);
             Assert.Equal(actionResult.StatusCode, (int)HttpStatusCode.BadRequest);
+
+            A.CallTo(() => userService.FindUserByIdAsync(A<Guid>._)).MustHaveHappenedOnceExactly();
         }
 
         [Fact]
@@ -126,15 +118,11 @@ namespace UnitTests.Controllers
             var claimsReader = new ClaimsReader();
             var userService = A.Fake<IUserService>();
 
-            var serviceResultClassUserDTO = new ServiceResultClass<UserDTO>
-            {
-                Result = UserConstants.TestUserDTO,
-                ServiceResultType = ServiceResultType.Success
-            };
+            var ServiceResultUserDTO = new ServiceResult<UserDTO>(UserConstants.TestUserDTO, ServiceResultType.Success);
 
             var userController = new UserController(userService, claimsReader);
 
-            A.CallTo(() => userService.UpdateUserInfoAsync(A<UserDTO>._)).Returns(serviceResultClassUserDTO);
+            A.CallTo(() => userService.UpdateUserInfoAsync(A<UserDTO>._)).Returns(ServiceResultUserDTO);
 
             //Act
             var result = await userController.Update(UserConstants.TestUserDTO);
@@ -146,7 +134,9 @@ namespace UnitTests.Controllers
             Assert.Equal(actionResult.StatusCode, (int)HttpStatusCode.OK);
             Assert.NotNull(actionResult.Value);
 
-            AssertUsertDTOProperties(serviceResultClassUserDTO.Result, (UserDTO)actionResult.Value);
+            AssertUsertDTOProperties(ServiceResultUserDTO.Result, (UserDTO)actionResult.Value);
+
+            A.CallTo(() => userService.UpdateUserInfoAsync(A<UserDTO>._)).MustHaveHappenedOnceExactly();
         }
 
         [Fact]
@@ -155,10 +145,7 @@ namespace UnitTests.Controllers
             //Arrange
             var claimsReader = new ClaimsReader();
             var userService = A.Fake<IUserService>();
-            var ServiceResultUserDTO = new ServiceResultClass<UserDTO>
-            {
-                ServiceResultType = ServiceResultType.BadRequest
-            };
+            var ServiceResultUserDTO = new ServiceResult<UserDTO>(ServiceResultType.BadRequest);
 
             var userController = new UserController(userService, claimsReader);
 
@@ -172,6 +159,8 @@ namespace UnitTests.Controllers
 
             Assert.True(actionResult.StatusCode.HasValue);
             Assert.Equal(actionResult.StatusCode, (int)HttpStatusCode.BadRequest);
+
+            A.CallTo(() => userService.UpdateUserInfoAsync(A<UserDTO>._)).MustHaveHappenedOnceExactly();
         }
 
         [Fact]
@@ -196,6 +185,8 @@ namespace UnitTests.Controllers
 
             Assert.True(actionResult.StatusCode.HasValue);
             Assert.Equal(actionResult.StatusCode, (int)HttpStatusCode.OK);
+
+            A.CallTo(() => userService.ChangePasswordAsync(A<ResetPasswordUserDTO>._)).MustHaveHappenedOnceExactly();
         }
 
         [Fact]
@@ -221,6 +212,8 @@ namespace UnitTests.Controllers
 
             Assert.True(actionResult.StatusCode.HasValue);
             Assert.Equal(actionResult.StatusCode, (int)HttpStatusCode.BadRequest);
+
+            A.CallTo(() => userService.ChangePasswordAsync(A<ResetPasswordUserDTO>._)).MustHaveHappenedOnceExactly();
         }
 
         private static void AssertUsertDTOProperties(UserDTO expectedUserDTO, UserDTO actualUserDTO)
