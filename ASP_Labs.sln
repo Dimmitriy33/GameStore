@@ -12,6 +12,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{7828
 		PublishApp.sh = PublishApp.sh
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "UnitTests\UnitTests.csproj", "{F5AF7F88-8B4A-4027-8E44-C67C043059AB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -22,6 +24,10 @@ Global
 		{574B127C-F28E-4ED5-A9C0-58F05EE05763}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{574B127C-F28E-4ED5-A9C0-58F05EE05763}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{574B127C-F28E-4ED5-A9C0-58F05EE05763}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F5AF7F88-8B4A-4027-8E44-C67C043059AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F5AF7F88-8B4A-4027-8E44-C67C043059AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F5AF7F88-8B4A-4027-8E44-C67C043059AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F5AF7F88-8B4A-4027-8E44-C67C043059AB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

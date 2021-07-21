@@ -35,6 +35,21 @@ namespace WebApp.DAL.Repository
         }
 
         public void RemoveOrderRange(List<Order> orders) => _dbContext.Orders.RemoveRange(orders);
+        public async Task RemoveOrderRangeByOrdersId(ICollection<Guid> orderList)
+        {
+            try
+            {
+                var orders = await _dbContext.Orders.AsNoTracking().Where(x => orderList.Contains(x.OrderId)).ToListAsync();
+                _dbContext.Orders.RemoveRange(orders);
+
+                await _dbContext.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw new Exception($"Could not remove order in database. Error: {e.Message}");
+            }
+        }
 
         public async Task ChangeOrderStatusAsync(ICollection<Guid> orderList, OrderStatus orderStatus)
         {

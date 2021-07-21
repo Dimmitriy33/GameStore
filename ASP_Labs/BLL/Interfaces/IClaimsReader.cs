@@ -6,6 +6,6 @@ namespace WebApp.BLL.Interfaces
 {
     public interface IClaimsReader
     {
-        public ServiceResultStruct<Guid> GetUserId(ClaimsPrincipal user);
+        public ServiceResult<Guid> GetUserId(ClaimsPrincipal user);
     }
 }

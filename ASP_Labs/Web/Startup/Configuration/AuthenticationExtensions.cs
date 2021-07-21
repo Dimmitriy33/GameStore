@@ -56,7 +56,7 @@ namespace WebApp.Web.Startup.Configuration
         {
             if (roles is null || !roles.Any())
             {
-                throw new CustomExceptions(ServiceResultType.Internal_Server_Error, "Roles not found");
+                throw new CustomExceptions(ServiceResultType.InternalServerError, "Roles not found");
             }
 
             var roleManager = serviceProvider.GetRequiredService<RoleManager<ApplicationRole>>();

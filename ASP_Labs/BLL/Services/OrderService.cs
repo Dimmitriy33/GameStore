@@ -39,7 +39,7 @@ namespace WebApp.BLL.Services
             var productIdList = orderItemsDTO.Select(x => x.ProductId).Distinct().ToList();
             if (!await _productRepository.CheckProductsExistence(productIdList))
             {
-                return new ServiceResult(ServiceResultType.Bad_Request);
+                return new ServiceResult(ServiceResultType.BadRequest);
             }
 
             await _orderRepository.AddRangeAsync(orderItemsDTO.Select(_mapper.Map<Order>).ToList());
@@ -47,18 +47,18 @@ namespace WebApp.BLL.Services
             return new ServiceResult(ServiceResultType.Success);
         }
 
-        public async Task<ServiceResultClass<List<GameResponseDTO>>> SearchForOrderListByUserIdAsync(Guid userId)
+        public async Task<ServiceResult<List<GameResponseDTO>>> SearchForOrderListByUserIdAsync(Guid userId)
         {
             var result = await _orderRepository.GetGamesByUserId(userId);
 
-            return new ServiceResultClass<List<GameResponseDTO>>(result.Select(_mapper.Map<GameResponseDTO>).ToList(), ServiceResultType.Success);
+            return new ServiceResult<List<GameResponseDTO>>(result.Select(_mapper.Map<GameResponseDTO>).ToList(), ServiceResultType.Success);
         }
 
-        public async Task<ServiceResultClass<List<GameResponseDTO>>> SearchForOrderListByOrdersIdAsync(ICollection<Guid> orderList)
+        public async Task<ServiceResult<List<GameResponseDTO>>> SearchForOrderListByOrdersIdAsync(ICollection<Guid> orderList)
         {
             var games = await _orderRepository.GetGamesByOrderId(orderList);
 
-            return new ServiceResultClass<List<GameResponseDTO>>(games.Select(_mapper.Map<GameResponseDTO>).ToList(), ServiceResultType.Success);
+            return new ServiceResult<List<GameResponseDTO>>(games.Select(_mapper.Map<GameResponseDTO>).ToList(), ServiceResultType.Success);
         }
 
         public async Task<ServiceResult> BuySelectedItemsAsync(ICollection<Guid> orderList)
@@ -70,10 +70,7 @@ namespace WebApp.BLL.Services
 
         public async Task<ServiceResult> RemoveSelectedItemsAsync(ICollection<Guid> orderList)
         {
-            foreach (var orderId in orderList)
-            {
-                await _orderRepository.DeleteAsync(t => t.OrderId == orderId);
-            }
+            await _orderRepository.RemoveOrderRangeByOrdersId(orderList);
 
             return new ServiceResult(ServiceResultType.Success);
         }

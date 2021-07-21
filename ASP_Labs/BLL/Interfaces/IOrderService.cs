@@ -11,8 +11,8 @@ namespace WebApp.BLL.Interfaces
         Task<ServiceResult> AddProductsToOrderAsync(ICollection<OrderItemDTO> orderItemsDTO);
         Task<ServiceResult> BuySelectedItemsAsync(ICollection<Guid> orderList);
         Task<ServiceResult> RemoveSelectedItemsAsync(ICollection<Guid> orderList);
-        Task<ServiceResultClass<List<GameResponseDTO>>> SearchForOrderListByOrdersIdAsync(ICollection<Guid> orderList);
-        Task<ServiceResultClass<List<GameResponseDTO>>> SearchForOrderListByUserIdAsync(Guid userId);
+        Task<ServiceResult<List<GameResponseDTO>>> SearchForOrderListByOrdersIdAsync(ICollection<Guid> orderList);
+        Task<ServiceResult<List<GameResponseDTO>>> SearchForOrderListByUserIdAsync(Guid userId);
         Task<ServiceResult> SoftRemoveSelectedItemsAsync(ICollection<Guid> orderList);
     }
 }

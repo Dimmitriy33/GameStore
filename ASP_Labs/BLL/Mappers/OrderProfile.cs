@@ -4,11 +4,11 @@ using WebApp.DAL.Entities;
 
 namespace WebApp.BLL.Mappers
 {
-    public class UserProfile : Profile
+    public class OrderProfile : Profile
     {
-        public UserProfile()
+        public OrderProfile()
         {
-            CreateMap<ApplicationUser, UserDTO>().ReverseMap();
+            CreateMap<OrderItemDTO, Order>().ReverseMap();
         }
     }
 }
