@@ -10,6 +10,6 @@ namespace WebApp.BLL.Helpers
         public ServiceResultStruct<Guid> GetUserId(ClaimsPrincipal user) =>
             Guid.TryParse(user.FindFirstValue(ClaimTypes.NameIdentifier), out var userId)
                 ? new ServiceResultStruct<Guid>(userId, ServiceResultType.Success)
-                : new ServiceResultStruct<Guid>(ServiceResultType.Bad_Request);
+                : new ServiceResultStruct<Guid>(ServiceResultType.BadRequest);
     }
 }

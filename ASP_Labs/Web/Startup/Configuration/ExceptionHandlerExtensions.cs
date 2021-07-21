@@ -35,13 +35,13 @@ namespace WebApp.Web.Startup.Configuration
                             case CustomExceptions customExceptions:
                                 switch (customExceptions.ErrorStatus)
                                 {
-                                    case ServiceResultType.Not_Found:
+                                    case ServiceResultType.NotFound:
                                         context.Response.StatusCode = StatusCodes.Status404NotFound;
                                         break;
-                                    case ServiceResultType.Invalid_Data:
+                                    case ServiceResultType.InvalidData:
                                         context.Response.StatusCode = StatusCodes.Status400BadRequest;
                                         break;
-                                    case ServiceResultType.Internal_Server_Error:
+                                    case ServiceResultType.InternalServerError:
                                         context.Response.StatusCode = StatusCodes.Status500InternalServerError;
                                         break;
                                 }

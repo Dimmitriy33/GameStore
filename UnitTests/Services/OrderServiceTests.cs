@@ -65,7 +65,7 @@ namespace UnitTests.Services
             var result = await orderService.AddProductsToOrderAsync(orderItems);
 
             //Assert
-            Assert.Equal(ServiceResultType.Bad_Request, result.ServiceResultType);
+            Assert.Equal(ServiceResultType.BadRequest, result.ServiceResultType);
 
             A.CallTo(() => orderRepository.AddRangeAsync(A<IEnumerable<Order>>._)).MustNotHaveHappened();
         }
@@ -82,14 +82,14 @@ namespace UnitTests.Services
 
             var productsList = new List<Product>
             {
-                TestValues.TestProduct1,
-                TestValues.TestProduct2
+                ProductConstants.TestProduct1,
+                ProductConstants.TestProduct2
             };
 
-            A.CallTo(() => orderRepository.GetGamesByUserId(TestValues.TestGuid1)).Returns(productsList);
+            A.CallTo(() => orderRepository.GetGamesByUserId(UserConstants.TestGuid1)).Returns(productsList);
 
             //Act
-            var result = await orderService.SearchForOrderListByUserIdAsync(TestValues.TestGuid1);
+            var result = await orderService.SearchForOrderListByUserIdAsync(UserConstants.TestGuid1);
 
             //Assert
             Assert.Equal(ServiceResultType.Success, result.ServiceResultType);
@@ -106,17 +106,8 @@ namespace UnitTests.Services
 
             var orderService = new OrderService(orderRepository, productRepository, mapper);
 
-            var productsList = new List<Product>
-            {
-                TestValues.TestProduct1,
-                TestValues.TestProduct2
-            };
-
-            var ordersIdList = new List<Guid>
-            {
-                TestValues.TestGuid1,
-                TestValues.TestGuid2
-            };
+            var productsList = ProductConstants.ProductsList;
+            var ordersIdList = UserConstants.TestGuidList;
 
             A.CallTo(() => orderRepository.GetGamesByOrderId(ordersIdList)).Returns(productsList);
 
@@ -135,14 +126,9 @@ namespace UnitTests.Services
             var productRepository = A.Fake<IProductRepository>();
             var orderRepository = A.Fake<IOrderRepository>();
             var mapper = new MapperConfiguration(cfg => cfg.AddProfile<OrderProfile>()).CreateMapper();
+            var ordersIdList = UserConstants.TestGuidList;
 
             var orderService = new OrderService(orderRepository, productRepository, mapper);
-
-            var ordersIdList = new List<Guid>
-            {
-                TestValues.TestGuid1,
-                TestValues.TestGuid2
-            };
 
             A.CallTo(() => orderRepository.ChangeOrderStatusAsync(ordersIdList, OrderStatus.Paid));
 
@@ -160,14 +146,9 @@ namespace UnitTests.Services
             var productRepository = A.Fake<IProductRepository>();
             var orderRepository = A.Fake<IOrderRepository>();
             var mapper = new MapperConfiguration(cfg => cfg.AddProfile<OrderProfile>()).CreateMapper();
+            var ordersIdList = UserConstants.TestGuidList;
 
             var orderService = new OrderService(orderRepository, productRepository, mapper);
-
-            var ordersIdList = new List<Guid>
-            {
-                TestValues.TestGuid1,
-                TestValues.TestGuid2
-            };
 
             A.CallTo(() => orderRepository.RemoveOrderRangeByOrdersId(ordersIdList)).DoesNothing();
 
@@ -188,7 +169,6 @@ namespace UnitTests.Services
 
             var orderService = new OrderService(orderRepository, productRepository, mapper);
 
-
             A.CallTo(() => orderRepository.RemoveOrderRangeByOrdersId(null)).Throws<ArgumentNullException>();
 
             //Act && Assert
@@ -202,14 +182,9 @@ namespace UnitTests.Services
             var productRepository = A.Fake<IProductRepository>();
             var orderRepository = A.Fake<IOrderRepository>();
             var mapper = new MapperConfiguration(cfg => cfg.AddProfile<OrderProfile>()).CreateMapper();
+            var ordersIdList = UserConstants.TestGuidList;
 
             var orderService = new OrderService(orderRepository, productRepository, mapper);
-
-            var ordersIdList = new List<Guid>
-            {
-                TestValues.TestGuid1,
-                TestValues.TestGuid2
-            };
 
             A.CallTo(() => orderRepository.ChangeOrderStatusAsync(ordersIdList, OrderStatus.Rejected));
 

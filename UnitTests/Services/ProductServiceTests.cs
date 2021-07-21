@@ -27,18 +27,17 @@ namespace UnitTests.Services
             var productRatingRepository = A.Fake<IProductRatingRepository>();
             var cloudinaryService = A.Fake<ICloudinaryService>();
             var mapper = new MapperConfiguration(cfg => cfg.AddProfile<ProductProfile>()).CreateMapper();
-
             var gameSelectionHelper = new GameSelectionHelper();
+
             var count = 3;
-
-            var productService = new ProductService(productRepository, mapper, cloudinaryService, gameSelectionHelper, productRatingRepository);
-
             var platforms = new List<Platforms>
             {
                 Platforms.Playstation,
                 Platforms.Mobile,
                 Platforms.Nintendo
             };
+
+            var productService = new ProductService(productRepository, mapper, cloudinaryService, gameSelectionHelper, productRatingRepository);
 
             A.CallTo(() => productRepository.GetTopPopularPlatformsAsync(count)).Returns(platforms);
 
@@ -65,11 +64,7 @@ namespace UnitTests.Services
             var mapper = new MapperConfiguration(cfg => cfg.AddProfile<ProductProfile>()).CreateMapper();
             var gameSelectionHelper = new GameSelectionHelper();
 
-            var gamesList = new List<Product>
-            {
-                TestValues.TestProduct1,
-                TestValues.TestProduct2
-            };
+            var gamesList = ProductConstants.ProductsList;
 
             var productService = new ProductService(productRepository, mapper, cloudinaryService, gameSelectionHelper, productRatingRepository);
 
@@ -98,14 +93,12 @@ namespace UnitTests.Services
 
             var productService = new ProductService(productRepository, mapper, cloudinaryService, gameSelectionHelper, productRatingRepository);
 
-            var gameId = TestValues.TestGuid1;
-            var product = TestValues.TestProduct1;
-            product.Id = gameId;
+            var product = ProductConstants.TestProduct1;
 
-            A.CallTo(() => productRepository.GetGameByIdAsync(gameId)).Returns(product);
+            A.CallTo(() => productRepository.GetGameByIdAsync(product.Id)).Returns(product);
 
             //Act
-            var result = await productService.GetGameByIdAsync(gameId);
+            var result = await productService.GetGameByIdAsync(product.Id);
 
             //Assert
             Assert.Equal(ServiceResultType.Success, result.ServiceResultType);
@@ -121,7 +114,7 @@ namespace UnitTests.Services
             Assert.Equal(product.Genre, result.Result.Genre);
             Assert.Equal(product.Background, result.Result.Background);
 
-            A.CallTo(() => productRepository.GetGameByIdAsync(gameId)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => productRepository.GetGameByIdAsync(product.Id)).MustHaveHappenedOnceExactly();
         }
 
         [Fact]
@@ -134,9 +127,9 @@ namespace UnitTests.Services
             var mapper = new MapperConfiguration(cfg => cfg.AddProfile<ProductProfile>()).CreateMapper();
             var gameSelectionHelper = new GameSelectionHelper();
 
-            var productService = new ProductService(productRepository, mapper, cloudinaryService, gameSelectionHelper, productRatingRepository);
+            var gameId = UserConstants.TestGuid1;
 
-            var gameId = TestValues.TestGuid1;
+            var productService = new ProductService(productRepository, mapper, cloudinaryService, gameSelectionHelper, productRatingRepository);
 
             A.CallTo(() => productRepository.GetGameByIdAsync(gameId)).Returns((Product)null);
 
@@ -145,7 +138,7 @@ namespace UnitTests.Services
 
             //Assert
 
-            Assert.Equal(ServiceResultType.Not_Found, result.ServiceResultType);
+            Assert.Equal(ServiceResultType.NotFound, result.ServiceResultType);
 
             A.CallTo(() => productRepository.GetGameByIdAsync(gameId)).MustHaveHappenedOnceExactly();
         }
@@ -160,9 +153,9 @@ namespace UnitTests.Services
             var mapper = new MapperConfiguration(cfg => cfg.AddProfile<ProductProfile>()).CreateMapper();
             var gameSelectionHelper = new GameSelectionHelper();
 
-            var productService = new ProductService(productRepository, mapper, cloudinaryService, gameSelectionHelper, productRatingRepository);
+            var gameRequestDTO = ProductConstants.TestGameRequestDTO;
 
-            var gameRequestDTO = TestValues.TestGameRequestDTO;
+            var productService = new ProductService(productRepository, mapper, cloudinaryService, gameSelectionHelper, productRatingRepository);
 
             //Act
             var result = await productService.CreateGameAsync(gameRequestDTO);
@@ -197,9 +190,9 @@ namespace UnitTests.Services
             var mapper = new MapperConfiguration(cfg => cfg.AddProfile<ProductProfile>()).CreateMapper();
             var gameSelectionHelper = new GameSelectionHelper();
 
-            var productService = new ProductService(productRepository, mapper, cloudinaryService, gameSelectionHelper, productRatingRepository);
+            var gameRequestDTO = ProductConstants.TestGameRequestDTO;
 
-            var gameRequestDTO = TestValues.TestGameRequestDTO;
+            var productService = new ProductService(productRepository, mapper, cloudinaryService, gameSelectionHelper, productRatingRepository);
 
             //Act
             var result = await productService.UpdateGameAsync(gameRequestDTO);
@@ -235,9 +228,8 @@ namespace UnitTests.Services
             var mapper = new MapperConfiguration(cfg => cfg.AddProfile<ProductProfile>()).CreateMapper();
             var gameSelectionHelper = new GameSelectionHelper();
 
-            var gameId = TestValues.TestGuid1;
-            var product = TestValues.TestProduct1;
-            product.Id = gameId;
+            var gameId = UserConstants.TestGuid1;
+            var product = ProductConstants.TestProduct1;
 
             var productService = new ProductService(productRepository, mapper, cloudinaryService, gameSelectionHelper, productRatingRepository);
 
@@ -263,7 +255,7 @@ namespace UnitTests.Services
             var mapper = new MapperConfiguration(cfg => cfg.AddProfile<ProductProfile>()).CreateMapper();
             var gameSelectionHelper = new GameSelectionHelper();
 
-            var gameId = TestValues.TestGuid1;
+            var gameId = UserConstants.TestGuid1;
 
             var productService = new ProductService(productRepository, mapper, cloudinaryService, gameSelectionHelper, productRatingRepository);
 
@@ -273,7 +265,7 @@ namespace UnitTests.Services
             var result = await productService.DeleteGameAsync(gameId);
 
             //Assert
-            Assert.Equal(ServiceResultType.Not_Found, result.ServiceResultType);
+            Assert.Equal(ServiceResultType.NotFound, result.ServiceResultType);
 
             A.CallTo(() => productRepository.DeleteAsync(A<Expression<Func<Product, bool>>>._)).MustNotHaveHappened();
         }
@@ -288,8 +280,8 @@ namespace UnitTests.Services
             var mapper = new MapperConfiguration(cfg => cfg.AddProfile<ProductProfile>()).CreateMapper();
             var gameSelectionHelper = new GameSelectionHelper();
 
-            var gameId = TestValues.TestGuid1;
-            var product = TestValues.TestProduct1;
+            var gameId = UserConstants.TestGuid1;
+            var product = ProductConstants.TestProduct1;
             product.Id = gameId;
 
             var productService = new ProductService(productRepository, mapper, cloudinaryService, gameSelectionHelper, productRatingRepository);
@@ -316,7 +308,7 @@ namespace UnitTests.Services
             var mapper = new MapperConfiguration(cfg => cfg.AddProfile<ProductProfile>()).CreateMapper();
             var gameSelectionHelper = new GameSelectionHelper();
 
-            var gameId = TestValues.TestGuid1;
+            var gameId = UserConstants.TestGuid1;
 
             var productService = new ProductService(productRepository, mapper, cloudinaryService, gameSelectionHelper, productRatingRepository);
 
@@ -326,7 +318,7 @@ namespace UnitTests.Services
             var result = await productService.SoftDeleteGameAsync(gameId);
 
             //Assert
-            Assert.Equal(ServiceResultType.Not_Found, result.ServiceResultType);
+            Assert.Equal(ServiceResultType.NotFound, result.ServiceResultType);
 
             A.CallTo(() => productRepository.SoftDeleteAsync(gameId)).MustNotHaveHappened();
         }
@@ -342,18 +334,14 @@ namespace UnitTests.Services
             var gameSelectionHelper = new GameSelectionHelper();
             var limit = 2;
             var offset = 0;
-            var productsList = new List<Product>
-            {
-                TestValues.TestProduct1,
-                TestValues.TestProduct2
-            };
+            var productsList = ProductConstants.ProductsList;
 
             var productService = new ProductService(productRepository, mapper, cloudinaryService, gameSelectionHelper, productRatingRepository);
 
             A.CallTo(() => productRepository.SortAndFilterItemsAsync(A<Expression<Func<Product, bool>>>._, A<Expression<Func<Product, object>>>._, limit, offset, A<OrderType>._)).Returns(productsList);
 
             //Act
-            var result = await productService.SortAndFilterGamesAsync(TestValues.TestGameSelectionDTO, offset, limit);
+            var result = await productService.SortAndFilterGamesAsync(ProductConstants.TestGameSelectionDTO, offset, limit);
 
             //Assert
             Assert.Equal(ServiceResultType.Success, result.ServiceResultType);
@@ -370,27 +358,11 @@ namespace UnitTests.Services
             var mapper = new MapperConfiguration(cfg => cfg.AddProfile<ProductRatingProfile>()).CreateMapper();
             var gameSelectionHelper = new GameSelectionHelper();
 
-            var productRating = new ProductRating
-            {
-                ProductId = TestValues.TestProduct1.Id,
-                Rating = TestValues.TestProduct1.TotalRating,
-                UserId = TestValues.TestGuid2,
-                Product = TestValues.TestProduct1,
-                User = TestValues.TestUser
-            };
-
-            var createdProductRating = new ProductRating
-            {
-                ProductId = TestValues.TestProduct1.Id,
-                Rating = TestValues.TestProduct1.TotalRating,
-                UserId = TestValues.TestGuid2,
-                Product = TestValues.TestProduct1,
-                User = TestValues.TestUser
-            };
+            var productRating = ProductRatingConstants.TestProductRating1;
 
             var productService = new ProductService(productRepository, mapper, cloudinaryService, gameSelectionHelper, productRatingRepository);
 
-            A.CallTo(() => productRatingRepository.CreateAsync(productRating)).Returns(createdProductRating);
+            A.CallTo(() => productRatingRepository.CreateAsync(productRating)).Returns(productRating);
             A.CallTo(() => productRepository.ChangeGameRatingAsync(productRating.ProductId)).DoesNothing();
 
             //Act
@@ -399,9 +371,9 @@ namespace UnitTests.Services
             //Assert
             Assert.Equal(ServiceResultType.Success, result.ServiceResultType);
             Assert.NotNull(result.Result);
-            Assert.Equal(createdProductRating.ProductId, result.Result.ProductId);
-            Assert.Equal(createdProductRating.UserId, result.Result.UserId);
-            Assert.Equal(createdProductRating.Rating, result.Result.Rating);
+            Assert.Equal(productRating.ProductId, result.Result.ProductId);
+            Assert.Equal(productRating.UserId, result.Result.UserId);
+            Assert.Equal(productRating.Rating, result.Result.Rating);
 
             A.CallTo(() => productRepository.ChangeGameRatingAsync(productRating.ProductId)).MustHaveHappenedOnceExactly();
         }

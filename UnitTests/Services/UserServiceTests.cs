@@ -49,24 +49,15 @@ namespace UnitTests.Services
             var tokenEncodingHelper = new TokenEncodingHelper();
             var redisContext = A.Fake<IRedisContext>();
 
-            var user = TestValues.TestUser;
-            var token = TestValues.TestToken;
+            var signUpUser = UserConstants.SignUpUser;
+            var token = TokenConstants.TestToken;
             var registerResult = IdentityResult.Success;
             var roleExistenceResult = true;
-
-
-            var signUpUser = new SignUpUserDTO
-            {
-                AddressDelivery = user.AddressDelivery,
-                Email = user.Email,
-                Password = TestValues.TestPassword1,
-                PhoneNumber = user.PhoneNumber,
-                UserName = user.UserName
-            };
 
             A.CallTo(() => userManager.CreateAsync(A<ApplicationUser>._, signUpUser.Password)).Returns(registerResult);
             A.CallTo(() => roleManager.RoleExistsAsync(RolesConstants.User)).Returns(roleExistenceResult);
             A.CallTo(() => userManager.GenerateEmailConfirmationTokenAsync(A<ApplicationUser>._)).Returns(token);
+
             var tokenEncoded = tokenEncodingHelper.Encode(token);
 
             var userService = new UserService(userManager, signInManager, roleManager, jwtGenerator, userRepository, mapper, tokenEncodingHelper, redisContext);
@@ -96,18 +87,9 @@ namespace UnitTests.Services
             var tokenEncodingHelper = new TokenEncodingHelper();
             var redisContext = A.Fake<IRedisContext>();
 
-            var user = TestValues.TestUser;
+            var user = UserConstants.TestUser;
+            var signUpUser = UserConstants.SignUpUser;
             var registerResult = IdentityResult.Failed();
-
-
-            var signUpUser = new SignUpUserDTO
-            {
-                AddressDelivery = user.AddressDelivery,
-                Email = user.Email,
-                Password = TestValues.TestPassword1,
-                PhoneNumber = user.PhoneNumber,
-                UserName = user.UserName
-            };
 
             A.CallTo(() => userManager.CreateAsync(A<ApplicationUser>._, signUpUser.Password)).Returns(registerResult);
 
@@ -117,7 +99,7 @@ namespace UnitTests.Services
             var result = await userService.TryRegisterAsync(signUpUser);
 
             //Assert
-            Assert.Equal(ServiceResultType.Bad_Request, result.ServiceResultType);
+            Assert.Equal(ServiceResultType.BadRequest, result.ServiceResultType);
 
             A.CallTo(() => userManager.GenerateEmailConfirmationTokenAsync(A<ApplicationUser>._)).MustNotHaveHappened();
             A.CallTo(() => roleManager.RoleExistsAsync(RolesConstants.User)).MustNotHaveHappened();
@@ -139,19 +121,10 @@ namespace UnitTests.Services
             var tokenEncodingHelper = new TokenEncodingHelper();
             var redisContext = A.Fake<IRedisContext>();
 
-            var user = TestValues.TestUser;
+            var user = UserConstants.TestUser;
+            var signUpUser = UserConstants.SignUpUser;
             var registerResult = IdentityResult.Success;
             var roleExistenceResult = false;
-
-
-            var signUpUser = new SignUpUserDTO
-            {
-                AddressDelivery = user.AddressDelivery,
-                Email = user.Email,
-                Password = TestValues.TestPassword1,
-                PhoneNumber = user.PhoneNumber,
-                UserName = user.UserName
-            };
 
             A.CallTo(() => userManager.CreateAsync(A<ApplicationUser>._, signUpUser.Password)).Returns(registerResult);
             A.CallTo(() => roleManager.RoleExistsAsync(RolesConstants.User)).Returns(roleExistenceResult);
@@ -162,7 +135,7 @@ namespace UnitTests.Services
             var result = await userService.TryRegisterAsync(signUpUser);
 
             //Assert
-            Assert.Equal(ServiceResultType.Bad_Request, result.ServiceResultType);
+            Assert.Equal(ServiceResultType.BadRequest, result.ServiceResultType);
 
             A.CallTo(() => userManager.GenerateEmailConfirmationTokenAsync(A<ApplicationUser>._)).MustNotHaveHappened();
             A.CallTo(() => roleManager.RoleExistsAsync(RolesConstants.User)).MustHaveHappenedOnceExactly();
@@ -184,18 +157,13 @@ namespace UnitTests.Services
             var tokenEncodingHelper = new TokenEncodingHelper();
             var redisContext = A.Fake<IRedisContext>();
 
-            var user = TestValues.TestUser;
+            var user = UserConstants.TestUser;
+            var signInUser = UserConstants.SignInUser;
             var loginResult = SignInResult.Success;
-
-
-            var signInUser = new SignInUserDTO
-            {
-                Email = user.Email,
-                Password = TestValues.TestPassword1
-            };
 
             A.CallTo(() => userManager.FindByEmailAsync(signInUser.Email)).Returns(user);
             A.CallTo(() => signInManager.CheckPasswordSignInAsync(A<ApplicationUser>._, signInUser.Password, false)).Returns(loginResult);
+
             var jwtToken = jwtGenerator.CreateToken(user.Id, user.UserName, RolesConstants.User);
 
             var userService = new UserService(userManager, signInManager, roleManager, jwtGenerator, userRepository, mapper, tokenEncodingHelper, redisContext);
@@ -225,15 +193,9 @@ namespace UnitTests.Services
             var tokenEncodingHelper = new TokenEncodingHelper();
             var redisContext = A.Fake<IRedisContext>();
 
-            var user = TestValues.TestUser;
+            var user = UserConstants.TestUser;
+            var signInUser = UserConstants.SignInUser;
             var loginResult = SignInResult.Success;
-
-
-            var signInUser = new SignInUserDTO
-            {
-                Email = user.Email,
-                Password = TestValues.TestPassword1
-            };
 
             A.CallTo(() => userManager.FindByEmailAsync(signInUser.Email)).Returns((ApplicationUser)null);
 
@@ -243,7 +205,7 @@ namespace UnitTests.Services
             var result = await userService.TryLoginAsync(signInUser);
 
             //Assert
-            Assert.Equal(ServiceResultType.Bad_Request, result.ServiceResultType);
+            Assert.Equal(ServiceResultType.BadRequest, result.ServiceResultType);
             Assert.Null(result.Result);
 
             A.CallTo(() => signInManager.CheckPasswordSignInAsync(A<ApplicationUser>._, signInUser.Password, false)).MustNotHaveHappened();
@@ -265,15 +227,9 @@ namespace UnitTests.Services
             var tokenEncodingHelper = new TokenEncodingHelper();
             var redisContext = A.Fake<IRedisContext>();
 
-            var user = TestValues.TestUser;
+            var user = UserConstants.TestUser;
+            var signInUser = UserConstants.SignInUser;
             var loginResult = SignInResult.Failed;
-
-
-            var signInUser = new SignInUserDTO
-            {
-                Email = user.Email,
-                Password = TestValues.TestPassword1
-            };
 
             A.CallTo(() => userManager.FindByEmailAsync(signInUser.Email)).Returns(user);
             A.CallTo(() => signInManager.CheckPasswordSignInAsync(A<ApplicationUser>._, signInUser.Password, false)).Returns(loginResult);
@@ -306,8 +262,8 @@ namespace UnitTests.Services
             var tokenEncodingHelper = new TokenEncodingHelper();
             var redisContext = A.Fake<IRedisContext>();
 
-            var user = TestValues.TestUser;
-            var token = TestValues.TestToken;
+            var user = UserConstants.TestUser;
+            var token = TokenConstants.TestToken;
             var confirmEmailResult = IdentityResult.Success;
 
             var decodedToken = tokenEncodingHelper.Decode(token);
@@ -339,8 +295,8 @@ namespace UnitTests.Services
             var tokenEncodingHelper = new TokenEncodingHelper();
             var redisContext = A.Fake<IRedisContext>();
 
-            var user = TestValues.TestUser;
-            var token = TestValues.TestToken;
+            var user = UserConstants.TestUser;
+            var token = TokenConstants.TestToken;
 
             A.CallTo(() => userManager.FindByEmailAsync(user.Email)).Returns((ApplicationUser)null);
 
@@ -350,7 +306,7 @@ namespace UnitTests.Services
             var result = await userService.ConfirmEmailAsync(user.Email, token);
 
             //Assert
-            Assert.Equal(ServiceResultType.Invalid_Data, result.ServiceResultType);
+            Assert.Equal(ServiceResultType.InvalidData, result.ServiceResultType);
 
             A.CallTo(() => userManager.ConfirmEmailAsync(A<ApplicationUser>._, A<string>._)).MustNotHaveHappened();
         }
@@ -370,8 +326,8 @@ namespace UnitTests.Services
             var tokenEncodingHelper = new TokenEncodingHelper();
             var redisContext = A.Fake<IRedisContext>();
 
-            var user = TestValues.TestUser;
-            var token = TestValues.TestToken;
+            var user = UserConstants.TestUser;
+            var token = TokenConstants.TestToken;
             var confirmEmailResult = IdentityResult.Failed();
 
             var decodedToken = tokenEncodingHelper.Decode(token);
@@ -385,7 +341,7 @@ namespace UnitTests.Services
             var result = await userService.ConfirmEmailAsync(user.Email, token);
 
             //Assert
-            Assert.Equal(ServiceResultType.Bad_Request, result.ServiceResultType);
+            Assert.Equal(ServiceResultType.BadRequest, result.ServiceResultType);
 
             A.CallTo(() => userManager.ConfirmEmailAsync(A<ApplicationUser>._, A<string>._)).MustHaveHappenedOnceExactly();
         }
@@ -405,7 +361,7 @@ namespace UnitTests.Services
             var tokenEncodingHelper = new TokenEncodingHelper();
             var redisContext = A.Fake<IRedisContext>();
 
-            var user = TestValues.TestUser;
+            var user = UserConstants.TestUser;
             var userDTO = mapper.Map<UserDTO>(user);
 
             A.CallTo(() => userRepository.UpdateUserInfoAsync(A<UserDTO>._)).DoesNothing();
@@ -420,19 +376,14 @@ namespace UnitTests.Services
             //Assert
             Assert.Equal(ServiceResultType.Success, result.ServiceResultType);
             Assert.NotNull(result.Result);
-            Assert.Equal(userDTO.Id, result.Result.Id);
-            Assert.Equal(userDTO.UserName, result.Result.UserName);
-            Assert.Equal(userDTO.PhoneNumber, result.Result.PhoneNumber);
-            Assert.Equal(userDTO.AddressDelivery, result.Result.AddressDelivery);
-            Assert.Equal(userDTO.ConcurrencyStamp, result.Result.ConcurrencyStamp);
+
+            AssertUsertDTOProperties(userDTO, result.Result);
         }
 
         [Fact]
         public async Task ShouldNotUpdateUserInfoNotFoundUser_ReturnServiceResultClassWithUserDTO()
         {
             //Arrange
-            var store = A.Fake<IUserStore<ApplicationUser>>();
-
             var userManager = A.Fake<UserManager<ApplicationUser>>();
             var signInManager = A.Fake<SignInManager<ApplicationUser>>();
             var roleManager = A.Fake<RoleManager<ApplicationRole>>();
@@ -442,7 +393,7 @@ namespace UnitTests.Services
             var tokenEncodingHelper = new TokenEncodingHelper();
             var redisContext = A.Fake<IRedisContext>();
 
-            var user = TestValues.TestUser;
+            var user = UserConstants.TestUser;
             var userDTO = mapper.Map<UserDTO>(user);
 
             A.CallTo(() => userRepository.UpdateUserInfoAsync(A<UserDTO>._)).DoesNothing();
@@ -454,7 +405,7 @@ namespace UnitTests.Services
             var result = await userService.UpdateUserInfoAsync(userDTO);
 
             //Assert
-            Assert.Equal(ServiceResultType.Bad_Request, result.ServiceResultType);
+            Assert.Equal(ServiceResultType.BadRequest, result.ServiceResultType);
             Assert.Null(result.Result);
 
             A.CallTo(() => redisContext.Remove<ApplicationUser>(A<string>._, A<TimeSpan>._)).MustNotHaveHappened();
@@ -464,8 +415,6 @@ namespace UnitTests.Services
         public async Task ShouldChangePasswordByResetPasswordUserDTOWithRedis_ReturnServiceResult()
         {
             //Arrange
-            var store = A.Fake<IUserStore<ApplicationUser>>();
-
             var userManager = A.Fake<UserManager<ApplicationUser>>();
             var signInManager = A.Fake<SignInManager<ApplicationUser>>();
             var roleManager = A.Fake<RoleManager<ApplicationRole>>();
@@ -475,8 +424,8 @@ namespace UnitTests.Services
             var tokenEncodingHelper = new TokenEncodingHelper();
             var redisContext = A.Fake<IRedisContext>();
 
-            var user = TestValues.TestUser;
-            var resetPasswordDTO = TestValues.TestRsetPasswordUserDTO;
+            var user = UserConstants.TestUser;
+            var resetPasswordDTO = UserConstants.TestResetPasswordUserDTO;
 
             A.CallTo(() => redisContext.Get<ApplicationUser>(A<string>._)).Returns(user);
             A.CallTo(() => userRepository.UpdatePasswordAsync(resetPasswordDTO.Id, resetPasswordDTO.OldPassword, resetPasswordDTO.NewPassword)).DoesNothing();
@@ -489,7 +438,7 @@ namespace UnitTests.Services
             //Assert
             Assert.Equal(ServiceResultType.Success, result.ServiceResultType);
 
-            A.CallTo(() => userManager.FindByIdAsync(TestValues.TestId)).MustNotHaveHappened();
+            A.CallTo(() => userManager.FindByIdAsync(UserConstants.TestId)).MustNotHaveHappened();
             A.CallTo(() => userRepository.UpdatePasswordAsync(resetPasswordDTO.Id, resetPasswordDTO.OldPassword, resetPasswordDTO.NewPassword)).MustHaveHappenedOnceExactly();
         }
 
@@ -497,8 +446,6 @@ namespace UnitTests.Services
         public async Task ShouldChangePasswordByResetPasswordUserDTOWithUserManager_ReturnServiceResult()
         {
             //Arrange
-            var store = A.Fake<IUserStore<ApplicationUser>>();
-
             var userManager = A.Fake<UserManager<ApplicationUser>>();
             var signInManager = A.Fake<SignInManager<ApplicationUser>>();
             var roleManager = A.Fake<RoleManager<ApplicationRole>>();
@@ -508,11 +455,11 @@ namespace UnitTests.Services
             var tokenEncodingHelper = new TokenEncodingHelper();
             var redisContext = A.Fake<IRedisContext>();
 
-            var user = TestValues.TestUser;
-            var resetPasswordDTO = TestValues.TestRsetPasswordUserDTO;
+            var user = UserConstants.TestUser;
+            var resetPasswordDTO = UserConstants.TestResetPasswordUserDTO;
 
             A.CallTo(() => redisContext.Get<ApplicationUser>(A<string>._)).Returns((ApplicationUser)null);
-            A.CallTo(() => userManager.FindByIdAsync(TestValues.TestId)).Returns(user);
+            A.CallTo(() => userManager.FindByIdAsync(UserConstants.TestId)).Returns(user);
             A.CallTo(() => userRepository.UpdatePasswordAsync(resetPasswordDTO.Id, resetPasswordDTO.OldPassword, resetPasswordDTO.NewPassword)).DoesNothing();
 
             var userService = new UserService(userManager, signInManager, roleManager, jwtGenerator, userRepository, mapper, tokenEncodingHelper, redisContext);
@@ -530,8 +477,6 @@ namespace UnitTests.Services
         public async Task ShouldNotChangePasswordByResetPasswordUserDTOWithUserManager_ReturnServiceResult()
         {
             //Arrange
-            var store = A.Fake<IUserStore<ApplicationUser>>();
-
             var userManager = A.Fake<UserManager<ApplicationUser>>();
             var signInManager = A.Fake<SignInManager<ApplicationUser>>();
             var roleManager = A.Fake<RoleManager<ApplicationRole>>();
@@ -541,7 +486,7 @@ namespace UnitTests.Services
             var tokenEncodingHelper = new TokenEncodingHelper();
             var redisContext = A.Fake<IRedisContext>();
 
-            var resetPasswordDTO = TestValues.TestRsetPasswordUserDTO;
+            var resetPasswordDTO = UserConstants.TestResetPasswordUserDTO;
 
             A.CallTo(() => redisContext.Get<ApplicationUser>(A<string>._)).Returns((ApplicationUser)null);
             A.CallTo(() => userManager.FindByIdAsync(A<string>._)).Returns((ApplicationUser)null);
@@ -552,7 +497,7 @@ namespace UnitTests.Services
             var result = await userService.ChangePasswordAsync(resetPasswordDTO);
 
             //Assert
-            Assert.Equal(ServiceResultType.Bad_Request, result.ServiceResultType);
+            Assert.Equal(ServiceResultType.BadRequest, result.ServiceResultType);
 
             A.CallTo(() => userRepository.UpdatePasswordAsync(resetPasswordDTO.Id, resetPasswordDTO.OldPassword, resetPasswordDTO.NewPassword)).MustNotHaveHappened();
         }
@@ -561,8 +506,6 @@ namespace UnitTests.Services
         public async Task ShouldFindUserByIdWithRedis_ReturnServiceResultClassWithUserDTO()
         {
             //Arrange
-            var store = A.Fake<IUserStore<ApplicationUser>>();
-
             var userManager = A.Fake<UserManager<ApplicationUser>>();
             var signInManager = A.Fake<SignInManager<ApplicationUser>>();
             var roleManager = A.Fake<RoleManager<ApplicationRole>>();
@@ -572,7 +515,7 @@ namespace UnitTests.Services
             var tokenEncodingHelper = new TokenEncodingHelper();
             var redisContext = A.Fake<IRedisContext>();
 
-            var user = TestValues.TestUser;
+            var user = UserConstants.TestUser;
             var userDTO = mapper.Map<UserDTO>(user);
 
             A.CallTo(() => redisContext.Get<ApplicationUser>(A<string>._)).Returns(user);
@@ -585,11 +528,8 @@ namespace UnitTests.Services
             //Assert
             Assert.Equal(ServiceResultType.Success, result.ServiceResultType);
             Assert.NotNull(result.Result);
-            Assert.Equal(userDTO.Id, result.Result.Id);
-            Assert.Equal(userDTO.UserName, result.Result.UserName);
-            Assert.Equal(userDTO.PhoneNumber, result.Result.PhoneNumber);
-            Assert.Equal(userDTO.AddressDelivery, result.Result.AddressDelivery);
-            Assert.Equal(userDTO.ConcurrencyStamp, result.Result.ConcurrencyStamp);
+
+            AssertUsertDTOProperties(userDTO, result.Result);
 
             A.CallTo(() => userRepository.GetUserByIdAsync(user.Id)).MustNotHaveHappened();
         }
@@ -598,8 +538,6 @@ namespace UnitTests.Services
         public async Task ShouldFindUserByIdWithUserManager_ReturnServiceResultClassWithUserDTO()
         {
             //Arrange
-            var store = A.Fake<IUserStore<ApplicationUser>>();
-
             var userManager = A.Fake<UserManager<ApplicationUser>>();
             var signInManager = A.Fake<SignInManager<ApplicationUser>>();
             var roleManager = A.Fake<RoleManager<ApplicationRole>>();
@@ -609,7 +547,7 @@ namespace UnitTests.Services
             var tokenEncodingHelper = new TokenEncodingHelper();
             var redisContext = A.Fake<IRedisContext>();
 
-            var user = TestValues.TestUser;
+            var user = UserConstants.TestUser;
             var userDTO = mapper.Map<UserDTO>(user);
 
             A.CallTo(() => redisContext.Get<ApplicationUser>(A<string>._)).Returns((ApplicationUser)null);
@@ -623,19 +561,14 @@ namespace UnitTests.Services
             //Assert
             Assert.Equal(ServiceResultType.Success, result.ServiceResultType);
             Assert.NotNull(result.Result);
-            Assert.Equal(userDTO.Id, result.Result.Id);
-            Assert.Equal(userDTO.UserName, result.Result.UserName);
-            Assert.Equal(userDTO.PhoneNumber, result.Result.PhoneNumber);
-            Assert.Equal(userDTO.AddressDelivery, result.Result.AddressDelivery);
-            Assert.Equal(userDTO.ConcurrencyStamp, result.Result.ConcurrencyStamp);
+
+            AssertUsertDTOProperties(userDTO, result.Result);
         }
 
         [Fact]
         public async Task ShouldNotFindUserByIdr_ReturnServiceResultClassWithUserDTO()
         {
             //Arrange
-            var store = A.Fake<IUserStore<ApplicationUser>>();
-
             var userManager = A.Fake<UserManager<ApplicationUser>>();
             var signInManager = A.Fake<SignInManager<ApplicationUser>>();
             var roleManager = A.Fake<RoleManager<ApplicationRole>>();
@@ -645,7 +578,7 @@ namespace UnitTests.Services
             var tokenEncodingHelper = new TokenEncodingHelper();
             var redisContext = A.Fake<IRedisContext>();
 
-            var user = TestValues.TestUser;
+            var user = UserConstants.TestUser;
             var userDTO = mapper.Map<UserDTO>(user);
 
             A.CallTo(() => redisContext.Get<ApplicationUser>(A<string>._)).Returns((ApplicationUser)null);
@@ -657,8 +590,17 @@ namespace UnitTests.Services
             var result = await userService.FindUserByIdAsync(user.Id);
 
             //Assert
-            Assert.Equal(ServiceResultType.Not_Found, result.ServiceResultType);
+            Assert.Equal(ServiceResultType.NotFound, result.ServiceResultType);
             Assert.Null(result.Result);
+        }
+
+        private static void AssertUsertDTOProperties(UserDTO expectedUserDTO, UserDTO actualUserDTO)
+        {
+            Assert.Equal(expectedUserDTO.Id.ToString(), actualUserDTO.Id.ToString());
+            Assert.Equal(expectedUserDTO.UserName, actualUserDTO.UserName);
+            Assert.Equal(expectedUserDTO.PhoneNumber, actualUserDTO.PhoneNumber);
+            Assert.Equal(expectedUserDTO.AddressDelivery, actualUserDTO.AddressDelivery);
+            Assert.Equal(expectedUserDTO.ConcurrencyStamp, actualUserDTO.ConcurrencyStamp);
         }
     }
 }

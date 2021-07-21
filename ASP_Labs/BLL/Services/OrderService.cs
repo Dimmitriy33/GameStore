@@ -39,7 +39,7 @@ namespace WebApp.BLL.Services
             var productIdList = orderItemsDTO.Select(x => x.ProductId).Distinct().ToList();
             if (!await _productRepository.CheckProductsExistence(productIdList))
             {
-                return new ServiceResult(ServiceResultType.Bad_Request);
+                return new ServiceResult(ServiceResultType.BadRequest);
             }
 
             await _orderRepository.AddRangeAsync(orderItemsDTO.Select(_mapper.Map<Order>).ToList());

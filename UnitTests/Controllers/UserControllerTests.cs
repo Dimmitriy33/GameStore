@@ -1,14 +1,10 @@
-using AutoFixture;
 using FakeItEasy;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Net;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using UnitTests.Constants;
-using WebApp.BLL.Constants;
 using WebApp.BLL.DTO;
 using WebApp.BLL.Helpers;
 using WebApp.BLL.Interfaces;
@@ -27,32 +23,13 @@ namespace UnitTests.Controllers
             var claimsReader = new ClaimsReader();
             var userService = A.Fake<IUserService>();
 
-            var userId = new Guid(TestValues.TestId);
-            var userRole = RolesConstants.User;
-            var userName = TestValues.TestUsername;
-
-            var userDTO = new ServiceResultClass<UserDTO>()
+            var serviceResultClassUserDTO = new ServiceResultClass<UserDTO>
             {
-                Result = new UserDTO
-                {
-                    UserName = userName,
-                    Id = userId,
-                    AddressDelivery = TestValues.TestAddressDelivery,
-                    PhoneNumber = TestValues.TestPhoneNumber,
-                    ConcurrencyStamp = TestValues.TestConcurrencyStamp
-                },
+                Result = UserConstants.TestUserDTO,
                 ServiceResultType = ServiceResultType.Success
             };
 
-            var user = new ClaimsPrincipal(
-                new ClaimsIdentity(new[]
-                {
-                    new Claim(ClaimTypes.NameIdentifier, userId.ToString()),
-                    new Claim(ClaimTypes.Role, userRole),
-                    new Claim(ClaimTypes.Name, userName),
-                },
-                "Token")
-            );
+            var user = UserControllerDataConstants.GetUserIdentity();
 
             var httpContextAccessor = new HttpContextAccessor
             {
@@ -70,7 +47,7 @@ namespace UnitTests.Controllers
                 }
             };
 
-            A.CallTo(() => userService.FindUserByIdAsync(userId)).Returns(userDTO);
+            A.CallTo(() => userService.FindUserByIdAsync(A<Guid>._)).Returns(serviceResultClassUserDTO);
 
             //Act
             var result = await userController.GetUser();
@@ -81,11 +58,8 @@ namespace UnitTests.Controllers
             Assert.True(actionResult.StatusCode.HasValue);
             Assert.Equal(actionResult.StatusCode, (int)HttpStatusCode.OK);
             Assert.NotNull(actionResult.Value);
-            Assert.Equal(userDTO.Result.UserName, ((UserDTO)actionResult.Value).UserName);
-            Assert.Equal(userDTO.Result.AddressDelivery, ((UserDTO)actionResult.Value).AddressDelivery);
-            Assert.Equal(userDTO.Result.PhoneNumber, ((UserDTO)actionResult.Value).PhoneNumber);
-            Assert.Equal(userDTO.Result.ConcurrencyStamp, ((UserDTO)actionResult.Value).ConcurrencyStamp);
-            Assert.Equal(userDTO.Result.Id.ToString(), ((UserDTO)actionResult.Value).Id.ToString());
+
+            AssertUsertDTOProperties(serviceResultClassUserDTO.Result, (UserDTO)actionResult.Value);
         }
 
         [Fact]
@@ -95,24 +69,13 @@ namespace UnitTests.Controllers
             var claimsReader = new ClaimsReader();
             var userService = A.Fake<IUserService>();
 
-            var userId = new Guid(TestValues.TestId);
-            var userRole = RolesConstants.User;
-            var userName = TestValues.TestUsername;
-            var userDTO = new ServiceResultClass<UserDTO>
+            var ServiceResultClassUserDTO = new ServiceResultClass<UserDTO>
             {
-                Result = new UserDTO(),
-                ServiceResultType = ServiceResultType.Bad_Request
+                Result = UserConstants.TestUserDTO,
+                ServiceResultType = ServiceResultType.BadRequest
             };
 
-            var user = new ClaimsPrincipal(
-                new ClaimsIdentity(new[]
-                {
-                    new Claim(ClaimTypes.NameIdentifier, userId.ToString()),
-                    new Claim(ClaimTypes.Role, userRole),
-                    new Claim(ClaimTypes.Name, userName),
-                },
-                "Token")
-            );
+            var user = UserControllerDataConstants.GetUserIdentity();
 
             var httpContextAccessor = new HttpContextAccessor
             {
@@ -130,7 +93,7 @@ namespace UnitTests.Controllers
                 }
             };
 
-            A.CallTo(() => userService.FindUserByIdAsync(userId)).Returns(userDTO);
+            A.CallTo(() => userService.FindUserByIdAsync(A<Guid>._)).Returns(ServiceResultClassUserDTO);
 
             //Act
             var result = await userController.GetUser();
@@ -147,26 +110,13 @@ namespace UnitTests.Controllers
         {
             //Arrange
             var claimsReader = new ClaimsReader();
-
-            var userId = string.Empty;
-            var userRole = RolesConstants.User;
-            var userName = TestValues.TestUsername;
-
-            var user = new ClaimsPrincipal(
-                new ClaimsIdentity(new[]
-                {
-                    new Claim(ClaimTypes.NameIdentifier, userId),
-                    new Claim(ClaimTypes.Role, userRole),
-                    new Claim(ClaimTypes.Name, userName),
-                },
-                "Token")
-            );
+            var user = UserControllerDataConstants.GetUserIdentity(string.Empty);
 
             //Act
             var result = claimsReader.GetUserId(user);
 
             //Assert
-            Assert.Equal(ServiceResultType.Bad_Request, result.ServiceResultType);
+            Assert.Equal(ServiceResultType.BadRequest, result.ServiceResultType);
         }
 
         [Fact]
@@ -176,20 +126,18 @@ namespace UnitTests.Controllers
             var claimsReader = new ClaimsReader();
             var userService = A.Fake<IUserService>();
 
-            var userForUpdate = new Fixture().Create<UserDTO>();
-
-            var userDTO = new ServiceResultClass<UserDTO>
+            var serviceResultClassUserDTO = new ServiceResultClass<UserDTO>
             {
-                Result = userForUpdate,
+                Result = UserConstants.TestUserDTO,
                 ServiceResultType = ServiceResultType.Success
             };
 
             var userController = new UserController(userService, claimsReader);
 
-            A.CallTo(() => userService.UpdateUserInfoAsync(userForUpdate)).Returns(userDTO);
+            A.CallTo(() => userService.UpdateUserInfoAsync(A<UserDTO>._)).Returns(serviceResultClassUserDTO);
 
             //Act
-            var result = await userController.Update(userForUpdate);
+            var result = await userController.Update(UserConstants.TestUserDTO);
 
             //Assert
             var actionResult = Assert.IsType<ObjectResult>(result.Result);
@@ -197,11 +145,8 @@ namespace UnitTests.Controllers
             Assert.True(actionResult.StatusCode.HasValue);
             Assert.Equal(actionResult.StatusCode, (int)HttpStatusCode.OK);
             Assert.NotNull(actionResult.Value);
-            Assert.Equal(userDTO.Result.UserName, ((UserDTO)actionResult.Value).UserName);
-            Assert.Equal(userDTO.Result.AddressDelivery, ((UserDTO)actionResult.Value).AddressDelivery);
-            Assert.Equal(userDTO.Result.PhoneNumber, ((UserDTO)actionResult.Value).PhoneNumber);
-            Assert.Equal(userDTO.Result.ConcurrencyStamp, ((UserDTO)actionResult.Value).ConcurrencyStamp);
-            Assert.Equal(userDTO.Result.Id.ToString(), ((UserDTO)actionResult.Value).Id.ToString());
+
+            AssertUsertDTOProperties(serviceResultClassUserDTO.Result, (UserDTO)actionResult.Value);
         }
 
         [Fact]
@@ -210,19 +155,17 @@ namespace UnitTests.Controllers
             //Arrange
             var claimsReader = new ClaimsReader();
             var userService = A.Fake<IUserService>();
-            var userDTO = new ServiceResultClass<UserDTO>
+            var ServiceResultUserDTO = new ServiceResultClass<UserDTO>
             {
-                ServiceResultType = ServiceResultType.Bad_Request
+                ServiceResultType = ServiceResultType.BadRequest
             };
-
-            var userForUpdate = new Fixture().Create<UserDTO>();
 
             var userController = new UserController(userService, claimsReader);
 
-            A.CallTo(() => userService.UpdateUserInfoAsync(userForUpdate)).Returns(userDTO);
+            A.CallTo(() => userService.UpdateUserInfoAsync(A<UserDTO>._)).Returns(ServiceResultUserDTO);
 
             //Act
-            var result = await userController.Update(userForUpdate);
+            var result = await userController.Update(UserConstants.TestUserDTO);
 
             //Assert
             var actionResult = Assert.IsType<ObjectResult>(result.Result);
@@ -239,11 +182,7 @@ namespace UnitTests.Controllers
             var userService = A.Fake<IUserService>();
 
             var resultData = new ServiceResult(string.Empty, ServiceResultType.Success);
-
-            var jsonPatch = new JsonPatchDocument<ResetPasswordUserDTO>();
-            jsonPatch.Replace(j => j.Id, new Guid(TestValues.TestId));
-            jsonPatch.Replace(j => j.OldPassword, TestValues.TestPassword1);
-            jsonPatch.Replace(j => j.NewPassword, TestValues.TestPassword2);
+            var jsonPatch = UserControllerDataConstants.GetJsonPatchDocumentForResetPassword();
 
             var userController = new UserController(userService, claimsReader);
 
@@ -266,12 +205,9 @@ namespace UnitTests.Controllers
             var claimsReader = new ClaimsReader();
             var userService = A.Fake<IUserService>();
 
-            var resultData = new ServiceResult(string.Empty, ServiceResultType.Bad_Request);
+            var resultData = new ServiceResult(string.Empty, ServiceResultType.BadRequest);
 
-            var jsonPatch = new JsonPatchDocument<ResetPasswordUserDTO>();
-            jsonPatch.Replace(j => j.Id, new Guid(TestValues.TestId));
-            jsonPatch.Replace(j => j.OldPassword, string.Empty);
-            jsonPatch.Replace(j => j.NewPassword, string.Empty);
+            var jsonPatch = UserControllerDataConstants.GetJsonPatchDocumentForResetPassword(oldPassword: string.Empty, newPassword: string.Empty);
 
             var userController = new UserController(userService, claimsReader);
 
@@ -285,6 +221,15 @@ namespace UnitTests.Controllers
 
             Assert.True(actionResult.StatusCode.HasValue);
             Assert.Equal(actionResult.StatusCode, (int)HttpStatusCode.BadRequest);
+        }
+
+        private static void AssertUsertDTOProperties(UserDTO expectedUserDTO, UserDTO actualUserDTO)
+        {
+            Assert.Equal(expectedUserDTO.Id.ToString(), actualUserDTO.Id.ToString());
+            Assert.Equal(expectedUserDTO.UserName, actualUserDTO.UserName);
+            Assert.Equal(expectedUserDTO.PhoneNumber, actualUserDTO.PhoneNumber);
+            Assert.Equal(expectedUserDTO.AddressDelivery, actualUserDTO.AddressDelivery);
+            Assert.Equal(expectedUserDTO.ConcurrencyStamp, actualUserDTO.ConcurrencyStamp);
         }
     }
 }

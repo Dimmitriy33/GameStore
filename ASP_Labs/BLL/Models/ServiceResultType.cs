@@ -3,10 +3,10 @@
     public enum ServiceResultType
     {
         Success = 200,
-        Bad_Request = 400,
-        Invalid_Data = 422,
-        Not_Found = 404,
-        Internal_Server_Error = 500,
+        BadRequest = 400,
+        InvalidData = 422,
+        NotFound = 404,
+        InternalServerError = 500,
         Unauthorized = 401
     }
 }

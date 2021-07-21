@@ -17,7 +17,7 @@ namespace WebApp.BLL.Helpers
         {
             if (token is null)
             {
-                throw new CustomExceptions(ServiceResultType.Bad_Request, InvalidTokenMessage);
+                throw new CustomExceptions(ServiceResultType.BadRequest, InvalidTokenMessage);
             }
 
             var tokenGeneratedBytes = Encoding.UTF8.GetBytes(token);
@@ -30,7 +30,7 @@ namespace WebApp.BLL.Helpers
         {
             if (token is null)
             {
-                throw new CustomExceptions(ServiceResultType.Bad_Request, InvalidTokenMessage);
+                throw new CustomExceptions(ServiceResultType.BadRequest, InvalidTokenMessage);
             }
 
             var codeDecodedBytes = WebEncoders.Base64UrlDecode(token);

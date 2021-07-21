@@ -78,12 +78,12 @@ namespace WebApp.BLL.Services
 
             if (!tryRegister.Succeeded)
             {
-                return new ServiceResultClass<string>(InvalidRegisterMessage, ServiceResultType.Bad_Request);
+                return new ServiceResultClass<string>(InvalidRegisterMessage, ServiceResultType.BadRequest);
             }
 
             if (!await _roleManager.RoleExistsAsync(RolesConstants.User))
             {
-                return new ServiceResultClass<string>(MissingRole, ServiceResultType.Bad_Request);
+                return new ServiceResultClass<string>(MissingRole, ServiceResultType.BadRequest);
             }
 
             await _userManager.AddToRoleAsync(user, RolesConstants.User);
@@ -98,7 +98,7 @@ namespace WebApp.BLL.Services
             var user = await _userManager.FindByEmailAsync(userDTO.Email);
             if (user is null)
             {
-                return new ServiceResultClass<string>(InvalidLoginMessage, ServiceResultType.Bad_Request);
+                return new ServiceResultClass<string>(InvalidLoginMessage, ServiceResultType.BadRequest);
             }
 
             var tryLogin = await _signInManager.CheckPasswordSignInAsync(user, userDTO.Password, false);
@@ -120,7 +120,7 @@ namespace WebApp.BLL.Services
             var user = await _userManager.FindByEmailAsync(email);
             if (user is null)
             {
-                return new ServiceResult(NotFoundEmail, ServiceResultType.Invalid_Data);
+                return new ServiceResult(NotFoundEmail, ServiceResultType.InvalidData);
             }
 
             var codeDecoded = _tokenEncodingHelper.Decode(token);
@@ -131,7 +131,7 @@ namespace WebApp.BLL.Services
                 return new ServiceResult(ServiceResultType.Success);
             }
 
-            return new ServiceResult(NotConfirmedEmail, ServiceResultType.Bad_Request);
+            return new ServiceResult(NotConfirmedEmail, ServiceResultType.BadRequest);
         }
 
         public async Task<ServiceResultClass<UserDTO>> UpdateUserInfoAsync(UserDTO user)
@@ -141,7 +141,7 @@ namespace WebApp.BLL.Services
 
             if (updatedUser is null)
             {
-                return new ServiceResultClass<UserDTO>(ServiceResultType.Bad_Request);
+                return new ServiceResultClass<UserDTO>(ServiceResultType.BadRequest);
             }
 
             await _redisContext.Remove<ApplicationUser>(CreateRedisKeyForUser(user.Id));
@@ -160,7 +160,7 @@ namespace WebApp.BLL.Services
 
             if (userForUpdate is null)
             {
-                return new ServiceResult(NotFoundUser, ServiceResultType.Bad_Request);
+                return new ServiceResult(NotFoundUser, ServiceResultType.BadRequest);
             }
 
             await _userRepository.UpdatePasswordAsync(user.Id, user.OldPassword, user.NewPassword);
@@ -182,7 +182,7 @@ namespace WebApp.BLL.Services
 
             if (foundUser is null)
             {
-                return new ServiceResultClass<UserDTO>(ServiceResultType.Not_Found);
+                return new ServiceResultClass<UserDTO>(ServiceResultType.NotFound);
             }
 
             return new ServiceResultClass<UserDTO>(foundUser, ServiceResultType.Success);

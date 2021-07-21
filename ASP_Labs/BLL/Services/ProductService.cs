@@ -59,7 +59,7 @@ namespace WebApp.BLL.Services
 
             if (game is null)
             {
-                return new ServiceResultClass<GameResponseDTO>(ServiceResultType.Not_Found);
+                return new ServiceResultClass<GameResponseDTO>(ServiceResultType.NotFound);
             }
 
             return new ServiceResultClass<GameResponseDTO>(_mapper.Map<GameResponseDTO>(game), ServiceResultType.Success);
@@ -78,7 +78,7 @@ namespace WebApp.BLL.Services
 
             if (game is null)
             {
-                return new ServiceResultClass<GameResponseDTO>(ServiceResultType.Not_Found);
+                return new ServiceResultClass<GameResponseDTO>(ServiceResultType.NotFound);
             }
 
             var updatedGame = await HandleGameDTO(gameDTO, _productRepository.UpdateItemAsync);
@@ -92,7 +92,7 @@ namespace WebApp.BLL.Services
 
             if (game is null)
             {
-                return new ServiceResult(ServiceResultType.Not_Found);
+                return new ServiceResult(ServiceResultType.NotFound);
             }
 
             await _productRepository.DeleteAsync(g => g.Id == id);
@@ -106,7 +106,7 @@ namespace WebApp.BLL.Services
 
             if (game is null)
             {
-                return new ServiceResult(ServiceResultType.Not_Found);
+                return new ServiceResult(ServiceResultType.NotFound);
             }
 
             await _productRepository.SoftDeleteAsync(game.Id);
