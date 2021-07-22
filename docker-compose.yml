@@ -1,0 +1,9 @@
+version: '3.4'
+
+services:
+  webapp:
+    ports:
+      - 44341:80
+    build:
+      context: .
+      dockerfile: Dockerfile
