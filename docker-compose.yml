@@ -1,9 +1,28 @@
 version: '3.4'
 
-services:
+services: 
   webapp:
-    ports:
-      - 44341:80
     build:
       context: .
       dockerfile: Dockerfile
+    restart: always
+    environment: 
+      - ASPNETCORE_ENVIRONMENT=docker
+    depends_on:
+      - sql-server-db
+    ports:
+      - 8000:80
+
+  sql-server-db:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    ports:
+      - 1433:1433
+    environment:
+      MSSQL_SA_PASSWORD: PasswOrd124GGS412G
+      ACCEPT_EULA: "Y"
+      
+  redis:
+    image: redis:5.0.5
+    restart: always
+    ports:
+      - 6379:6379 

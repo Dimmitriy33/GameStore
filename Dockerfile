@@ -11,11 +11,11 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 WORKDIR /src
 
-COPY ["ASP_Labs/WebApp.csproj", "ASP_Labs/"]
-RUN dotnet restore "ASP_Labs/WebApp.csproj"
+COPY /*/*.csproj ./
+RUN dotnet restore "WebApp.csproj"
 
 COPY . .
-WORKDIR "/src/ASP_Labs/ASP_Labs"
+WORKDIR "/src/ASP_Labs"
 RUN dotnet build "WebApp.csproj" -c Release -o /app/build
 
 FROM build AS publish
