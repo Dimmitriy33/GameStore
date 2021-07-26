@@ -16,12 +16,13 @@ namespace WebApp.Web.Startup.Configuration
 {
     public static class AuthenticationExtensions
     {
-        public static void RegisterAuthenticationSettings(this IServiceCollection services, AppSettings appSettings) => services.AddAuthentication(cfg =>
-                                                                                                                      {
-                                                                                                                          cfg.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                                                                                                                          cfg.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                                                                                                                          cfg.DefaultForbidScheme = JwtBearerDefaults.AuthenticationScheme;
-                                                                                                                      })
+        public static void RegisterAuthenticationSettings(this IServiceCollection services, AppSettings appSettings)
+            => services.AddAuthentication(cfg =>
+                {
+                    cfg.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    cfg.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                    cfg.DefaultForbidScheme = JwtBearerDefaults.AuthenticationScheme;
+                })
                 .AddJwtBearer(
                     opt =>
                     {
@@ -35,17 +36,19 @@ namespace WebApp.Web.Startup.Configuration
                             ValidAudience = appSettings.JwtSettings.Audience
                         };
                     });
-        public static void RegisterIdentity(this IServiceCollection services, AppSettings appSettings) => services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
-                                                                                                              {
-                                                                                                                  options.User.RequireUniqueEmail = true;
-                                                                                                                  options.SignIn.RequireConfirmedEmail = appSettings.IdentitySettings.SignInRequireConfirmedEmail;
-                                                                                                                  options.Password.RequireDigit = appSettings.IdentitySettings.PasswordRequireDigit;
-                                                                                                                  options.Password.RequireNonAlphanumeric = appSettings.IdentitySettings.PasswordRequireNonAlphanumeric;
-                                                                                                                  options.Password.RequireUppercase = appSettings.IdentitySettings.PasswordRequireUppercase;
-                                                                                                                  options.Password.RequireLowercase = appSettings.IdentitySettings.PasswordRequireLowercase;
-                                                                                                              })
-                    .AddDefaultTokenProviders()
-                    .AddEntityFrameworkStores<ApplicationDbContext>();
+
+        public static void RegisterIdentity(this IServiceCollection services, AppSettings appSettings)
+            => services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
+                {
+                    options.User.RequireUniqueEmail = true;
+                    options.SignIn.RequireConfirmedEmail = appSettings.IdentitySettings.SignInRequireConfirmedEmail;
+                    options.Password.RequireDigit = appSettings.IdentitySettings.PasswordRequireDigit;
+                    options.Password.RequireNonAlphanumeric = appSettings.IdentitySettings.PasswordRequireNonAlphanumeric;
+                    options.Password.RequireUppercase = appSettings.IdentitySettings.PasswordRequireUppercase;
+                    options.Password.RequireLowercase = appSettings.IdentitySettings.PasswordRequireLowercase;
+                })
+                .AddDefaultTokenProviders()
+                .AddEntityFrameworkStores<ApplicationDbContext>();
 
         public static async Task SeedRoles(IServiceProvider serviceProvider, ICollection<string> roles)
         {

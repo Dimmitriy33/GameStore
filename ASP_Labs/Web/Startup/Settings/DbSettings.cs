@@ -12,7 +12,6 @@ namespace WebApp.Web.Startup.Settings
         public string Username { get; set; }
         [Required]
         public string Password { get; set; }
-        [Required]
         public int Port { get; set; }
         public string ConnectionString => $"Server=tcp:{Host},{Port};Database={Instance};User={Username};Password={Password};MultipleActiveResultSets=True;";
         public void Validate()
