@@ -30,7 +30,7 @@ namespace WebApp.Web.Controllers
         [Authorize(Roles = RolesConstants.Admin)]
         public ActionResult<string> GetInfo()
         {
-            string GetInfoMessage = "Request GET /api/home/info";
+            var GetInfoMessage = "Request GET /api/home/info";
 
             _logger.LogInformation(GetInfoMessage);
             return Ok(GetInfoMessage);

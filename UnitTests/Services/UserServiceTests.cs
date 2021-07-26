@@ -157,8 +157,10 @@ namespace UnitTests.Services
             var user = UserConstants.TestUser;
             var signInUser = UserConstants.SignInUser;
             var loginResult = SignInResult.Success;
+            var isConfirmedEmailResult = true;
 
-            A.CallTo(() => userManager.FindByEmailAsync(signInUser.Email)).Returns(user);
+            A.CallTo(() => userManager.FindByEmailAsync(A<string>._)).Returns(user);
+            A.CallTo(() => userManager.IsEmailConfirmedAsync(A<ApplicationUser>._)).Returns(isConfirmedEmailResult);
             A.CallTo(() => signInManager.CheckPasswordSignInAsync(A<ApplicationUser>._, signInUser.Password, false)).Returns(loginResult);
 
             var jwtToken = jwtGenerator.CreateToken(user.Id, user.UserName, RolesConstants.User);
@@ -174,11 +176,12 @@ namespace UnitTests.Services
 
             A.CallTo(() => userManager.FindByEmailAsync(A<string>._)).MustHaveHappenedOnceExactly();
             A.CallTo(() => signInManager.CheckPasswordSignInAsync(A<ApplicationUser>._, signInUser.Password, false)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => userManager.IsEmailConfirmedAsync(A<ApplicationUser>._)).MustHaveHappenedOnceExactly();
             A.CallTo(() => redisContext.Set(A<string>._, A<ApplicationUser>._, A<TimeSpan>._)).MustHaveHappenedOnceExactly();
         }
 
         [Fact]
-        public async Task ShouldNotLoginInvalidPassword_ReturnServiceResultWithErrorMessage()
+        public async Task ShouldNotLoginNotFoundUser_ReturnServiceResultWithErrorMessage()
         {
             //Arrange
             var userManager = A.Fake<UserManager<ApplicationUser>>();
@@ -206,12 +209,13 @@ namespace UnitTests.Services
             Assert.Null(result.Result);
 
             A.CallTo(() => userManager.FindByEmailAsync(A<string>._)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => userManager.IsEmailConfirmedAsync(A<ApplicationUser>._)).MustNotHaveHappened();
             A.CallTo(() => signInManager.CheckPasswordSignInAsync(A<ApplicationUser>._, signInUser.Password, false)).MustNotHaveHappened();
             A.CallTo(() => redisContext.Set(A<string>._, A<ApplicationUser>._, A<TimeSpan>._)).MustNotHaveHappened();
         }
 
         [Fact]
-        public async Task ShouldNotLoginNotFoundUser_ReturnServiceResultWithErrorMessage()
+        public async Task ShouldNotLoginNotConfirmedEmail_ReturnServiceResultWithErrorMessage()
         {
             //Arrange
             var userManager = A.Fake<UserManager<ApplicationUser>>();
@@ -226,8 +230,46 @@ namespace UnitTests.Services
             var user = UserConstants.TestUser;
             var signInUser = UserConstants.SignInUser;
             var loginResult = SignInResult.Failed;
+            var isConfirmedEmailResult = false;
 
-            A.CallTo(() => userManager.FindByEmailAsync(signInUser.Email)).Returns(user);
+            A.CallTo(() => userManager.FindByEmailAsync(A<string>._)).Returns(user);
+            A.CallTo(() => userManager.IsEmailConfirmedAsync(A<ApplicationUser>._)).Returns(isConfirmedEmailResult);
+
+            var userService = new UserService(userManager, signInManager, roleManager, jwtGenerator, userRepository, mapper, tokenEncodingHelper, redisContext);
+
+            //Act
+            var result = await userService.TryLoginAsync(signInUser);
+
+            //Assert
+            Assert.Equal(ServiceResultType.BadRequest, result.ServiceResultType);
+            Assert.Null(result.Result);
+
+            A.CallTo(() => userManager.FindByEmailAsync(A<string>._)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => userManager.IsEmailConfirmedAsync(A<ApplicationUser>._)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => signInManager.CheckPasswordSignInAsync(A<ApplicationUser>._, signInUser.Password, false)).MustNotHaveHappened();
+            A.CallTo(() => redisContext.Set(A<string>._, A<ApplicationUser>._, A<TimeSpan>._)).MustNotHaveHappened();
+        }
+
+        [Fact]
+        public async Task ShouldNotLoginInvalidPassword_ReturnServiceResultWithErrorMessage()
+        {
+            //Arrange
+            var userManager = A.Fake<UserManager<ApplicationUser>>();
+            var signInManager = A.Fake<SignInManager<ApplicationUser>>();
+            var roleManager = A.Fake<RoleManager<ApplicationRole>>();
+            var jwtGenerator = new JwtGenerator(appSettings);
+            var userRepository = A.Fake<IUserRepository>();
+            var mapper = new MapperConfiguration(cfg => cfg.AddProfile<UserProfile>()).CreateMapper();
+            var tokenEncodingHelper = new TokenEncodingHelper();
+            var redisContext = A.Fake<IRedisContext>();
+
+            var user = UserConstants.TestUser;
+            var signInUser = UserConstants.SignInUser;
+            var loginResult = SignInResult.Failed;
+            var isConfirmedEmailResult = true;
+
+            A.CallTo(() => userManager.FindByEmailAsync(A<string>._)).Returns(user);
+            A.CallTo(() => userManager.IsEmailConfirmedAsync(A<ApplicationUser>._)).Returns(isConfirmedEmailResult);
             A.CallTo(() => signInManager.CheckPasswordSignInAsync(A<ApplicationUser>._, signInUser.Password, false)).Returns(loginResult);
 
             var userService = new UserService(userManager, signInManager, roleManager, jwtGenerator, userRepository, mapper, tokenEncodingHelper, redisContext);
@@ -240,6 +282,7 @@ namespace UnitTests.Services
             Assert.Null(result.Result);
 
             A.CallTo(() => userManager.FindByEmailAsync(A<string>._)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => userManager.IsEmailConfirmedAsync(A<ApplicationUser>._)).MustHaveHappenedOnceExactly();
             A.CallTo(() => signInManager.CheckPasswordSignInAsync(A<ApplicationUser>._, signInUser.Password, false)).MustHaveHappenedOnceExactly();
             A.CallTo(() => redisContext.Set(A<string>._, A<ApplicationUser>._, A<TimeSpan>._)).MustNotHaveHappened();
         }

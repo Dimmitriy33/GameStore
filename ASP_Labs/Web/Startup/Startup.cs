@@ -94,8 +94,6 @@ namespace WebApp.Web.Startup
 
             app.UseSerilogRequestLogging();
 
-            app.UseHttpsRedirection();
-
             app.UseRouting();
 
             app.RegisterExceptionHandler(LoggerFactory.CreateLogger("Exceptions"));

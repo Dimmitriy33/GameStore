@@ -100,6 +100,12 @@ namespace WebApp.BLL.Services
             {
                 return new ServiceResult<string>(InvalidLoginMessage, ServiceResultType.BadRequest);
             }
+            var isConfirmedAccount = await _userManager.IsEmailConfirmedAsync(user);
+
+            if (!isConfirmedAccount)
+            {
+                return new ServiceResult<string>(InvalidLoginMessage, ServiceResultType.BadRequest);
+            }
 
             var tryLogin = await _signInManager.CheckPasswordSignInAsync(user, userDTO.Password, false);
 
