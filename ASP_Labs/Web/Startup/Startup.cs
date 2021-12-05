@@ -10,6 +10,7 @@ using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using Serilog;
 using System;
+using WebApp.DAL;
 using WebApp.Web.Startup.Configuration;
 using WebApp.Web.Startup.Settings;
 
@@ -110,6 +111,12 @@ namespace WebApp.Web.Startup
             {
                 endpoints.MapControllers();
             });
+
+            try
+            {
+                Procedures.Initialize(serviceProvider.GetRequiredService<ApplicationDbContext>());
+            }
+            catch (Exception e) { }
         }
 
         private static AppSettings ReadAppSettings(IConfiguration configuration)
