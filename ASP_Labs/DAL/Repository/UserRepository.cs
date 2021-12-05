@@ -52,6 +52,5 @@ namespace WebApp.DAL.Repository
         }
 
         private ApplicationUser GetUser(Guid id) => _dbContext.Users.FirstOrDefault(u => u.Id == id);
-
     }
 }
