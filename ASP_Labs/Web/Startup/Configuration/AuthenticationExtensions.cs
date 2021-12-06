@@ -2,11 +2,14 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WebApp.BLL.Constants;
 using WebApp.BLL.Models;
 using WebApp.DAL;
 using WebApp.DAL.Entities;
@@ -65,6 +68,52 @@ namespace WebApp.Web.Startup.Configuration
                 {
                     await roleManager.CreateAsync(new ApplicationRole { Name = role });
                 }
+            }
+        }
+
+        public static async Task SeedAdmin(IServiceProvider serviceProvider)
+        {
+            var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+            var user = new ApplicationUser
+            {
+                Email = "Admin123@gmail.com",
+                UserName = "Admin123",
+                AddressDelivery = "TestAddressDelivery, 12",
+                PhoneNumber = "+375291111111",
+                EmailConfirmed = true
+            };
+
+            var tryRegister = await userManager.CreateAsync(user, "Admin123");
+            //if admin already exist
+            if (!tryRegister.Succeeded)
+            {
+                return;
+            }
+            await userManager.AddToRoleAsync(user, RolesConstants.Admin);
+        }
+
+        // Just for test
+        public static async Task SeedProducts(IServiceProvider serviceProvider)
+        {
+            var context = serviceProvider.GetRequiredService<ApplicationDbContext>();
+            var testProducts = new List<Product>();
+            try
+            {
+                //docker
+                using (StreamReader r = new StreamReader(Directory.GetCurrentDirectory() + "/testProducts.json"))
+                //windows
+                /* using (StreamReader r = new StreamReader(Directory.GetParent(Directory.GetCurrentDirectory()) + "\\testProducts.json"))*/
+                {
+                    string json = r.ReadToEnd();
+                    testProducts = JsonConvert.DeserializeObject<List<Product>>(json);
+                }
+                context.Products.AddRange(testProducts);
+                await context.SaveChangesAsync();
+            }
+            // to handle cases when data already exist
+            catch (Exception e)
+            {
+                Console.WriteLine(Directory.GetCurrentDirectory() + $"\r\nErr: {e.Message}");
             }
         }
     }

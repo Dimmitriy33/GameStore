@@ -11,6 +11,7 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 WORKDIR /src
 
+
 COPY /*/*.csproj ./
 RUN dotnet restore "WebApp.csproj"
 
@@ -23,5 +24,6 @@ RUN dotnet publish "WebApp.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
-COPY --from=publish /app/publish .
+COPY --from=publish /app/publish /app/
+COPY testProducts.json ./
 ENTRYPOINT ["dotnet", "WebApp.dll"]

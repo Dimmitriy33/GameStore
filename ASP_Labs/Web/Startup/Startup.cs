@@ -107,6 +107,16 @@ namespace WebApp.Web.Startup
                 .SeedRoles(serviceProvider, appSettings.IdentitySettings.Roles)
                 .Wait();
 
+            //to seed admin with static data
+            AuthenticationExtensions
+               .SeedAdmin(serviceProvider)
+               .Wait();
+
+            //to seed test products from json file
+            AuthenticationExtensions
+               .SeedProducts(serviceProvider)
+               .Wait();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
